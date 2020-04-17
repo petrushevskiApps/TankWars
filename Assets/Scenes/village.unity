@@ -613,8 +613,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020ec667d6c7341e4a8a849a15cab9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flourLevel: 0
-  breadLevel: 2
+  flourLevel: 5
+  breadLevel: 5
   drawOffset: 100
   name: Inventory
 --- !u!114 &743796553
@@ -647,7 +647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: DeliverBread
-  cost: 1
+  cost: 3
   target: {fileID: 637827608}
   workDuration: 2
 --- !u!1 &818579530
@@ -1290,7 +1290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020ec667d6c7341e4a8a849a15cab9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flourLevel: 7
+  flourLevel: 10
   breadLevel: 0
   drawOffset: 0
   name: Windmill

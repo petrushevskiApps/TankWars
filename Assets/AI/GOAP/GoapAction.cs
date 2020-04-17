@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public abstract class GoapAction : MonoBehaviour {
 
 	public string name = "No Name";
-	private HashSet<KeyValuePair<string,object>> preconditions;
-	private HashSet<KeyValuePair<string,object>> effects;
-
 	private bool inRange = false;
+
+	public HashSet<KeyValuePair<string, object>> Preconditions { get; }
+	public HashSet<KeyValuePair<string, object>> Effects { get; }
 
 	/* The cost of performing the action. 
 	 * Figure out a weight that suits the action. 
@@ -21,8 +21,8 @@ public abstract class GoapAction : MonoBehaviour {
 
 	public GoapAction() 
 	{
-		preconditions = new HashSet<KeyValuePair<string, object>> ();
-		effects = new HashSet<KeyValuePair<string, object>> ();
+		Preconditions = new HashSet<KeyValuePair<string, object>> ();
+		Effects = new HashSet<KeyValuePair<string, object>> ();
 		//target = target;
 	}
 
@@ -80,14 +80,14 @@ public abstract class GoapAction : MonoBehaviour {
 
 	public void addPrecondition(string key, object value) 
 	{
-		preconditions.Add (new KeyValuePair<string, object>(key, value) );
+		Preconditions.Add (new KeyValuePair<string, object>(key, value) );
 	}
 
 
 	public void removePrecondition(string key) 
 	{
 		KeyValuePair<string, object> remove = default(KeyValuePair<string,object>);
-		foreach (KeyValuePair<string, object> kvp in preconditions) 
+		foreach (KeyValuePair<string, object> kvp in Preconditions) 
 		{
 			if (kvp.Key.Equals(key))
 			{
@@ -97,21 +97,21 @@ public abstract class GoapAction : MonoBehaviour {
 		
 		if ( !default(KeyValuePair<string,object>).Equals(remove) )
 		{
-			preconditions.Remove(remove);
+			Preconditions.Remove(remove);
 		}
 	}
 
 
 	public void addEffect(string key, object value) 
 	{
-		effects.Add (new KeyValuePair<string, object>(key, value) );
+		Effects.Add (new KeyValuePair<string, object>(key, value) );
 	}
 
 
 	public void removeEffect(string key) 
 	{
 		KeyValuePair<string, object> remove = default(KeyValuePair<string,object>);
-		foreach (KeyValuePair<string, object> kvp in effects) 
+		foreach (KeyValuePair<string, object> kvp in Effects) 
 		{
 			if (kvp.Key.Equals (key))
 			{
@@ -121,24 +121,10 @@ public abstract class GoapAction : MonoBehaviour {
 		
 		if ( !default(KeyValuePair<string,object>).Equals(remove) )
 		{
-			effects.Remove(remove);
+			Effects.Remove(remove);
 		}
 	}
+
 
 	
-	public HashSet<KeyValuePair<string, object>> Preconditions 
-	{
-		get 
-		{
-			return preconditions;
-		}
-	}
-
-	public HashSet<KeyValuePair<string, object>> Effects 
-	{
-		get 
-		{
-			return effects;
-		}
-	}
 }

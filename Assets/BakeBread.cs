@@ -13,7 +13,7 @@ public class BakeBread : GoapAction {
 	public BakeBread () 
 	{
 		addPrecondition ("hasFlour", true);
-		addEffect("hasDelivery", true);
+		addEffect("doJob", true);
 		name = "BakeBread";
 	}
 	
