@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using GOAP;
 
-
-public sealed class GoapAgent : MonoBehaviour {
+public sealed class GoapAgent : MonoBehaviour 
+{
 
 	private FSM stateMachine;
 
@@ -20,12 +21,15 @@ public sealed class GoapAgent : MonoBehaviour {
 	private GoapPlanner planner;
 
 
-	void Start () {
+	void Start () 
+	{
 		stateMachine = new FSM ();
 		availableActions = new HashSet<GoapAction> ();
 		currentActions = new Queue<GoapAction> ();
 		planner = new GoapPlanner ();
-		FindDataProvider ();
+
+		dataProvider = GetComponent<IGoap>();
+
 		CreateIdleState ();
 		CreateMoveToState ();
 		CreatePerformActionState ();
@@ -34,33 +38,50 @@ public sealed class GoapAgent : MonoBehaviour {
 	}
 	
 
-	void Update () {
+	void Update () 
+	{
 		stateMachine.Update (this.gameObject);
 	}
 
 
-	public void AddAction(GoapAction a) {
+	public void AddAction(GoapAction a) 
+	{
 		availableActions.Add (a);
 	}
+	public void RemoveAction(GoapAction action)
+	{
+		availableActions.Remove(action);
+	}
+	private bool HasActionPlan()
+	{
+		return currentActions.Count > 0;
+	}
 
-	public GoapAction GetAction(Type action) {
-		foreach (GoapAction g in availableActions) {
+	public GoapAction GetAction(Type action) 
+	{
+		foreach (GoapAction g in availableActions) 
+		{
 			if (g.GetType().Equals(action) )
 			    return g;
 		}
 		return null;
 	}
 
-	public void RemoveAction(GoapAction action) {
-		availableActions.Remove (action);
+	private void LoadActions()
+	{
+		GoapAction[] actions = gameObject.GetComponents<GoapAction>();
+
+		foreach (GoapAction a in actions)
+		{
+			availableActions.Add(a);
+		}
+		Debug.Log("Found actions: " + actions.Length);
 	}
 
-	private bool HasActionPlan() {
-		return currentActions.Count > 0;
-	}
-
-	private void CreateIdleState() {
-		idleState = (fsm, gameObj) => {
+	private void CreateIdleState() 
+	{
+		idleState = (fsm, gameObj) => 
+		{
 			// GOAP planning
 
 			// get the world state and the goal we want to plan for
@@ -68,8 +89,10 @@ public sealed class GoapAgent : MonoBehaviour {
 			HashSet<KeyValuePair<string,object>> goal = dataProvider.CreateGoalState();
 
 			// Plan
-			Queue<GoapAction> plan = planner.plan(gameObject, availableActions, worldState, goal);
-			if (plan != null) {
+			Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
+			
+			if (plan != null) 
+			{
 				// we have a plan, hooray!
 				currentActions = plan;
 				dataProvider.PlanFound(goal, plan);
@@ -77,10 +100,13 @@ public sealed class GoapAgent : MonoBehaviour {
 				fsm.popState(); // move to PerformAction state
 				fsm.pushState(performActionState);
 
-			} else {
+			} 
+			else 
+			{
 				// ugh, we couldn't get a plan
 				Debug.Log("Failed Plan: " + goal);
 				dataProvider.PlanFailed(goal);
+				
 				fsm.popState (); // move back to IdleAction state
 				fsm.pushState (idleState);
 			}
@@ -88,12 +114,15 @@ public sealed class GoapAgent : MonoBehaviour {
 		};
 	}
 	
-	private void CreateMoveToState() {
-		moveToState = (fsm, gameObj) => {
+	private void CreateMoveToState() 
+	{
+		moveToState = (fsm, gameObj) => 
+		{
 			// move the game object
 
 			GoapAction action = currentActions.Peek();
-			if (action.requiresInRange() && action.target == null) {
+			if (action.requiresInRange() && action.target == null) 
+			{
 				Debug.Log("Fatal error: Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
 				fsm.popState(); // move
 				fsm.popState(); // perform
@@ -103,18 +132,22 @@ public sealed class GoapAgent : MonoBehaviour {
 
 			// get the agent to move itself
 			Debug.Log("Move to do: " + action.name);
-			if ( dataProvider.MoveAgent(action) ) {
+			if ( dataProvider.MoveAgent(action) ) 
+			{
 				fsm.popState();
 			}
 		};
 	}
 	
-	private void CreatePerformActionState() {
+	private void CreatePerformActionState() 
+	{
 
-		performActionState = (fsm, gameObj) => {
+		performActionState = (fsm, gameObj) => 
+		{
 			// perform the action
 
-			if (!HasActionPlan()) {
+			if (!HasActionPlan()) 
+			{
 				// no actions to perform
 				Debug.Log("<color=red>Done actions</color>");
 				fsm.popState();
@@ -124,33 +157,41 @@ public sealed class GoapAgent : MonoBehaviour {
 			}
 
 			GoapAction action = currentActions.Peek();
-			if ( action.isDone() ) {
+			if ( action.isDone() ) 
+			{
 				// the action is done. Remove it so we can perform the next one
 				currentActions.Dequeue();
 			}
 
-			if (HasActionPlan()) {
+			if (HasActionPlan()) 
+			{
 				// perform the next action
 				action = currentActions.Peek();
 				bool inRange = action.requiresInRange() ? action.isInRange() : true;
 
-				if ( inRange ) {
+				if ( inRange ) 
+				{
 					// we are in range, so perform the action
 					bool success = action.perform(gameObj);
 
-					if (!success) {
+					if (!success) 
+					{
 						// action failed, we need to plan again
 						fsm.popState();
 						fsm.pushState(idleState);
 						dataProvider.PlanAborted(action);
 					}
-				} else {
+				} 
+				else 
+				{
 					// we need to move there first
 					// push moveTo state
 					fsm.pushState(moveToState);
 				}
 
-			} else {
+			} 
+			else 
+			{
 				// no actions left, move to Plan state
 				fsm.popState();
 				fsm.pushState(idleState);
@@ -160,22 +201,7 @@ public sealed class GoapAgent : MonoBehaviour {
 		};
 	}
 
-	private void FindDataProvider() {
-		foreach (Component comp in gameObject.GetComponents(typeof(Component)) ) {
-			if ( typeof(IGoap).IsAssignableFrom(comp.GetType()) ) {
-				dataProvider = (IGoap)comp;
-				return;
-			}
-		}
-	}
 
-	private void LoadActions ()
-	{
-		GoapAction[] actions = gameObject.GetComponents<GoapAction>();
-		foreach (GoapAction a in actions) {
-			availableActions.Add (a);
-		}
-		Debug.Log("Found actions: " + actions);
-	}
+	
 
 }

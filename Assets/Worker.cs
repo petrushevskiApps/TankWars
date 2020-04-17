@@ -21,7 +21,7 @@ public class Worker : MonoBehaviour, IGoap
 		HashSet<KeyValuePair<string,object>> worldData = new HashSet<KeyValuePair<string,object>> ();
 		worldData.Add(new KeyValuePair<string, object>("hasStock", (windmill.flourLevel > 4) ));
 		worldData.Add(new KeyValuePair<string, object>("hasFlour", (inv.flourLevel > 1) ));
-		worldData.Add(new KeyValuePair<string, object>("hasDelivery", (inv.breadLevel > 4) ));		
+		worldData.Add(new KeyValuePair<string, object>("hasDelivery", (inv.breadLevel >= 4) ));		
 		return worldData;
 	}
 
@@ -35,7 +35,8 @@ public class Worker : MonoBehaviour, IGoap
 	}
 
 
-	public bool MoveAgent(GoapAction nextAction) {
+	public bool MoveAgent(GoapAction nextAction) 
+	{
 		
 		//if we don't need to move anywhere
 		if(previousDestination == nextAction.target.transform.position)
@@ -46,12 +47,16 @@ public class Worker : MonoBehaviour, IGoap
 		
 		agent.SetDestination(nextAction.target.transform.position);
 		
-		if (agent.hasPath && agent.remainingDistance < 2) {
+		if (agent.hasPath && agent.remainingDistance < 2) 
+		{
 			nextAction.setInRange(true);
 			previousDestination = nextAction.target.transform.position;
 			return true;
-		} else
+		} 
+		else
+		{
 			return false;
+		}
 	}
 
 	void Update()

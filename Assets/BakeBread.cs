@@ -8,9 +8,12 @@ public class BakeBread : GoapAction {
 	float startTime = 0;
 	public float workDuration = 2; // seconds
 	
-	public BakeBread () {
-		addPrecondition ("hasFlour", true); 
-		addEffect ("doJob", true);
+	public bool isDeliveryReady = false;
+
+	public BakeBread () 
+	{
+		addPrecondition ("hasFlour", true);
+		addEffect("hasDelivery", true);
 		name = "BakeBread";
 	}
 	
@@ -48,6 +51,7 @@ public class BakeBread : GoapAction {
 			Debug.Log("Finished: " + name);
 			this.GetComponent<Inventory>().flourLevel -= 2;
 			this.GetComponent<Inventory>().breadLevel += 1;
+
 			completed = true;
 		}
 		return true;

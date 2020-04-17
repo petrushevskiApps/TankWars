@@ -8,7 +8,8 @@ public class DeliverBread : GoapAction {
 	float startTime = 0;
 	public float workDuration = 2; // seconds
 	
-	public DeliverBread () {
+	public DeliverBread () 
+	{
 		addPrecondition ("hasDelivery", true); 
 		addEffect ("doJob", true);
 		name = "DeliverBread";
@@ -46,7 +47,7 @@ public class DeliverBread : GoapAction {
 		if (Time.time - startTime > workDuration) 
 		{
 			Debug.Log("Finished: " + name);
-			this.GetComponent<Inventory>().breadLevel -= 5;
+			this.GetComponent<Inventory>().breadLevel -= this.GetComponent<Inventory>().breadLevel;
 			completed = true;
 		}
 		return true;

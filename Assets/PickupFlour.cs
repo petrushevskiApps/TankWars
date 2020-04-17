@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickupFlour : GoapAction {
+public class PickupFlour : GoapAction 
+{
 
 	bool completed = false;
 	float startTime = 0;
 	public float workDuration = 2; // seconds
 	public Inventory windmill;
 	
-	public PickupFlour () {
+	public PickupFlour () 
+	{
 		addPrecondition("hasStock", true);
 		addPrecondition ("hasFlour", false); 
 		addEffect ("hasFlour", true);
@@ -34,7 +36,7 @@ public class PickupFlour : GoapAction {
 	
 	public override bool checkProceduralPrecondition (GameObject agent)
 	{	
-		return true;
+		return windmill.flourLevel >= 5;
 	}
 	
 	public override bool perform (GameObject agent)

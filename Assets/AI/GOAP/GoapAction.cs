@@ -19,13 +19,15 @@ public abstract class GoapAction : MonoBehaviour {
 	 * An action often has to perform on an object. This is that object. Can be null. */
 	public GameObject target;
 
-	public GoapAction() {
+	public GoapAction() 
+	{
 		preconditions = new HashSet<KeyValuePair<string, object>> ();
 		effects = new HashSet<KeyValuePair<string, object>> ();
 		//target = target;
 	}
 
-	public void doReset() {
+	public void Reset() 
+	{
 		inRange = false;
 		reset ();
 	}
@@ -65,55 +67,77 @@ public abstract class GoapAction : MonoBehaviour {
 	 * Are we in range of the target?
 	 * The MoveTo state will set this and it gets reset each time this action is performed.
 	 */
-	public bool isInRange () {
+	public bool isInRange () 
+	{
 		return inRange;
 	}
 	
-	public void setInRange(bool inRange) {
+	public void setInRange(bool inRange) 
+	{
 		this.inRange = inRange;
 	}
 
 
-	public void addPrecondition(string key, object value) {
+	public void addPrecondition(string key, object value) 
+	{
 		preconditions.Add (new KeyValuePair<string, object>(key, value) );
 	}
 
 
-	public void removePrecondition(string key) {
+	public void removePrecondition(string key) 
+	{
 		KeyValuePair<string, object> remove = default(KeyValuePair<string,object>);
-		foreach (KeyValuePair<string, object> kvp in preconditions) {
-			if (kvp.Key.Equals (key)) 
+		foreach (KeyValuePair<string, object> kvp in preconditions) 
+		{
+			if (kvp.Key.Equals(key))
+			{
 				remove = kvp;
+			}
 		}
+		
 		if ( !default(KeyValuePair<string,object>).Equals(remove) )
-			preconditions.Remove (remove);
+		{
+			preconditions.Remove(remove);
+		}
 	}
 
 
-	public void addEffect(string key, object value) {
+	public void addEffect(string key, object value) 
+	{
 		effects.Add (new KeyValuePair<string, object>(key, value) );
 	}
 
 
-	public void removeEffect(string key) {
+	public void removeEffect(string key) 
+	{
 		KeyValuePair<string, object> remove = default(KeyValuePair<string,object>);
-		foreach (KeyValuePair<string, object> kvp in effects) {
-			if (kvp.Key.Equals (key)) 
+		foreach (KeyValuePair<string, object> kvp in effects) 
+		{
+			if (kvp.Key.Equals (key))
+			{
 				remove = kvp;
+			}
 		}
+		
 		if ( !default(KeyValuePair<string,object>).Equals(remove) )
-			effects.Remove (remove);
+		{
+			effects.Remove(remove);
+		}
 	}
 
 	
-	public HashSet<KeyValuePair<string, object>> Preconditions {
-		get {
+	public HashSet<KeyValuePair<string, object>> Preconditions 
+	{
+		get 
+		{
 			return preconditions;
 		}
 	}
 
-	public HashSet<KeyValuePair<string, object>> Effects {
-		get {
+	public HashSet<KeyValuePair<string, object>> Effects 
+	{
+		get 
+		{
 			return effects;
 		}
 	}
