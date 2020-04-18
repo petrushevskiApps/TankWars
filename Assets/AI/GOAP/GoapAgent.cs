@@ -6,15 +6,18 @@ using GOAP;
 
 public sealed class GoapAgent : MonoBehaviour 
 {
+	private const string IDLE_STATE_KEY				= "IdleState";
+	private const string MOVETO_STATE_KEY			= "MoveToState";
+	private const string PERFORMACTION_STATE_KEY	= "PerformActionState";
 
 	private HashSet<GoapAction> availableActions;
 	private Queue<GoapAction> currentActions;
 
-	private IGoap dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
+	private IGoap agentImplementation; // this is the implementing class that provides our world data and listens to feedback on planning
 
 	private GoapPlanner planner;
 
-	[SerializeField] private Animator unityFSM; 
+	[SerializeField] private Animator FSM; 
 
 	void Start () 
 	{
@@ -22,16 +25,10 @@ public sealed class GoapAgent : MonoBehaviour
 		currentActions = new Queue<GoapAction> ();
 		planner = new GoapPlanner ();
 
-		dataProvider = GetComponent<IGoap>();
+		agentImplementation = GetComponent<IGoap>();
+		FSM = GetComponent<Animator>();
 
 		LoadActions ();
-
-		unityFSM = GetComponent<Animator>();
-
-		if (unityFSM.GetCurrentAnimatorStateInfo(0).IsName("MoveToState"))
-		{
-			Debug.Log("State Entered");
-		}
 	}
 	
 
@@ -74,11 +71,11 @@ public sealed class GoapAgent : MonoBehaviour
 
 	public void IdleState()
 	{
-		// GOAP planning
+		// GOAP Planning State
 
 		// get the world state and the goal we want to plan for
-		HashSet<KeyValuePair<string, object>> worldState = dataProvider.GetWorldState();
-		HashSet<KeyValuePair<string, object>> goal = dataProvider.CreateGoalState();
+		HashSet<KeyValuePair<string, object>> worldState = agentImplementation.GetWorldState();
+		HashSet<KeyValuePair<string, object>> goal = agentImplementation.CreateGoalState();
 
 		// Plan
 		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
@@ -87,19 +84,20 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// we have a plan, hooray!
 			currentActions = plan;
-			dataProvider.PlanFound(goal, plan);
+			agentImplementation.PlanFound(goal, plan);
 
-			unityFSM.SetTrigger("PerformActionState");
+			// Plan Available - Change State
+			ChangeState(PERFORMACTION_STATE_KEY);
 
 		}
 		else
 		{
 			// ugh, we couldn't get a plan
 			Debug.Log("Failed Plan: " + goal);
-			dataProvider.PlanFailed(goal);
-			unityFSM.SetTrigger("IdleState");
-			// Stays in IdleState;
+			agentImplementation.PlanFailed(goal);
 
+			// Plan Not Available - Loop State
+			ChangeState(IDLE_STATE_KEY);
 		}
 	}
 
@@ -110,19 +108,22 @@ public sealed class GoapAgent : MonoBehaviour
 		if (action.RequiresInRange() && action.target == null)
 		{
 			Debug.Log("Fatal error: Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-			unityFSM.SetTrigger("IdleState");
+			ChangeState(IDLE_STATE_KEY);
 			return;
 		}
 
 		// get the agent to move itself
 		Debug.Log("Move to do: " + action.name);
-		if (dataProvider.MoveAgent(action))
+
+		if (agentImplementation.MoveAgent(action))
 		{
-			unityFSM.SetTrigger("PerformActionState");
+			// Destination Reached - Change State
+			ChangeState(PERFORMACTION_STATE_KEY);
 		}
 		else
 		{
-			unityFSM.SetTrigger("MoveToState");
+			// Destination Not Reached - Loop
+			ChangeState(MOVETO_STATE_KEY);
 		}
 	}
 
@@ -135,8 +136,8 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// no actions to perform
 			Debug.Log("<color=red>Done actions</color>");
-			unityFSM.SetTrigger("IdleState");
-			dataProvider.ActionsFinished();
+			ChangeState(IDLE_STATE_KEY);
+			agentImplementation.ActionsFinished();
 			return;
 		}
 
@@ -161,31 +162,33 @@ public sealed class GoapAgent : MonoBehaviour
 				if (!success)
 				{
 					// action failed, we need to plan again
-					unityFSM.SetTrigger("IdleState");
-					dataProvider.PlanAborted(action);
+					ChangeState(IDLE_STATE_KEY);
+					agentImplementation.PlanAborted(action);
 				}
 				else
 				{
-					unityFSM.SetTrigger("PerformActionState");
-
+					ChangeState(PERFORMACTION_STATE_KEY);
 				}
 			}
 			else
 			{
 				// we need to move there first
 				// push moveTo state
-				unityFSM.SetTrigger("MoveToState");
+				ChangeState(MOVETO_STATE_KEY);
 			}
 
 		}
 		else
 		{
 			// no actions left, move to Plan state
-			unityFSM.SetTrigger("IdleState");
-			dataProvider.ActionsFinished();
+			ChangeState(IDLE_STATE_KEY);
+			agentImplementation.ActionsFinished();
 		}
 	}
 	
-	
+	private void ChangeState(string stateKey)
+	{
+		FSM.SetTrigger(stateKey);
+	}
 
 }
