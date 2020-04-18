@@ -12,8 +12,8 @@ public class BakeBread : GoapAction {
 
 	public BakeBread () 
 	{
-		addPrecondition ("hasFlour", true);
-		addEffect("doJob", true);
+		AddPrecondition ("hasFlour", true);
+		AddEffect("doJob", true);
 		name = "BakeBread";
 	}
 	
@@ -28,17 +28,17 @@ public class BakeBread : GoapAction {
 		return completed;
 	}
 	
-	public override bool requiresInRange ()
+	public override bool RequiresInRange ()
 	{
 		return true; 
 	}
 	
-	public override bool checkProceduralPrecondition (GameObject agent)
+	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
 		return true;
 	}
 	
-	public override bool perform (GameObject agent)
+	public override bool Perform (GameObject agent)
 	{
 		if (startTime == 0)
 		{

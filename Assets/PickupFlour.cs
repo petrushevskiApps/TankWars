@@ -12,9 +12,9 @@ public class PickupFlour : GoapAction
 	
 	public PickupFlour () 
 	{
-		addPrecondition("hasStock", true);
-		addPrecondition ("hasFlour", false); 
-		addEffect ("hasFlour", true);
+		AddPrecondition("hasStock", true);
+		AddPrecondition ("hasFlour", false); 
+		AddEffect ("hasFlour", true);
 		name = "PickupFlour";
 	}
 	
@@ -29,17 +29,17 @@ public class PickupFlour : GoapAction
 		return completed;
 	}
 	
-	public override bool requiresInRange ()
+	public override bool RequiresInRange ()
 	{
 		return true; 
 	}
 	
-	public override bool checkProceduralPrecondition (GameObject agent)
+	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
 		return windmill.flourLevel >= 5;
 	}
 	
-	public override bool perform (GameObject agent)
+	public override bool Perform (GameObject agent)
 	{
 		if (startTime == 0)
 		{

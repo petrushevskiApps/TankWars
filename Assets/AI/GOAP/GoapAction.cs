@@ -46,7 +46,7 @@ public abstract class GoapAction : MonoBehaviour {
 	 * Procedurally check if this action can run. Not all actions
 	 * will need this, but some might.
 	 */
-	public abstract bool checkProceduralPrecondition(GameObject agent);
+	public abstract bool CheckProceduralPrecondition(GameObject agent);
 
 	/**
 	 * Run the action.
@@ -54,39 +54,39 @@ public abstract class GoapAction : MonoBehaviour {
 	 * if something happened and it can no longer perform. In this case
 	 * the action queue should clear out and the goal cannot be reached.
 	 */
-	public abstract bool perform(GameObject agent);
+	public abstract bool Perform(GameObject agent);
 
 	/**
 	 * Does this action need to be within range of a target game object?
 	 * If not then the moveTo state will not need to run for this action.
 	 */
-	public abstract bool requiresInRange ();
+	public abstract bool RequiresInRange ();
 	
-
 	/**
 	 * Are we in range of the target?
 	 * The MoveTo state will set this and it gets reset each time this action is performed.
 	 */
-	public bool isInRange () 
+	public bool IsInRange ()  
 	{
 		return inRange;
 	}
 	
-	public void setInRange(bool inRange) 
+	public void SetInRange(bool inRange) 
 	{
 		this.inRange = inRange;
 	}
 
 
-	public void addPrecondition(string key, object value) 
+	public void AddPrecondition(string key, object value)  
 	{
 		Preconditions.Add (new KeyValuePair<string, object>(key, value) );
 	}
 
 
-	public void removePrecondition(string key) 
+	public void RemovePrecondition(string key)  
 	{
-		KeyValuePair<string, object> remove = default(KeyValuePair<string,object>);
+		KeyValuePair<string, object> remove = default;
+		
 		foreach (KeyValuePair<string, object> kvp in Preconditions) 
 		{
 			if (kvp.Key.Equals(key))
@@ -95,31 +95,32 @@ public abstract class GoapAction : MonoBehaviour {
 			}
 		}
 		
-		if ( !default(KeyValuePair<string,object>).Equals(remove) )
+		if (!default(KeyValuePair<string,object>).Equals(remove) )
 		{
 			Preconditions.Remove(remove);
 		}
 	}
 
 
-	public void addEffect(string key, object value) 
+	public void AddEffect(string key, object value)  
 	{
 		Effects.Add (new KeyValuePair<string, object>(key, value) );
 	}
 
 
-	public void removeEffect(string key) 
+	public void RemoveEffect(string key)  
 	{
-		KeyValuePair<string, object> remove = default(KeyValuePair<string,object>);
+		KeyValuePair<string, object> remove = default;
+
 		foreach (KeyValuePair<string, object> kvp in Effects) 
 		{
-			if (kvp.Key.Equals (key))
+			if (kvp.Key.Equals(key))
 			{
 				remove = kvp;
 			}
 		}
 		
-		if ( !default(KeyValuePair<string,object>).Equals(remove) )
+		if (!default(KeyValuePair<string,object>).Equals(remove) )
 		{
 			Effects.Remove(remove);
 		}

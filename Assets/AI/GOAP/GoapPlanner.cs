@@ -31,7 +31,7 @@ namespace GOAP
 
 			foreach (GoapAction action in availableActions)
 			{
-				if (action.checkProceduralPrecondition(agent))
+				if (action.CheckProceduralPrecondition(agent))
 				{
 					usableActions.Add(action);
 				}

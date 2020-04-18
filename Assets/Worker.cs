@@ -12,8 +12,8 @@ public class Worker : MonoBehaviour, IGoap
 
 	void Start()
 	{
-		agent = this.GetComponent<NavMeshAgent>();
-		inv = this.GetComponent<Inventory>();
+		agent = GetComponent<NavMeshAgent>();
+		inv = GetComponent<Inventory>();
 	}
 
 	public HashSet<KeyValuePair<string,object>> GetWorldState () 
@@ -41,22 +41,22 @@ public class Worker : MonoBehaviour, IGoap
 		//if we don't need to move anywhere
 		if(previousDestination == nextAction.target.transform.position)
 		{
-			nextAction.setInRange(true);
+			Debug.Log("previousDestination == nextAction.target.transform.position");
+			nextAction.SetInRange(true);
 			return true;
 		}
 		
 		agent.SetDestination(nextAction.target.transform.position);
-		
+
 		if (agent.hasPath && agent.remainingDistance < 2) 
 		{
-			nextAction.setInRange(true);
+			nextAction.SetInRange(true);
 			previousDestination = nextAction.target.transform.position;
+			Debug.Log("Destination reached!");
 			return true;
-		} 
-		else
-		{
-			return false;
 		}
+
+		return false;
 	}
 
 	void Update()

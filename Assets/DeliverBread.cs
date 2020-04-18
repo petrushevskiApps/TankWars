@@ -10,8 +10,8 @@ public class DeliverBread : GoapAction {
 	
 	public DeliverBread () 
 	{
-		addPrecondition ("hasDelivery", true); 
-		addEffect ("doJob", true);
+		AddPrecondition ("hasDelivery", true); 
+		AddEffect ("doJob", true);
 		name = "DeliverBread";
 	}
 	
@@ -26,17 +26,17 @@ public class DeliverBread : GoapAction {
 		return completed;
 	}
 	
-	public override bool requiresInRange ()
+	public override bool RequiresInRange ()
 	{
 		return true; 
 	}
 	
-	public override bool checkProceduralPrecondition (GameObject agent)
+	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
 		return true;
 	}
 	
-	public override bool perform (GameObject agent)
+	public override bool Perform (GameObject agent)
 	{
 		if (startTime == 0)
 		{

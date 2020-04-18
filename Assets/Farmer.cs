@@ -36,14 +36,14 @@ public class Farmer : MonoBehaviour, IGoap
 		//if we don't need to move anywhere
 		if(previousDestination == nextAction.target.transform.position)
 		{
-			nextAction.setInRange(true);
+			nextAction.SetInRange(true);
 			return true;
 		}
 		
 		agent.SetDestination(nextAction.target.transform.position);
 		
 		if (agent.hasPath && agent.remainingDistance < 2) {
-			nextAction.setInRange(true);
+			nextAction.SetInRange(true);
 			previousDestination = nextAction.target.transform.position;
 			return true;
 		} else

@@ -7,12 +7,6 @@ using GOAP;
 public sealed class GoapAgent : MonoBehaviour 
 {
 
-	private FSM stateMachine;
-
-	private FSM.FSMState idleState; // finds something to do
-	private FSM.FSMState moveToState; // moves to a target
-	private FSM.FSMState performActionState; // performs an action
-	
 	private HashSet<GoapAction> availableActions;
 	private Queue<GoapAction> currentActions;
 
@@ -20,29 +14,26 @@ public sealed class GoapAgent : MonoBehaviour
 
 	private GoapPlanner planner;
 
+	[SerializeField] private Animator unityFSM; 
 
 	void Start () 
 	{
-		stateMachine = new FSM ();
 		availableActions = new HashSet<GoapAction> ();
 		currentActions = new Queue<GoapAction> ();
 		planner = new GoapPlanner ();
 
 		dataProvider = GetComponent<IGoap>();
 
-		CreateIdleState ();
-		CreateMoveToState ();
-		CreatePerformActionState ();
-		stateMachine.pushState (idleState);
 		LoadActions ();
+
+		unityFSM = GetComponent<Animator>();
+
+		if (unityFSM.GetCurrentAnimatorStateInfo(0).IsName("MoveToState"))
+		{
+			Debug.Log("State Entered");
+		}
 	}
 	
-
-	void Update () 
-	{
-		stateMachine.Update (this.gameObject);
-	}
-
 
 	public void AddAction(GoapAction a) 
 	{
@@ -52,17 +43,20 @@ public sealed class GoapAgent : MonoBehaviour
 	{
 		availableActions.Remove(action);
 	}
+
 	private bool HasActionPlan()
 	{
 		return currentActions.Count > 0;
 	}
 
-	public GoapAction GetAction(Type action) 
+	public GoapAction GetAction(Type actionType) 
 	{
-		foreach (GoapAction g in availableActions) 
+		foreach (GoapAction action in availableActions) 
 		{
-			if (g.GetType().Equals(action) )
-			    return g;
+			if (action.GetType().Equals(actionType) )
+			{
+				return action;
+			}
 		}
 		return null;
 	}
@@ -78,130 +72,120 @@ public sealed class GoapAgent : MonoBehaviour
 		Debug.Log("Found actions: " + actions.Length);
 	}
 
-	private void CreateIdleState() 
+	public void IdleState()
 	{
-		idleState = (fsm, gameObj) => 
+		// GOAP planning
+
+		// get the world state and the goal we want to plan for
+		HashSet<KeyValuePair<string, object>> worldState = dataProvider.GetWorldState();
+		HashSet<KeyValuePair<string, object>> goal = dataProvider.CreateGoalState();
+
+		// Plan
+		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
+
+		if (plan != null)
 		{
-			// GOAP planning
+			// we have a plan, hooray!
+			currentActions = plan;
+			dataProvider.PlanFound(goal, plan);
 
-			// get the world state and the goal we want to plan for
-			HashSet<KeyValuePair<string,object>> worldState = dataProvider.GetWorldState();
-			HashSet<KeyValuePair<string,object>> goal = dataProvider.CreateGoalState();
+			unityFSM.SetTrigger("PerformActionState");
 
-			// Plan
-			Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
-			
-			if (plan != null) 
-			{
-				// we have a plan, hooray!
-				currentActions = plan;
-				dataProvider.PlanFound(goal, plan);
+		}
+		else
+		{
+			// ugh, we couldn't get a plan
+			Debug.Log("Failed Plan: " + goal);
+			dataProvider.PlanFailed(goal);
+			unityFSM.SetTrigger("IdleState");
+			// Stays in IdleState;
 
-				fsm.popState(); // move to PerformAction state
-				fsm.pushState(performActionState);
-
-			} 
-			else 
-			{
-				// ugh, we couldn't get a plan
-				Debug.Log("Failed Plan: " + goal);
-				dataProvider.PlanFailed(goal);
-				
-				fsm.popState (); // move back to IdleAction state
-				fsm.pushState (idleState);
-			}
-
-		};
+		}
 	}
-	
-	private void CreateMoveToState() 
+
+	public void MoveToState()
 	{
-		moveToState = (fsm, gameObj) => 
+		GoapAction action = currentActions.Peek();
+
+		if (action.RequiresInRange() && action.target == null)
 		{
-			// move the game object
+			Debug.Log("Fatal error: Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
+			unityFSM.SetTrigger("IdleState");
+			return;
+		}
 
-			GoapAction action = currentActions.Peek();
-			if (action.requiresInRange() && action.target == null) 
-			{
-				Debug.Log("Fatal error: Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-				fsm.popState(); // move
-				fsm.popState(); // perform
-				fsm.pushState(idleState);
-				return;
-			}
-
-			// get the agent to move itself
-			Debug.Log("Move to do: " + action.name);
-			if ( dataProvider.MoveAgent(action) ) 
-			{
-				fsm.popState();
-			}
-		};
+		// get the agent to move itself
+		Debug.Log("Move to do: " + action.name);
+		if (dataProvider.MoveAgent(action))
+		{
+			unityFSM.SetTrigger("PerformActionState");
+		}
+		else
+		{
+			unityFSM.SetTrigger("MoveToState");
+		}
 	}
-	
-	private void CreatePerformActionState() 
+
+
+	public void PerformActionState()
 	{
+		// perform the action
 
-		performActionState = (fsm, gameObj) => 
+		if (!HasActionPlan())
 		{
-			// perform the action
+			// no actions to perform
+			Debug.Log("<color=red>Done actions</color>");
+			unityFSM.SetTrigger("IdleState");
+			dataProvider.ActionsFinished();
+			return;
+		}
 
-			if (!HasActionPlan()) 
+		GoapAction action = currentActions.Peek();
+		if (action.isDone())
+		{
+			// the action is done. Remove it so we can perform the next one
+			currentActions.Dequeue();
+		}
+
+		if (HasActionPlan())
+		{
+			// perform the next action
+			action = currentActions.Peek();
+			bool inRange = action.RequiresInRange() ? action.IsInRange() : true;
+
+			if (inRange)
 			{
-				// no actions to perform
-				Debug.Log("<color=red>Done actions</color>");
-				fsm.popState();
-				fsm.pushState(idleState);
-				dataProvider.ActionsFinished();
-				return;
-			}
+				// we are in range, so perform the action
+				bool success = action.Perform(gameObject);
 
-			GoapAction action = currentActions.Peek();
-			if ( action.isDone() ) 
-			{
-				// the action is done. Remove it so we can perform the next one
-				currentActions.Dequeue();
-			}
-
-			if (HasActionPlan()) 
-			{
-				// perform the next action
-				action = currentActions.Peek();
-				bool inRange = action.requiresInRange() ? action.isInRange() : true;
-
-				if ( inRange ) 
+				if (!success)
 				{
-					// we are in range, so perform the action
-					bool success = action.perform(gameObj);
-
-					if (!success) 
-					{
-						// action failed, we need to plan again
-						fsm.popState();
-						fsm.pushState(idleState);
-						dataProvider.PlanAborted(action);
-					}
-				} 
-				else 
-				{
-					// we need to move there first
-					// push moveTo state
-					fsm.pushState(moveToState);
+					// action failed, we need to plan again
+					unityFSM.SetTrigger("IdleState");
+					dataProvider.PlanAborted(action);
 				}
+				else
+				{
+					unityFSM.SetTrigger("PerformActionState");
 
-			} 
-			else 
+				}
+			}
+			else
 			{
-				// no actions left, move to Plan state
-				fsm.popState();
-				fsm.pushState(idleState);
-				dataProvider.ActionsFinished();
+				// we need to move there first
+				// push moveTo state
+				unityFSM.SetTrigger("MoveToState");
 			}
 
-		};
+		}
+		else
+		{
+			// no actions left, move to Plan state
+			unityFSM.SetTrigger("IdleState");
+			dataProvider.ActionsFinished();
+		}
 	}
-
-
+	
 	
 
 }

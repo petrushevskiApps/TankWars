@@ -10,8 +10,8 @@ public class DeliverWheat : GoapAction {
 	public Inventory inv;
 	
 	public DeliverWheat () {
-		addPrecondition ("hasWheat", true); 
-		addEffect ("doJob", true);
+		AddPrecondition ("hasWheat", true); 
+		AddEffect ("doJob", true);
 		name = "Harvest";
 	}
 	
@@ -26,17 +26,17 @@ public class DeliverWheat : GoapAction {
 		return completed;
 	}
 	
-	public override bool requiresInRange ()
+	public override bool RequiresInRange ()
 	{
 		return true; 
 	}
 	
-	public override bool checkProceduralPrecondition (GameObject agent)
+	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
 		return true;
 	}
 	
-	public override bool perform (GameObject agent)
+	public override bool Perform (GameObject agent)
 	{
 		if (startTime == 0)
 		{
