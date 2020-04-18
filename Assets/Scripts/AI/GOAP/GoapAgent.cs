@@ -13,11 +13,13 @@ public sealed class GoapAgent : MonoBehaviour
 	private HashSet<GoapAction> availableActions;
 	private Queue<GoapAction> currentActions;
 
-	private IGoap agentImplementation; // this is the implementing class that provides our world data and listens to feedback on planning
+	// this is the implementing class that provides 
+	// our world data and listens to feedback on planning
+	private IGoap agentImplementation; 
 
 	private GoapPlanner planner;
 
-	[SerializeField] private Animator FSM; 
+	private Animator FSM; 
 
 	void Start () 
 	{
