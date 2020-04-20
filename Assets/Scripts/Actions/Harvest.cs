@@ -13,13 +13,13 @@ public class Harvest : GoapAction {
 		name = "Harvest";
 	}
 	
-	public override void reset ()
+	public override void Reset ()
 	{
 		completed = false;
 		startTime = 0;
 	}
 	
-	public override bool isDone ()
+	public override bool IsActionDone ()
 	{
 		return completed;
 	}

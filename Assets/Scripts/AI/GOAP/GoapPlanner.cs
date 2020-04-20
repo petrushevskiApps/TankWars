@@ -69,7 +69,7 @@ namespace GOAP
 		{
 			foreach (GoapAction action in availableActions)
 			{
-				action.Reset();
+				action.ResetAction();
 			}
 		}
 		
@@ -216,7 +216,7 @@ namespace GOAP
 		{
 			Utilities.PrintCollection("Current State", currentState);
 
-			//Make Hard Copy of Current State -> Updated State
+			//Make Copy of Current State -> Updated State
 			StatesSet updatedState = new StatesSet();
 
 			foreach (KeyValue state in currentState)

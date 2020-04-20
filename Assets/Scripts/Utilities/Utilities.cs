@@ -9,6 +9,18 @@ namespace GOAP
 {
     public class Utilities
     {
+		public static float GetAngle(GameObject caller, GameObject target)
+		{
+			return Vector3.Angle(caller.transform.forward, GetDirection(caller, target));
+		}
+
+		public static Vector3 GetDirection(GameObject caller, GameObject target)
+		{
+			Vector3 heading = (target.transform.position - caller.transform.position);
+			float distance = heading.magnitude;
+			return heading / distance;
+		}
+
 		public static void PrintTree(List<Node> leaves, Node cheapestLeaf)
 		{
 			StringBuilder sb = new StringBuilder();

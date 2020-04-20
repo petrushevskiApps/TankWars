@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BakeBread : GoapAction {
+public class BakeBread : GoapAction 
+{
 
 	bool completed = false;
 	float startTime = 0;
@@ -17,13 +18,13 @@ public class BakeBread : GoapAction {
 		name = "BakeBread";
 	}
 	
-	public override void reset ()
+	public override void Reset ()
 	{
 		completed = false;
 		startTime = 0;
 	}
 	
-	public override bool isDone ()
+	public override bool IsActionDone ()
 	{
 		return completed;
 	}

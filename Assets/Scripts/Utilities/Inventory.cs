@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour {
+public class Inventory : MonoBehaviour 
+{
 
 	public int flourLevel = 5;
 	public int breadLevel = 0;

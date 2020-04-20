@@ -17,7 +17,7 @@ public abstract class GoapAction : MonoBehaviour {
 
 	/**
 	 * An action often has to perform on an object. This is that object. Can be null. */
-	public GameObject target;
+	public Vector3 target;
 
 	public GoapAction() 
 	{
@@ -26,21 +26,21 @@ public abstract class GoapAction : MonoBehaviour {
 		//target = target;
 	}
 
-	public void Reset() 
+	public void ResetAction() 
 	{
 		inRange = false;
-		reset ();
+		Reset ();
 	}
 
 	/**
 	 * Reset any variables that need to be reset before planning happens again.
 	 */
-	public abstract void reset();
+	public abstract void Reset();
 
 	/**
 	 * Is the action done?
 	 */
-	public abstract bool isDone();
+	public abstract bool IsActionDone();
 
 	/**
 	 * Procedurally check if this action can run. Not all actions

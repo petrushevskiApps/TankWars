@@ -39,22 +39,22 @@ public class Worker : MonoBehaviour, IGoap
 	{
 		
 		//if we don't need to move anywhere
-		if(previousDestination == nextAction.target.transform.position)
-		{
-			Debug.Log("previousDestination == nextAction.target.transform.position");
-			nextAction.SetInRange(true);
-			return true;
-		}
+		//if(previousDestination == nextAction.target.transform.position)
+		//{
+		//	Debug.Log("previousDestination == nextAction.target.transform.position");
+		//	nextAction.SetInRange(true);
+		//	return true;
+		//}
 		
-		agent.SetDestination(nextAction.target.transform.position);
+		//agent.SetDestination(nextAction.target.transform.position);
 
-		if (agent.hasPath && agent.remainingDistance < 2) 
-		{
-			nextAction.SetInRange(true);
-			previousDestination = nextAction.target.transform.position;
-			Debug.Log("Destination reached!");
-			return true;
-		}
+		//if (agent.hasPath && agent.remainingDistance < 2) 
+		//{
+		//	nextAction.SetInRange(true);
+		//	previousDestination = nextAction.target.transform.position;
+		//	Debug.Log("Destination reached!");
+		//	return true;
+		//}
 
 		return false;
 	}

@@ -144,7 +144,7 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 
 		GoapAction action = currentActions.Peek();
-		if (action.isDone())
+		if (action.IsActionDone())
 		{
 			// the action is done. Remove it so we can perform the next one
 			currentActions.Dequeue();
