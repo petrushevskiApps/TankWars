@@ -9,6 +9,17 @@ namespace GOAP
 {
     public class Utilities
     {
+		public static float GetAngle(Transform caller, Vector3 target)
+		{
+			return Vector3.Angle(caller.forward, GetDirection(caller, target));
+		}
+		public static Vector3 GetDirection(Transform caller, Vector3 target)
+		{
+			Vector3 heading = (target - caller.position);
+			float distance = heading.magnitude;
+			return heading / distance;
+		}
+
 		public static float GetAngle(GameObject caller, GameObject target)
 		{
 			return Vector3.Angle(caller.transform.forward, GetDirection(caller, target));

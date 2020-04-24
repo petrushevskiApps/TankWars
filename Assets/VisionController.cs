@@ -6,10 +6,12 @@ using UnityEngine.Events;
 
 public class VisionController : MonoBehaviour
 {
-    public UnityEvent EnemyDetected = new UnityEvent();
-    public UnityEvent PickableDetected = new UnityEvent();
+    public EnemyDetected EnemyDetectedEvent = new EnemyDetected();
+    public EnemyLost EnemyLostEvent = new EnemyLost();
 
-    
+    public PackDetected AmmoPackDetected = new PackDetected();
+    public PackDetected HealthPackDetected = new PackDetected();
+
     // On Trigger is called when detectable object
     // is in radius range of visibility.
     private void OnTriggerStay(Collider other)
@@ -20,8 +22,17 @@ public class VisionController : MonoBehaviour
         {
             CheckDetectableType(other.gameObject);
 
-            Debug.Log("Sensor (" + this.gameObject.name + ") Detected: " + other.gameObject.name + " With angle of: " + angle);
+            //Debug.Log("Sensor (" + this.gameObject.name + ") Detected: " + other.gameObject.name + " With angle of: " + angle);
            
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        Tank targetTank = other.gameObject.GetComponent<Tank>();
+
+        if (targetTank != null)
+        {
+            EnemyLostEvent.Invoke(other.gameObject);
         }
     }
 
@@ -42,12 +53,10 @@ public class VisionController : MonoBehaviour
         {
             if (hit.transform.gameObject == target)
             {
-                Debug.Log("Raycast: Did Hit");
                 return true;
             }
         }
 
-        Debug.Log("Raycast: Did not Hit");
         return false;
     }
 
@@ -55,15 +64,13 @@ public class VisionController : MonoBehaviour
     private void CheckDetectableType(GameObject target)
     {
         Tank targetTank = target.GetComponent<Tank>();
-        
+
         if (targetTank != null)
         {
-            int targetID = targetTank.GetTeamID();
-            int ID = transform.parent.GetComponent<Tank>().GetTeamID();
-            if (ID != targetID)
+            if (IsEnemy(targetTank))
             {
                 Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.red);
-                EnemyDetected.Invoke();
+                EnemyDetectedEvent.Invoke(target);
             }
             else
             {
@@ -73,14 +80,37 @@ public class VisionController : MonoBehaviour
         else if(target.GetComponent<Pickable>() != null)
         {
             Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
-            PickableDetected.Invoke();
+
+            Pickable pickable = target.GetComponent<Pickable>();
+            if (pickable.GetType() == typeof(AmmoPack))
+            {
+                AmmoPackDetected.Invoke(target);
+            }
+            else if(pickable.GetType() == typeof(HealthPack))
+            {
+                HealthPackDetected.Invoke(target);
+            }
         }
     }
-
+    private bool IsEnemy(Tank targetTank)
+    {
+        int targetID = targetTank.agentMemory.GetTeamID();
+        int ID = transform.parent.GetComponent<Tank>().agentMemory.GetTeamID();
+        return ID != targetID;
+    }
     
+    public class EnemyDetected : UnityEvent<GameObject>
+    {
 
-    
+    }
+    public class EnemyLost : UnityEvent<GameObject>
+    {
+
+    }
+    public class PackDetected : UnityEvent<GameObject>
+    {
+
+    }
 
 
-    
 }

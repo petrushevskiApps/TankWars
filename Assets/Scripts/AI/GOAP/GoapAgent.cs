@@ -19,8 +19,9 @@ public sealed class GoapAgent : MonoBehaviour
 
 	private GoapPlanner planner;
 
-	private Animator FSM; 
+	private Animator FSM;
 
+	private GoapAction currentAction;
 	void Start () 
 	{
 		availableActions = new HashSet<GoapAction> ();
@@ -76,8 +77,9 @@ public sealed class GoapAgent : MonoBehaviour
 		// GOAP Planning State
 
 		// get the world state and the goal we want to plan for
-		HashSet<KeyValuePair<string, object>> worldState = agentImplementation.GetWorldState();
-		HashSet<KeyValuePair<string, object>> goal = agentImplementation.CreateGoalState();
+		Dictionary<string, bool> worldState = agentImplementation.GetWorldState();
+		Dictionary<string, bool> goal = agentImplementation.CreateGoalState();
+
 
 		// Plan
 		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
@@ -115,7 +117,7 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 
 		// get the agent to move itself
-		Debug.Log("Move to do: " + action.name);
+		//Debug.Log("Move to do: " + action.name);
 
 		if (agentImplementation.MoveAgent(action))
 		{
@@ -143,8 +145,9 @@ public sealed class GoapAgent : MonoBehaviour
 			return;
 		}
 
-		GoapAction action = currentActions.Peek();
-		if (action.IsActionDone())
+		currentAction = currentActions.Peek();
+		
+		if (currentAction.IsActionDone())
 		{
 			// the action is done. Remove it so we can perform the next one
 			currentActions.Dequeue();
@@ -153,24 +156,21 @@ public sealed class GoapAgent : MonoBehaviour
 		if (HasActionPlan())
 		{
 			// perform the next action
-			action = currentActions.Peek();
-			bool inRange = action.RequiresInRange() ? action.IsInRange() : true;
+			currentAction = currentActions.Peek();
+			bool inRange = currentAction.RequiresInRange() ? currentAction.IsInRange() : true;
 
 			if (inRange)
 			{
 				// we are in range, so perform the action
-				bool success = action.Perform(gameObject);
-
-				if (!success)
-				{
-					// action failed, we need to plan again
-					ChangeState(IDLE_STATE_KEY);
-					agentImplementation.PlanAborted(action);
-				}
-				else
-				{
-					ChangeState(PERFORMACTION_STATE_KEY);
-				}
+				currentAction.Perform(gameObject, 
+					()=>{
+						ChangeState(PERFORMACTION_STATE_KEY);
+					},
+					()=>{
+						// action failed, we need to plan again
+						ChangeState(IDLE_STATE_KEY);
+						agentImplementation.PlanAborted(currentAction);
+					});
 			}
 			else
 			{

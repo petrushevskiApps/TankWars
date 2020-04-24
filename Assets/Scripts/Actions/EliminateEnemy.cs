@@ -1,0 +1,132 @@
+﻿using Complete;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EliminateEnemy : GoapAction
+{
+	public GameObject bullet;                    // Prefab of the shell.
+	public Transform turretTransform;           // A child of the tank where the shells are spawned.
+	private float m_CurrentLaunchForce;         // The force that will be given to the shell when the fire button is released.
+	public AudioSource m_ShootingAudio;         // Reference to the audio source used to play the shooting audio. NB: different to the movement audio source.
+	public AudioClip m_FireClip;                // Audio that plays when each shot is fired.
+	
+	bool completed = false;
+
+
+	public EliminateEnemy()
+	{
+		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
+		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
+		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+
+		AddEffect(GoalKeys.ELIMINATE_ENEMY, true);
+
+		name = "EliminateEnemy";
+	}
+
+	public override void Reset()
+	{
+
+		completed = false;
+	}
+
+	public override bool IsActionDone()
+	{
+		return completed;
+	}
+
+	public override bool RequiresInRange()
+	{
+		Memory memory = GetComponent<Tank>().agentMemory;
+		
+		if (memory.EnemiesDetected())
+		{
+			target = memory.GetEnemy();
+		}
+		
+		return true;
+	}
+
+	public override bool CheckProceduralPrecondition(GameObject agent)
+	{
+		return true;
+	}
+	private bool CheckCurrentState(GameObject agent)
+	{
+		Memory agentMemory = GetComponent<Tank>().agentMemory;
+		return agentMemory.EnemiesDetected() && agentMemory.HaveAmmo();
+	}
+	public override void Perform(GameObject agent, Action succes, Action fail)
+	{
+		Debug.Log($"<color=green> {gameObject.name} Perform Action: {this.name}</color>");
+		StartCoroutine(Fire(agent, succes, fail));
+	}
+
+	IEnumerator Fire(GameObject agent, Action succes, Action fail)
+	{
+		GameObject enemy = GetComponent<Tank>().agentMemory.GetEnemy();
+		string enemyKey = enemy.name;
+
+		while (true)
+		{ 
+			if (CheckCurrentState(agent))
+			{
+				if (enemy != null)
+				{
+					FireBullet(enemy);
+					yield return new WaitForSeconds(0.5f);
+				}
+				else
+				{
+					GetComponent<Tank>().agentMemory.RemoveDetectedEnemy(enemyKey);
+					succes.Invoke();
+					completed = true;
+					break;
+				}
+			}
+			else
+			{
+				fail.Invoke();
+				break;
+			}
+		}
+	}
+
+	private void FireBullet(GameObject enemyTarget)
+	{
+		// Create an instance of the shell and store a reference to it's rigidbody.
+		GameObject shell = Instantiate(bullet, turretTransform.position, turretTransform.rotation);
+		
+		shell.GetComponent<ShellExplosion>().SetFiredFrom(gameObject);
+
+		Rigidbody shellBody = shell.GetComponent<Rigidbody>();
+
+		// Set the shell's velocity to the launch force in the fire position's forward direction.
+		shellBody.velocity = CalcBallisticVelocityVector(turretTransform.position, enemyTarget.transform.position, 40f);
+		shell.SetActive(true);
+		
+		// Change the clip to the firing clip and play it.
+		m_ShootingAudio.clip = m_FireClip;
+		m_ShootingAudio.Play();
+
+		GetComponent<Tank>().agentMemory.DecreaseAmmo();
+
+	}
+
+	private Vector3 CalcBallisticVelocityVector(Vector3 source, Vector3 target, float angle)
+	{
+		Vector3 direction = target - source;
+		float h = direction.y;
+		direction.y = 0;
+		float distance = direction.magnitude;
+		float a = angle * Mathf.Deg2Rad;
+		direction.y = distance * Mathf.Tan(a);
+		distance += h / Mathf.Tan(a);
+
+		// calculate velocity
+		float velocity = Mathf.Sqrt(distance * Physics.gravity.magnitude / Mathf.Sin(2 * a));
+		return velocity * direction.normalized;
+	}
+}

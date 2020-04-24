@@ -11,18 +11,18 @@ namespace Complete
         public Color m_FullHealthColor = Color.green;       // The color the health bar will be when on full health.
         public Color m_ZeroHealthColor = Color.red;         // The color the health bar will be when on no health.
         public GameObject m_ExplosionPrefab;                // A prefab that will be instantiated in Awake, then used whenever the tank dies.
-        
-        
+
+
         private AudioSource m_ExplosionAudio;               // The audio source to play when the tank explodes.
         private ParticleSystem m_ExplosionParticles;        // The particle system the will play when the tank is destroyed.
         private float m_CurrentHealth;                      // How much health the tank currently has.
-        private bool m_Dead;                                // Has the tank been reduced beyond zero health yet?
+        public bool m_Dead;                                // Has the tank been reduced beyond zero health yet?
 
 
         private void Awake ()
         {
             // Instantiate the explosion prefab and get a reference to the particle system on it.
-            m_ExplosionParticles = Instantiate (m_ExplosionPrefab).GetComponent<ParticleSystem> ();
+            m_ExplosionParticles = Instantiate(m_ExplosionPrefab).GetComponent<ParticleSystem>();
 
             // Get a reference to the audio source on the instantiated prefab.
             m_ExplosionAudio = m_ExplosionParticles.GetComponent<AudioSource> ();
@@ -85,7 +85,8 @@ namespace Complete
             m_ExplosionAudio.Play();
 
             // Turn the tank off.
-            gameObject.SetActive (false);
+            Destroy(gameObject);
+            //gameObject.SetActive (false);
         }
     }
 }

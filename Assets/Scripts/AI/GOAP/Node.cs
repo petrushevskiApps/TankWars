@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GOAP
 {
-	using StatesSet = HashSet<KeyValuePair<string, object>>;
 
 	/**
 	* Used for building up the graph and holding the running costs of actions.
@@ -11,10 +11,10 @@ namespace GOAP
     {
 		public Node parent;
 		public float runningCost;
-		public StatesSet state;
+		public Dictionary<string, bool> state;
 		public GoapAction action;
 
-		public Node(Node parent, float runningCost, StatesSet state, GoapAction action)
+		public Node(Node parent, float runningCost, Dictionary<string, bool> state, GoapAction action)
 		{
 			this.parent = parent;
 			this.runningCost = runningCost;

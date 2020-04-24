@@ -5,10 +5,9 @@ using UnityEngine;
 
 namespace GOAP
 {
-	using KeyValue = KeyValuePair<string, object>;
-	using StatesSet = HashSet<KeyValuePair<string, object>>;
-	using Goals = HashSet<KeyValuePair<string, object>>;
-	using GoapActions = HashSet<GoapAction>;
+	//using State = KeyValuePair<string, bool>; 
+	//using Goals = Dictionary<string, bool>;
+	//using GoapActions = HashSet<GoapAction>;
 
 	/**
 	 * Plans what actions can be completed in order to fulfill a goal state.
@@ -21,13 +20,13 @@ namespace GOAP
 		 * Returns null if a plan could not be found, or a list of the actions
 		 * that must be performed, in order, to fulfill the goal.
 		 */
-		public Queue<GoapAction> Plan(GameObject agent, GoapActions availableActions, StatesSet worldState, Goals goal)
+		public Queue<GoapAction> Plan(GameObject agent, HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goals) 
 		{
 			// reset the actions so we can start fresh with them
 			ResetActions(availableActions);
 
 			// check what actions can run using their checkProceduralPrecondition
-			GoapActions usableActions = new GoapActions();
+			HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
 
 			foreach (GoapAction action in availableActions)
 			{
@@ -44,7 +43,7 @@ namespace GOAP
 
 			// build graph
 			Node start = new Node(null, 0, worldState, null);
-			bool success = BuildTree(start, leaves, usableActions, goal);
+			bool success = BuildTree(start, leaves, usableActions, goals);
 			
 
 			if (!success)
@@ -65,7 +64,7 @@ namespace GOAP
 
 		}
 
-		private void ResetActions(GoapActions availableActions)
+		private void ResetActions(HashSet<GoapAction> availableActions)
 		{
 			foreach (GoapAction action in availableActions)
 			{
@@ -94,8 +93,6 @@ namespace GOAP
 
 		private List<GoapAction> GetActionList(List<Node> leaves)
 		{
-			// get its node and work back through the parents
-
 			List<GoapAction> result = new List<GoapAction>();
 
 			Node node = GetCheapestLeaf(leaves);
@@ -121,7 +118,7 @@ namespace GOAP
 		 * 'runningCost' value where the lowest cost will be the best action
 		 * sequence.
 		 */
-		private bool BuildTree(Node parent, List<Node> leaves, GoapActions usableActions, Goals goal)
+		private bool BuildTree(Node parent, List<Node> leaves, HashSet<GoapAction> usableActions, Dictionary<string, bool> goal)
 		{
 			bool foundOne = false;
 
@@ -138,13 +135,13 @@ namespace GOAP
 				{
 
 					// apply the action's effects to the parent state
-					StatesSet currentState = UpdatedState(parent.state, action.Effects);
+					Dictionary<string, bool> currentState = UpdatedState(parent.state, action.Effects);
 
 					Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
 
 					// If the current state has the conditions for achieving
 					// agents goal, we have found one possible plan.
-					if (InState(goal, currentState))
+					if (CheckGoal(goal, currentState))
 					{
 						leaves.Add(node);
 						foundOne = true;
@@ -152,9 +149,9 @@ namespace GOAP
 					else
 					{
 						// not at a solution yet, so test all the remaining actions and branch out the tree
-						GoapActions subset = GetActionsSubset(usableActions, action);
-						Utilities.PrintCollection("Usable Actions Subset", subset);
-						bool found = BuildTree(node, leaves, subset, goal);
+						HashSet<GoapAction> actionsSubset = GetActionsSubset(usableActions, action);
+						Utilities.PrintCollection("Usable Actions Subset", actionsSubset);
+						bool found = BuildTree(node, leaves, actionsSubset, goal);
 						
 						if (found)
 						{
@@ -169,11 +166,12 @@ namespace GOAP
 
 		/**
 		 * Create a subset of the actions excluding 
-		 * the removeAction one. Creates a new set.
+		 * the used action = removeAction. 
+		 * Creates a new set.
 		 */
-		private GoapActions GetActionsSubset(GoapActions actions, GoapAction removeAction)
+		private HashSet<GoapAction> GetActionsSubset(HashSet<GoapAction> actions, GoapAction removeAction)
 		{
-			GoapActions subset = new GoapActions();
+			HashSet<GoapAction> subset = new HashSet<GoapAction>();
 
 			foreach (GoapAction a in actions)
 			{
@@ -191,60 +189,72 @@ namespace GOAP
 		 * If just one does not match or is not there
 		 * then this returns false.
 		 */
-		private bool InState(StatesSet test, StatesSet state)
+		private bool InState(Dictionary<string, bool> test, Dictionary<string, bool> states)
 		{
-			bool allMatch = true;
-
-			foreach (KeyValue t in test)
+			foreach (KeyValuePair<string, bool> testState in test) 
 			{
-				allMatch = state.Contains(t);
-				
-				if(!allMatch)
+
+				if(!states.ContainsKey(testState.Key))
 				{
-					break;
+					return false;
+				}
+				else
+				{
+					if(states[testState.Key] != testState.Value)
+					{
+						return false;
+					}
 				}
 			}
-			return allMatch;
+			return true;
 		}
+		private bool CheckGoal(Dictionary<string, bool> goals, Dictionary<string, bool> state)
+		{
+			foreach (KeyValuePair<string, bool> goal in goals)
+			{
+				if(state.ContainsKey(goal.Key))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
 
 		/**
 		 * Apply the stateChange to the currentState.
 		 * If state exists with wrong value - Update value
 		 * If state doesn't exist - Add state
 		 */
-		private StatesSet UpdatedState(StatesSet currentState, StatesSet stateChange)
+		private Dictionary<string, bool> UpdatedState(Dictionary<string, bool> currentState, Dictionary<string, bool> stateChange)
 		{
 			Utilities.PrintCollection("Current State", currentState);
 
 			//Make Copy of Current State -> Updated State
-			StatesSet updatedState = new StatesSet();
+			Dictionary<string, bool> updatedState = new Dictionary<string, bool>();
 
-			foreach (KeyValue state in currentState)
+			foreach (KeyValuePair<string, bool> state in currentState)
 			{
-				updatedState.Add(new KeyValue(state.Key, state.Value));
+				updatedState.Add(state.Key, state.Value);
 			}
 
 
-			foreach (KeyValue change in stateChange)
+			foreach (KeyValuePair<string,bool> change in stateChange)
 			{
-
-				foreach (KeyValue state in updatedState)
+				if(updatedState.ContainsKey(change.Key))
 				{
-
-					if (state.Key.Equals(change.Key))
-					{
-						Debug.Log("State Found: " + change.ToString() + " == " + state.ToString() + " ( Value different )");
-						updatedState.RemoveWhere((KeyValue kvp) => { return kvp.Key.Equals(change.Key); });
-						
-						break;
-					}
+					// Update value in updatedState
+					updatedState[change.Key] = change.Value;
 				}
-
-				updatedState.Add(new KeyValue(change.Key, change.Value));
-
+				else
+				{
+					// Add state
+					updatedState.Add(change.Key, change.Value);
+				}
 			}
 
 			Utilities.PrintCollection("Updated State", updatedState);
+			
 			return updatedState;
 		}
 

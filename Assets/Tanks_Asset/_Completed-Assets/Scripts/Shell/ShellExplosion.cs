@@ -12,6 +12,7 @@ namespace Complete
         public float m_MaxLifeTime = 2f;                    // The time in seconds before the shell is removed.
         public float m_ExplosionRadius = 5f;                // The maximum distance away from the explosion tanks can be and are still affected.
 
+        [SerializeField] private GameObject firedFrom;
 
         private void Start ()
         {
@@ -19,9 +20,15 @@ namespace Complete
             Destroy (gameObject, m_MaxLifeTime);
         }
 
-
+        public void SetFiredFrom(GameObject firedFrom)
+        {
+            this.firedFrom = firedFrom;
+        }
         private void OnTriggerEnter (Collider other)
         {
+            // If tigger detects object fired from exit
+            
+
 			// Collect all the colliders in a sphere from the shell's current position to a radius of the explosion radius.
             Collider[] colliders = Physics.OverlapSphere (transform.position, m_ExplosionRadius, m_TankMask);
 
@@ -36,7 +43,7 @@ namespace Complete
                     continue;
 
                 // Add an explosion force.
-                targetRigidbody.AddExplosionForce (m_ExplosionForce, transform.position, m_ExplosionRadius);
+                //targetRigidbody.AddExplosionForce (m_ExplosionForce, transform.position, m_ExplosionRadius);
 
                 // Find the TankHealth script associated with the rigidbody.
                 TankHealth targetHealth = targetRigidbody.GetComponent<TankHealth> ();

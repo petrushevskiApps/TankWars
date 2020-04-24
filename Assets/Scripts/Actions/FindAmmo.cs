@@ -1,24 +1,23 @@
-﻿using GOAP;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Patrol : GoapAction 
+public class FindAmmo : GoapAction 
 {
 	private Vector3 destination;
-	private Coroutine actionCoroutine;
 
 	bool completed = false;
 
-	public Patrol() 
+	public FindAmmo() 
 	{
-		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
-		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+		name = "FindAmmo";
 
-		AddEffect(GoalKeys.PATROL, true);
-		name = "Patrol";
+		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
+		AddPrecondition(StateKeys.AMMO_DETECTED, false);
+
+		AddEffect(StateKeys.AMMO_DETECTED, true);
 	}
 	
 	public override void Reset ()
@@ -39,7 +38,7 @@ public class Patrol : GoapAction
 	
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
-		return GetComponent<Tank>().agentMemory.EnemiesDetected() == false;
+		return  true;
 	}
 	
 	public override void Perform(GameObject agent, Action success, Action fail)
@@ -64,23 +63,21 @@ public class Patrol : GoapAction
 
 			while(true)
 			{
-				if(CheckProceduralPrecondition(agent))
+				if (GetComponent<Tank>().agentMemory.IsAmmoDetected())
 				{
-					if (navAgent.remainingDistance <= maxRequiredRange)
-					{
-						succes.Invoke();
-						completed = true;
-						break;
-					}
+					succes.Invoke();
+					navAgent.isStopped = true;
+					navAgent.isStopped = false;
+					completed = true;
+					break;
 				}
-				else
+				else if (navAgent.remainingDistance <= maxRequiredRange)
 				{
 					fail.Invoke();
 					break;
 				}
-				
 
-				yield return null;
+				yield return new WaitForSeconds(0.3f);
 			}
 		}
 		else

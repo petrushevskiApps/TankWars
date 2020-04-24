@@ -1,14 +1,21 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
-public abstract class GoapAction : MonoBehaviour {
+[System.Serializable]
+public abstract class GoapAction : MonoBehaviour 
+{
 
 	public string name = "No Name";
 	private bool inRange = false;
+	public bool requireAngle = false;
 
-	public HashSet<KeyValuePair<string, object>> Preconditions { get; }
-	public HashSet<KeyValuePair<string, object>> Effects { get; }
+	public float minRequiredRange = 10f;
+	public float maxRequiredRange = 15f;
+
+	public Dictionary<string, bool> Preconditions { get; }
+	public Dictionary<string, bool> Effects { get; }
 
 	/* The cost of performing the action. 
 	 * Figure out a weight that suits the action. 
@@ -17,12 +24,12 @@ public abstract class GoapAction : MonoBehaviour {
 
 	/**
 	 * An action often has to perform on an object. This is that object. Can be null. */
-	public Vector3 target;
+	public GameObject target;
 
 	public GoapAction() 
 	{
-		Preconditions = new HashSet<KeyValuePair<string, object>> ();
-		Effects = new HashSet<KeyValuePair<string, object>> ();
+		Preconditions = new Dictionary<string, bool>();
+		Effects = new Dictionary<string, bool>();
 		//target = target;
 	}
 
@@ -54,7 +61,7 @@ public abstract class GoapAction : MonoBehaviour {
 	 * if something happened and it can no longer perform. In this case
 	 * the action queue should clear out and the goal cannot be reached.
 	 */
-	public abstract bool Perform(GameObject agent);
+	public abstract void Perform(GameObject agent, Action success, Action fail);
 
 	/**
 	 * Does this action need to be within range of a target game object?
@@ -77,52 +84,40 @@ public abstract class GoapAction : MonoBehaviour {
 	}
 
 
-	public void AddPrecondition(string key, object value)  
+	public void AddPrecondition(string key, bool value)  
 	{
-		Preconditions.Add (new KeyValuePair<string, object>(key, value) );
+		Preconditions.Add (key, value);
 	}
 
 
 	public void RemovePrecondition(string key)  
 	{
-		KeyValuePair<string, object> remove = default;
-		
-		foreach (KeyValuePair<string, object> kvp in Preconditions) 
+		try
 		{
-			if (kvp.Key.Equals(key))
-			{
-				remove = kvp;
-			}
+			Preconditions.Remove(key);
 		}
-		
-		if (!default(KeyValuePair<string,object>).Equals(remove) )
+		catch (Exception e)
 		{
-			Preconditions.Remove(remove);
+			Debug.LogError($"Key: {key} not found in Preconditions dictionary");
 		}
 	}
 
 
-	public void AddEffect(string key, object value)  
+	public void AddEffect(string key, bool value)  
 	{
-		Effects.Add (new KeyValuePair<string, object>(key, value) );
+		Effects.Add (key, value);
 	}
 
 
 	public void RemoveEffect(string key)  
 	{
-		KeyValuePair<string, object> remove = default;
-
-		foreach (KeyValuePair<string, object> kvp in Effects) 
+		try
 		{
-			if (kvp.Key.Equals(key))
-			{
-				remove = kvp;
-			}
+			Effects.Remove(key);
 		}
-		
-		if (!default(KeyValuePair<string,object>).Equals(remove) )
+		catch(Exception e)
 		{
-			Effects.Remove(remove);
+			Debug.LogError($"Key: {key} not found in Effects dictionary");
 		}
 	}
 

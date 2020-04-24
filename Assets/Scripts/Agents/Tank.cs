@@ -2,83 +2,158 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using UnityEngine.Events;
+using System;
+using GOAP;
 
 public class Tank : MonoBehaviour, IGoap
 {
 	NavMeshAgent agent;
 	Vector3 previousDestination;
-	Inventory inv;
 
-	[SerializeField] private int teamID = 0;
+	public Memory agentMemory = new Memory();
 
-	public int GetTeamID()
-	{
-		return teamID;
-	}
-	void Start()
+	[SerializeField] private VisionController visionSensors;
+
+
+	private void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		//inv = GetComponent<Inventory>();
+
+		visionSensors.EnemyDetectedEvent.AddListener(OnEnemyDetected);
+		visionSensors.EnemyLostEvent.AddListener(OnEnemyLost);
+		visionSensors.HealthPackDetected.AddListener(OnHealthPackDetected);
+		visionSensors.AmmoPackDetected.AddListener(OnAmmoPackDetected);
 	}
 
-	public HashSet<KeyValuePair<string,object>> GetWorldState () 
+	private void OnHealthPackDetected(GameObject target)
 	{
-		HashSet<KeyValuePair<string,object>> worldData = new HashSet<KeyValuePair<string,object>> ();
-		//worldData.Add(new KeyValuePair<string, object>("hasFlour", (inv.flourLevel > 1) ));
-		//worldData.Add(new KeyValuePair<string, object>("hasDelivery", (inv.breadLevel >= 4) ));		
-		return worldData;
+		throw new NotImplementedException();
 	}
 
-
-	public HashSet<KeyValuePair<string,object>> CreateGoalState ()
+	private void OnAmmoPackDetected(GameObject target)
 	{
-		HashSet<KeyValuePair<string,object>> goal = new HashSet<KeyValuePair<string,object>> ();
-		goal.Add(new KeyValuePair<string, object>("patrol", true ));
-
-		return goal;
+		agentMemory.AddDetectedAmmoPack(target);
 	}
+
+	private void OnDestroy()
+	{
+		visionSensors.EnemyDetectedEvent.RemoveListener(OnEnemyDetected);
+		visionSensors.EnemyLostEvent.RemoveListener(OnEnemyLost);
+		visionSensors.AmmoPackDetected.RemoveListener(OnAmmoPackDetected);
+	}
+
+	private void OnEnemyDetected(GameObject target)
+	{
+		agentMemory.AddDetectedEnemy(target);
+	}
+
+	private void OnEnemyLost(GameObject target)
+	{
+		agentMemory.RemoveDetectedEnemy(target.name);
+	}
+
+
+	private bool rotate = false;
+	private Vector3 currentDestination = Vector3.zero;
 
 
 	public bool MoveAgent(GoapAction nextAction) 
 	{
-		
+		rotate = true;
+		currentDestination = nextAction.target.transform.position;
+
 		// Agent at destination point
-		if(previousDestination == nextAction.target)
+		if(previousDestination == currentDestination)
 		{
-			Debug.Log("previousDestination == nextAction.target.transform.position");
+			Debug.Log("MoveAgent:: " + gameObject.name + "At Target Range");
 			nextAction.SetInRange(true);
 			return true;
 		}
-		
-		agent.SetDestination(nextAction.target);
 
-		if (agent.hasPath && agent.remainingDistance < 2) 
+		agent.isStopped = false;
+		NavMeshPath path = new NavMeshPath();
+		agent.CalculatePath(currentDestination, path);
+		agent.stoppingDistance = nextAction.maxRequiredRange;
+
+		if (path.status == NavMeshPathStatus.PathComplete)
 		{
-			nextAction.SetInRange(true);
-			previousDestination = nextAction.target;
-			Debug.Log("Destination reached!");
-			return true;
+			agent.SetPath(path);
+
+			if (agent.remainingDistance <= nextAction.maxRequiredRange)
+			{
+				bool angleCheck = true;
+
+				if(nextAction.requireAngle)
+				{
+					angleCheck = CheckAngle(nextAction.target);
+				}
+
+				if (angleCheck)
+				{
+					rotate = false;
+					nextAction.SetInRange(true);
+					previousDestination = currentDestination;
+					agent.isStopped = false;
+					return true;
+				}
+				return false;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	private bool CheckAngle(GameObject target)
+	{
+		float angle = Utilities.GetAngle(gameObject, target);
+		return angle < 5;
+	}
+
+	private void Update()
+	{
+		if(rotate)
+		{
+			Vector3 dir = currentDestination - transform.position;
+			dir.y = 0;//This allows the object to only rotate on its y axis
+			if(!dir.Equals(Vector3.zero))
+			{
+				Quaternion rot = Quaternion.LookRotation(dir);
+				transform.rotation = Quaternion.Lerp(transform.rotation, rot, 5f * Time.deltaTime);
+			}
+		}
+	}
+
+	public Dictionary<string, bool> GetWorldState()
+	{
+		Dictionary<string, bool> worldState = new Dictionary<string, bool>();
+		Dictionary<string, Func<bool>> internalState = agentMemory.GetWorldState();
+
+		foreach (KeyValuePair<string, Func<bool>> state in internalState)
+		{
+			worldState.Add(state.Key, state.Value());
 		}
 
-		return false;
+		return worldState;
 	}
 
-	void Update()
+	public Dictionary<string, bool> CreateGoalState()
 	{
-		//if (agent.hasPath)
-		//{
-		//	Vector3 toTarget = agent.steeringTarget - this.transform.position;
-		//	float turnAngle = Vector3.Angle(this.transform.forward, toTarget);
-		//	agent.acceleration = turnAngle * agent.speed;
-		//}
+		return agentMemory.GetGoalState();
 	}
 
-	public void PlanFailed (HashSet<KeyValuePair<string, object>> failedGoal)
+	public void PlanFailed (Dictionary<string, bool> failedGoal)
 	{
 
 	}
 
-	public void PlanFound (HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
+	public void PlanFound (Dictionary<string, bool> goal, Queue<GoapAction> actions)
 	{
 
 	}
@@ -92,4 +167,6 @@ public class Tank : MonoBehaviour, IGoap
 	{
 
 	}
+
+	
 }
