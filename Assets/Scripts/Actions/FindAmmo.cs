@@ -10,6 +10,8 @@ public class FindAmmo : GoapAction
 
 	bool completed = false;
 
+	private Memory agentMemory;
+
 	public FindAmmo() 
 	{
 		name = "FindAmmo";
@@ -18,8 +20,12 @@ public class FindAmmo : GoapAction
 		AddPrecondition(StateKeys.AMMO_DETECTED, false);
 
 		AddEffect(StateKeys.AMMO_DETECTED, true);
+
 	}
-	
+	private void Awake()
+	{
+		agentMemory = GetComponent<Tank>().agentMemory;
+	}
 	public override void Reset ()
 	{
 		destination = transform.position;
@@ -63,7 +69,7 @@ public class FindAmmo : GoapAction
 
 			while(true)
 			{
-				if (GetComponent<Tank>().agentMemory.AmmoPacks.IsAnyDetected())
+				if (agentMemory.AmmoPacks.IsAnyDetected())
 				{
 					succes.Invoke();
 					navAgent.isStopped = true;

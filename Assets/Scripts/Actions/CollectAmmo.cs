@@ -9,6 +9,7 @@ public class CollectAmmo : GoapAction
 	private Vector3 destination;
 
 	bool completed = false;
+	private Memory agentMemory;
 
 	public CollectAmmo() 
 	{
@@ -18,8 +19,12 @@ public class CollectAmmo : GoapAction
 		AddPrecondition(StateKeys.AMMO_DETECTED, true);
 
 		AddEffect(StateKeys.AMMO_AMOUNT, true);
+
 	}
-	
+	private void Awake()
+	{
+		agentMemory = GetComponent<Tank>().agentMemory;
+	}
 	public override void Reset ()
 	{
 		destination = transform.position;
@@ -33,7 +38,7 @@ public class CollectAmmo : GoapAction
 	
 	public override bool RequiresInRange ()
 	{
-		target = GetComponent<Tank>().agentMemory.AmmoPacks.GetDetected();
+		target = agentMemory.AmmoPacks.GetDetected();
 		return true; 
 	}
 	
@@ -45,17 +50,18 @@ public class CollectAmmo : GoapAction
 	public override void Perform(GameObject agent, Action success, Action fail)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {this.name}</color>");
-		StartCoroutine(Collect(agent, success, fail));
+		StartCoroutine(Collect(success, fail));
 	}
 
-	IEnumerator Collect(GameObject agent, Action succes, Action fail)
+	IEnumerator Collect(Action succes, Action fail)
 	{
 		yield return new WaitForSeconds(2f);
 
-		if (GetComponent<Tank>().agentMemory.AmmoPacks.IsAnyDetected())
+		if (agentMemory.AmmoPacks.IsAnyDetected())
 		{
-			GetComponent<Tank>().agentMemory.IncreaseAmmo();
-			GetComponent<Tank>().agentMemory.AmmoPacks.RemoveDetected(target.name);
+			agentMemory.IncreaseAmmo();
+			agentMemory.AmmoPacks.RemoveDetected(target.name);
+			
 			succes.Invoke();
 			completed = true;
 		}

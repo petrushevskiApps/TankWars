@@ -6,29 +6,43 @@ using UnityEngine;
 
 public class EliminateEnemy : GoapAction
 {
-	public GameObject bullet;                    // Prefab of the shell.
-	public Transform turretTransform;           // A child of the tank where the shells are spawned.
-	private float m_CurrentLaunchForce;         // The force that will be given to the shell when the fire button is released.
-	public AudioSource m_ShootingAudio;         // Reference to the audio source used to play the shooting audio. NB: different to the movement audio source.
-	public AudioClip m_FireClip;                // Audio that plays when each shot is fired.
+	// Prefab of the shell.
+	public GameObject bullet;
+
+	// A child of the tank where the shells are spawned.
+	public Transform turretTransform;           
+
+	// Reference to the audio source used to 
+	// play the shooting audio.
+	public AudioSource shootingAudioSource;         
+
+	// Audio that plays when each shot is fired.
+	public AudioClip fireAudioClip;                
 	
 	bool completed = false;
 
+	private Memory agentMemory;
+	private float fireAngle = 40f;
 
 	public EliminateEnemy()
 	{
+		name = "EliminateEnemy";
+
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
 
 		AddEffect(GoalKeys.ELIMINATE_ENEMY, true);
 
-		name = "EliminateEnemy";
+	}
+	private void Awake()
+	{
+		agentMemory = GetComponent<Tank>().agentMemory;
 	}
 
 	public override void Reset()
 	{
-
+		target = null;
 		completed = false;
 	}
 
@@ -39,11 +53,9 @@ public class EliminateEnemy : GoapAction
 
 	public override bool RequiresInRange()
 	{
-		Memory memory = GetComponent<Tank>().agentMemory;
-		
-		if (memory.Enemies.IsAnyDetected())
+		if (agentMemory.Enemies.IsAnyDetected())
 		{
-			target = memory.Enemies.GetDetected();
+			target = agentMemory.Enemies.GetDetected();
 		}
 		
 		return true;
@@ -55,9 +67,9 @@ public class EliminateEnemy : GoapAction
 	}
 	private bool CheckCurrentState(GameObject agent)
 	{
-		Memory agentMemory = GetComponent<Tank>().agentMemory;
 		return agentMemory.Enemies.IsAnyDetected() && agentMemory.IsAmmoAvailable();
 	}
+
 	public override void Perform(GameObject agent, Action succes, Action fail)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {this.name}</color>");
@@ -66,21 +78,20 @@ public class EliminateEnemy : GoapAction
 
 	IEnumerator Fire(GameObject agent, Action succes, Action fail)
 	{
-		GameObject enemy = GetComponent<Tank>().agentMemory.Enemies.GetDetected();
-		string enemyKey = enemy.name;
+		string targetKey = target.name;
 
 		while (true)
 		{ 
 			if (CheckCurrentState(agent))
 			{
-				if (enemy != null)
+				if (target != null)
 				{
-					FireBullet(enemy);
+					FireBullet(target);
 					yield return new WaitForSeconds(0.5f);
 				}
 				else
 				{
-					GetComponent<Tank>().agentMemory.Enemies.RemoveDetected(enemyKey);
+					agentMemory.Enemies.RemoveDetected(targetKey);
 					succes.Invoke();
 					completed = true;
 					break;
@@ -96,22 +107,22 @@ public class EliminateEnemy : GoapAction
 
 	private void FireBullet(GameObject enemyTarget)
 	{
-		// Create an instance of the shell and store a reference to it's rigidbody.
+		// Create an instance of the shell
 		GameObject shell = Instantiate(bullet, turretTransform.position, turretTransform.rotation);
 		
-		shell.GetComponent<ShellExplosion>().SetFiredFrom(gameObject);
+		shell.GetComponent<ShellExplosion>().SetOwner(gameObject);
 
 		Rigidbody shellBody = shell.GetComponent<Rigidbody>();
 
 		// Set the shell's velocity to the launch force in the fire position's forward direction.
-		shellBody.velocity = CalcBallisticVelocityVector(turretTransform.position, enemyTarget.transform.position, 40f);
+		shellBody.velocity = CalcBallisticVelocityVector(turretTransform.position, enemyTarget.transform.position, fireAngle);
 		shell.SetActive(true);
 		
 		// Change the clip to the firing clip and play it.
-		m_ShootingAudio.clip = m_FireClip;
-		m_ShootingAudio.Play();
+		shootingAudioSource.clip = fireAudioClip;
+		shootingAudioSource.Play();
 
-		GetComponent<Tank>().agentMemory.DecreaseAmmo();
+		agentMemory.DecreaseAmmo();
 
 	}
 

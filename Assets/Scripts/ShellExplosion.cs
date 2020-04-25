@@ -20,7 +20,7 @@ namespace Complete
             Destroy (gameObject, m_MaxLifeTime);
         }
 
-        public void SetFiredFrom(GameObject firedFrom)
+        public void SetOwner(GameObject firedFrom)
         {
             this.firedFrom = firedFrom;
         }

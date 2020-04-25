@@ -8,19 +8,26 @@ using UnityEngine.AI;
 public class Patrol : GoapAction 
 {
 	private Vector3 destination;
-	private Coroutine actionCoroutine;
 
-	bool completed = false;
+	private bool completed = false;
+
+	private Memory agentMemory;
 
 	public Patrol() 
 	{
+		name = "Patrol";
+
 		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
 
 		AddEffect(GoalKeys.PATROL, true);
-		name = "Patrol";
+
+		
 	}
-	
+	private void Awake()
+	{
+		agentMemory = GetComponent<Tank>().agentMemory;
+	}
 	public override void Reset ()
 	{
 		destination = transform.position;
@@ -37,9 +44,11 @@ public class Patrol : GoapAction
 		return false; 
 	}
 	
+	// Used in Planing phase to determin if
+	// action is usable.
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
-		return GetComponent<Tank>().agentMemory.Enemies.IsAnyDetected() == false;
+		return agentMemory.Enemies.IsAnyDetected() == false;
 	}
 	
 	public override void Perform(GameObject agent, Action success, Action fail)
@@ -51,6 +60,7 @@ public class Patrol : GoapAction
 	IEnumerator MoveAgent(GameObject agent, Action succes, Action fail)
 	{
 		destination = CornerCalculator.Instance.GetRandomInWorldCoordinates();
+		
 		NavMeshAgent navAgent = agent.GetComponent<NavMeshAgent>();
 
 		navAgent.isStopped = false;
