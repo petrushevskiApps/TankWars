@@ -21,18 +21,18 @@ public class VisionController : MonoBehaviour
         if(IsInFront(angle) && IsVisible(other.gameObject))
         {
             CheckDetectableType(other.gameObject);
-
-            //Debug.Log("Sensor (" + this.gameObject.name + ") Detected: " + other.gameObject.name + " With angle of: " + angle);
-           
         }
     }
+
+    // OnTriggerExit is called when detectable 
+    // object is lost of sight.
     private void OnTriggerExit(Collider other)
     {
         Tank targetTank = other.gameObject.GetComponent<Tank>();
 
         if (targetTank != null)
         {
-            EnemyLostEvent.Invoke(other.gameObject);
+            EnemyLostEvent.Invoke(other.gameObject.name);
         }
     }
 
@@ -60,7 +60,7 @@ public class VisionController : MonoBehaviour
         return false;
     }
 
-    // Check the type of object that was detected
+    // Check the type of object which was detected
     private void CheckDetectableType(GameObject target)
     {
         Tank targetTank = target.GetComponent<Tank>();
@@ -82,6 +82,7 @@ public class VisionController : MonoBehaviour
             Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
 
             Pickable pickable = target.GetComponent<Pickable>();
+            
             if (pickable.GetType() == typeof(AmmoPack))
             {
                 AmmoPackDetected.Invoke(target);
@@ -103,10 +104,11 @@ public class VisionController : MonoBehaviour
     {
 
     }
-    public class EnemyLost : UnityEvent<GameObject>
+    public class EnemyLost : UnityEvent<string>
     {
 
     }
+
     public class PackDetected : UnityEvent<GameObject>
     {
 

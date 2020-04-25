@@ -13,50 +13,22 @@ public class Tank : MonoBehaviour, IGoap
 
 	public Memory agentMemory = new Memory();
 
-	[SerializeField] private VisionController visionSensors;
+	[SerializeField] private VisionController visionSensor; 
 
+	private bool rotate = false;
+	private Vector3 currentDestination = Vector3.zero;
 
 	private void Awake()
 	{
 		agent = GetComponent<NavMeshAgent>();
 
-		visionSensors.EnemyDetectedEvent.AddListener(OnEnemyDetected);
-		visionSensors.EnemyLostEvent.AddListener(OnEnemyLost);
-		visionSensors.HealthPackDetected.AddListener(OnHealthPackDetected);
-		visionSensors.AmmoPackDetected.AddListener(OnAmmoPackDetected);
-	}
-
-	private void OnHealthPackDetected(GameObject target)
-	{
-		throw new NotImplementedException();
-	}
-
-	private void OnAmmoPackDetected(GameObject target)
-	{
-		agentMemory.AddDetectedAmmoPack(target);
+		agentMemory.AddEvents(visionSensor);
 	}
 
 	private void OnDestroy()
 	{
-		visionSensors.EnemyDetectedEvent.RemoveListener(OnEnemyDetected);
-		visionSensors.EnemyLostEvent.RemoveListener(OnEnemyLost);
-		visionSensors.AmmoPackDetected.RemoveListener(OnAmmoPackDetected);
+		agentMemory.RemoveEvents(visionSensor);
 	}
-
-	private void OnEnemyDetected(GameObject target)
-	{
-		agentMemory.AddDetectedEnemy(target);
-	}
-
-	private void OnEnemyLost(GameObject target)
-	{
-		agentMemory.RemoveDetectedEnemy(target.name);
-	}
-
-
-	private bool rotate = false;
-	private Vector3 currentDestination = Vector3.zero;
-
 
 	public bool MoveAgent(GoapAction nextAction) 
 	{

@@ -41,9 +41,9 @@ public class EliminateEnemy : GoapAction
 	{
 		Memory memory = GetComponent<Tank>().agentMemory;
 		
-		if (memory.EnemiesDetected())
+		if (memory.Enemies.IsAnyDetected())
 		{
-			target = memory.GetEnemy();
+			target = memory.Enemies.GetDetected();
 		}
 		
 		return true;
@@ -56,7 +56,7 @@ public class EliminateEnemy : GoapAction
 	private bool CheckCurrentState(GameObject agent)
 	{
 		Memory agentMemory = GetComponent<Tank>().agentMemory;
-		return agentMemory.EnemiesDetected() && agentMemory.HaveAmmo();
+		return agentMemory.Enemies.IsAnyDetected() && agentMemory.HaveAmmo();
 	}
 	public override void Perform(GameObject agent, Action succes, Action fail)
 	{
@@ -66,7 +66,7 @@ public class EliminateEnemy : GoapAction
 
 	IEnumerator Fire(GameObject agent, Action succes, Action fail)
 	{
-		GameObject enemy = GetComponent<Tank>().agentMemory.GetEnemy();
+		GameObject enemy = GetComponent<Tank>().agentMemory.Enemies.GetDetected();
 		string enemyKey = enemy.name;
 
 		while (true)
@@ -80,7 +80,7 @@ public class EliminateEnemy : GoapAction
 				}
 				else
 				{
-					GetComponent<Tank>().agentMemory.RemoveDetectedEnemy(enemyKey);
+					GetComponent<Tank>().agentMemory.Enemies.RemoveDetected(enemyKey);
 					succes.Invoke();
 					completed = true;
 					break;

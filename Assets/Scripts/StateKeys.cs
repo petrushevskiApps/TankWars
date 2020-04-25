@@ -20,3 +20,10 @@ public class GoalKeys
     public const string PATROL = "patrol";
     public const string ELIMINATE_ENEMY = "eliminateEnemy";
 }
+
+public class FSMKeys
+{
+    public const string IDLE_STATE = "IdleState";
+    public const string MOVETO_STATE = "MoveToState";
+    public const string PERFORM_STATE = "PerformActionState";
+}

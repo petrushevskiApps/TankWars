@@ -33,7 +33,7 @@ public class CollectAmmo : GoapAction
 	
 	public override bool RequiresInRange ()
 	{
-		target = GetComponent<Tank>().agentMemory.GetAmmoLocation();
+		target = GetComponent<Tank>().agentMemory.AmmoPacks.GetDetected();
 		return true; 
 	}
 	
@@ -52,10 +52,10 @@ public class CollectAmmo : GoapAction
 	{
 		yield return new WaitForSeconds(2f);
 
-		if (GetComponent<Tank>().agentMemory.IsAmmoDetected())
+		if (GetComponent<Tank>().agentMemory.AmmoPacks.IsAnyDetected())
 		{
-			GetComponent<Tank>().agentMemory.AddAmmo();
-			GetComponent<Tank>().agentMemory.RemoveDetectedAmmo(target);
+			GetComponent<Tank>().agentMemory.IncreaseAmmo();
+			GetComponent<Tank>().agentMemory.AmmoPacks.RemoveDetected(target.name);
 			succes.Invoke();
 			completed = true;
 		}

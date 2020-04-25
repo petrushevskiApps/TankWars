@@ -6,9 +6,7 @@ using GOAP;
 
 public sealed class GoapAgent : MonoBehaviour 
 {
-	private const string IDLE_STATE_KEY				= "IdleState";
-	private const string MOVETO_STATE_KEY			= "MoveToState";
-	private const string PERFORMACTION_STATE_KEY	= "PerformActionState";
+	
 
 	private HashSet<GoapAction> availableActions;
 	private Queue<GoapAction> currentActions;
@@ -22,6 +20,7 @@ public sealed class GoapAgent : MonoBehaviour
 	private Animator FSM;
 
 	private GoapAction currentAction;
+	
 	void Start () 
 	{
 		availableActions = new HashSet<GoapAction> ();
@@ -49,18 +48,7 @@ public sealed class GoapAgent : MonoBehaviour
 		return currentActions.Count > 0;
 	}
 
-	public GoapAction GetAction(Type actionType) 
-	{
-		foreach (GoapAction action in availableActions) 
-		{
-			if (action.GetType().Equals(actionType) )
-			{
-				return action;
-			}
-		}
-		return null;
-	}
-
+	// Collect all available actions for the agent
 	private void LoadActions()
 	{
 		GoapAction[] actions = gameObject.GetComponents<GoapAction>();
@@ -91,7 +79,7 @@ public sealed class GoapAgent : MonoBehaviour
 			agentImplementation.PlanFound(goal, plan);
 
 			// Plan Available - Change State
-			ChangeState(PERFORMACTION_STATE_KEY);
+			ChangeState(FSMKeys.PERFORM_STATE);
 
 		}
 		else
@@ -101,7 +89,7 @@ public sealed class GoapAgent : MonoBehaviour
 			agentImplementation.PlanFailed(goal);
 
 			// Plan Not Available - Loop State
-			ChangeState(IDLE_STATE_KEY);
+			ChangeState(FSMKeys.IDLE_STATE);
 		}
 	}
 
@@ -112,7 +100,7 @@ public sealed class GoapAgent : MonoBehaviour
 		if (action.RequiresInRange() && action.target == null)
 		{
 			Debug.Log("Fatal error: Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-			ChangeState(IDLE_STATE_KEY);
+			ChangeState(FSMKeys.IDLE_STATE);
 			return;
 		}
 
@@ -122,12 +110,12 @@ public sealed class GoapAgent : MonoBehaviour
 		if (agentImplementation.MoveAgent(action))
 		{
 			// Destination Reached - Change State
-			ChangeState(PERFORMACTION_STATE_KEY);
+			ChangeState(FSMKeys.PERFORM_STATE);
 		}
 		else
 		{
 			// Destination Not Reached - Loop
-			ChangeState(MOVETO_STATE_KEY);
+			ChangeState(FSMKeys.MOVETO_STATE);
 		}
 	}
 
@@ -140,7 +128,7 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// no actions to perform
 			Debug.Log("<color=red>Done actions</color>");
-			ChangeState(IDLE_STATE_KEY);
+			ChangeState(FSMKeys.IDLE_STATE);
 			agentImplementation.ActionsFinished();
 			return;
 		}
@@ -164,11 +152,11 @@ public sealed class GoapAgent : MonoBehaviour
 				// we are in range, so perform the action
 				currentAction.Perform(gameObject, 
 					()=>{
-						ChangeState(PERFORMACTION_STATE_KEY);
+						ChangeState(FSMKeys.PERFORM_STATE);
 					},
 					()=>{
 						// action failed, we need to plan again
-						ChangeState(IDLE_STATE_KEY);
+						ChangeState(FSMKeys.IDLE_STATE);
 						agentImplementation.PlanAborted(currentAction);
 					});
 			}
@@ -176,14 +164,14 @@ public sealed class GoapAgent : MonoBehaviour
 			{
 				// we need to move there first
 				// push moveTo state
-				ChangeState(MOVETO_STATE_KEY);
+				ChangeState(FSMKeys.MOVETO_STATE);
 			}
 
 		}
 		else
 		{
 			// no actions left, move to Plan state
-			ChangeState(IDLE_STATE_KEY);
+			ChangeState(FSMKeys.IDLE_STATE);
 			agentImplementation.ActionsFinished();
 		}
 	}

@@ -39,7 +39,7 @@ public class Patrol : GoapAction
 	
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
-		return GetComponent<Tank>().agentMemory.EnemiesDetected() == false;
+		return GetComponent<Tank>().agentMemory.Enemies.IsAnyDetected() == false;
 	}
 	
 	public override void Perform(GameObject agent, Action success, Action fail)

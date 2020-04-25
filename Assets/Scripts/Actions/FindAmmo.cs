@@ -63,7 +63,7 @@ public class FindAmmo : GoapAction
 
 			while(true)
 			{
-				if (GetComponent<Tank>().agentMemory.IsAmmoDetected())
+				if (GetComponent<Tank>().agentMemory.AmmoPacks.IsAnyDetected())
 				{
 					succes.Invoke();
 					navAgent.isStopped = true;
