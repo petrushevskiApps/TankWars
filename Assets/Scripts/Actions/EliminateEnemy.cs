@@ -56,7 +56,7 @@ public class EliminateEnemy : GoapAction
 	private bool CheckCurrentState(GameObject agent)
 	{
 		Memory agentMemory = GetComponent<Tank>().agentMemory;
-		return agentMemory.Enemies.IsAnyDetected() && agentMemory.HaveAmmo();
+		return agentMemory.Enemies.IsAnyDetected() && agentMemory.IsAmmoAvailable();
 	}
 	public override void Perform(GameObject agent, Action succes, Action fail)
 	{

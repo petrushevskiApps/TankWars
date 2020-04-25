@@ -26,12 +26,21 @@ public class Memory
         Enemies = new Enemies();
         AmmoPacks = new AmmoPacks();
 
+        SetStates();
+        SetGoals();
+        
+    }
+
+    private void SetStates()
+    {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyDetected);
         worldState.Add(StateKeys.HEALTH_AMOUNT, () => healthAmount > 30);
-        worldState.Add(StateKeys.AMMO_AMOUNT, HaveAmmo);
+        worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyDetected);
         worldState.Add(StateKeys.AMMO_SPECIAL_AMOUNT, () => specialAmmo > 0);
-
+    }
+    private void SetGoals()
+    {
         agentGoals.Add(GoalKeys.PATROL, true);
         agentGoals.Add(GoalKeys.ELIMINATE_ENEMY, true);
     }
@@ -42,6 +51,7 @@ public class Memory
         visionSensor.EnemyLostEvent.AddListener(Enemies.RemoveDetected);
         visionSensor.AmmoPackDetected.AddListener(AmmoPacks.AddDetected);
     }
+
     public void RemoveEvents(VisionController visionSensor)
     {
         visionSensor.EnemyDetectedEvent.RemoveListener(Enemies.AddDetected);
@@ -49,9 +59,16 @@ public class Memory
         visionSensor.AmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
     }
 
-    public Dictionary<string, Func<bool>> GetWorldState()
+    public Dictionary<string, bool> GetWorldState()
     {
-        return worldState;
+        Dictionary<string, bool> agentState = new Dictionary<string, bool>();
+        
+        foreach (KeyValuePair<string, Func<bool>> state in worldState)
+        {
+            agentState.Add(state.Key, state.Value());
+        }
+
+        return agentState;
     }
     public Dictionary<string, bool> GetGoalState()
     {
@@ -63,7 +80,7 @@ public class Memory
         return teamID;
     }
 
-    public bool HaveAmmo()
+    public bool IsAmmoAvailable()
     {
         return ammoAmount > 0;
     }

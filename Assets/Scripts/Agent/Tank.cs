@@ -43,8 +43,9 @@ public class Tank : MonoBehaviour, IGoap
 			return true;
 		}
 
-		agent.isStopped = false;
+		
 		NavMeshPath path = new NavMeshPath();
+		agent.isStopped = false;
 		agent.CalculatePath(currentDestination, path);
 		agent.stoppingDistance = nextAction.maxRequiredRange;
 
@@ -54,14 +55,10 @@ public class Tank : MonoBehaviour, IGoap
 
 			if (agent.remainingDistance <= nextAction.maxRequiredRange)
 			{
-				bool angleCheck = true;
+				bool requireAngle = nextAction.requireAngle;
+				bool checkAngle = CheckAngle(nextAction.target);
 
-				if(nextAction.requireAngle)
-				{
-					angleCheck = CheckAngle(nextAction.target);
-				}
-
-				if (angleCheck)
+				if (!requireAngle || (requireAngle && checkAngle))
 				{
 					rotate = false;
 					nextAction.SetInRange(true);
@@ -69,12 +66,9 @@ public class Tank : MonoBehaviour, IGoap
 					agent.isStopped = false;
 					return true;
 				}
-				return false;
 			}
-			else
-			{
-				return false;
-			}
+
+			return false;
 		}
 		else
 		{
@@ -104,15 +98,7 @@ public class Tank : MonoBehaviour, IGoap
 
 	public Dictionary<string, bool> GetWorldState()
 	{
-		Dictionary<string, bool> worldState = new Dictionary<string, bool>();
-		Dictionary<string, Func<bool>> internalState = agentMemory.GetWorldState();
-
-		foreach (KeyValuePair<string, Func<bool>> state in internalState)
-		{
-			worldState.Add(state.Key, state.Value());
-		}
-
-		return worldState;
+		return agentMemory.GetWorldState();
 	}
 
 	public Dictionary<string, bool> CreateGoalState()
