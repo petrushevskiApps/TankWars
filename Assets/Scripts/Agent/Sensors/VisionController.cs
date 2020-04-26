@@ -63,10 +63,10 @@ public class VisionController : MonoBehaviour
     // Check the type of object which was detected
     private void CheckDetectableType(GameObject target)
     {
-        Tank targetTank = target.GetComponent<Tank>();
-
-        if (targetTank != null)
+        if (target.CompareTag("Tank"))
         {
+            Tank targetTank = target.GetComponent<Tank>();
+
             if (IsEnemy(targetTank))
             {
                 Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.red);
@@ -77,20 +77,21 @@ public class VisionController : MonoBehaviour
                 Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.blue);
             }
         }
-        else if(target.GetComponent<Pickable>() != null)
+        else if(target.CompareTag("Pickable"))
         {
             Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
 
-            Pickable pickable = target.GetComponent<Pickable>();
+            AmmoPackDetected.Invoke(target);
+            //Pickable pickable = target.GetComponent<Pickable>();
             
-            if (pickable.GetType() == typeof(AmmoPack))
-            {
-                AmmoPackDetected.Invoke(target);
-            }
-            else if(pickable.GetType() == typeof(HealthPack))
-            {
-                HealthPackDetected.Invoke(target);
-            }
+            //if (pickable.GetType() == typeof(AmmoPack))
+            //{
+            //    AmmoPackDetected.Invoke(target);
+            //}
+            //else if(pickable.GetType() == typeof(HealthPack))
+            //{
+            //    HealthPackDetected.Invoke(target);
+            //}
         }
     }
     private bool IsEnemy(Tank targetTank)

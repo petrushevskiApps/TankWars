@@ -57,19 +57,32 @@ public class CollectAmmo : GoapAction
 	{
 		yield return new WaitForSeconds(2f);
 
-		if (agentMemory.AmmoPacks.IsAnyDetected())
+		if (ammoCollected)
 		{
-			agentMemory.IncreaseAmmo();
-			agentMemory.AmmoPacks.RemoveDetected(target);
-			
 			succes.Invoke();
 			completed = true;
 		}
 		else
 		{
+			agentMemory.AmmoPacks.RemoveDetected(target);
 			fail.Invoke();
 		}
 	}
 
+	private bool ammoCollected = false;
+
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
+		{
+			if (!ammoCollected)
+			{
+				agentMemory.IncreaseAmmo();
+				agentMemory.AmmoPacks.RemoveDetected(target);
+				ammoCollected = true;
+			}
+		}
+	}
 	
+
 }
