@@ -13,6 +13,7 @@ public class Tank : MonoBehaviour, IGoap
 
 	public Memory agentMemory = new Memory();
 
+
 	[SerializeField] private VisionController visionSensor; 
 
 	private bool rotate = false;
@@ -20,9 +21,10 @@ public class Tank : MonoBehaviour, IGoap
 
 	private void Awake()
 	{
-		agent = GetComponent<NavMeshAgent>();
-
+		agentMemory.Initialize(gameObject);
 		agentMemory.AddEvents(visionSensor);
+		agent = GetComponent<NavMeshAgent>();
+		
 	}
 
 	private void OnDestroy()

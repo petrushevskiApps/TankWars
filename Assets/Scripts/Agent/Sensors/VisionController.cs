@@ -32,7 +32,7 @@ public class VisionController : MonoBehaviour
 
         if (targetTank != null)
         {
-            EnemyLostEvent.Invoke(other.gameObject.name);
+            EnemyLostEvent.Invoke(other.gameObject);
         }
     }
 
@@ -104,7 +104,7 @@ public class VisionController : MonoBehaviour
     {
 
     }
-    public class EnemyLost : UnityEvent<string>
+    public class EnemyLost : UnityEvent<GameObject>
     {
 
     }

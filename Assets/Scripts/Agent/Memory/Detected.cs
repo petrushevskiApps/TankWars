@@ -7,40 +7,55 @@ public abstract class Detected
 {
     public Dictionary<string, GameObject> detectedObjects = new Dictionary<string, GameObject>();
     
+    public List<GameObject> detectedList = new List<GameObject>();
+
     public bool IsAnyDetected()
     {
-        return detectedObjects.Count > 0;
+        return detectedList.Count > 0;
     }
 
+    protected abstract int CompareDetected(GameObject x, GameObject y);
+
+    
     public void AddDetected(GameObject detected)
     {
-        if (!detectedObjects.ContainsKey(detected.name))
+        if(!detectedList.Contains(detected))
         {
-            detectedObjects.Add(detected.name, detected);
+            detectedList.Add(detected);
+            detectedList.Sort(CompareDetected);
             Debug.Log($"<color=green>InternalState::{this.GetType()} Added</color>");
         }
-    } 
-    public void RemoveDetected(string enemyKey)
+    }
+
+    public void RemoveDetected(GameObject detected) 
     {
-        if (detectedObjects.ContainsKey(enemyKey))
+        if (!detectedList.Contains(detected))
         {
-            detectedObjects.Remove(enemyKey);
+            detectedList.Remove(detected);
             Debug.Log($"<color=red>InternalState::{this.GetType()} Removed | Count: " + detectedObjects.Count + "</color>");
         }
     }
+
+
     public GameObject GetDetected()
     {
-        if (IsAnyDetected())
+        if(IsAnyDetected())
         {
-            KeyValuePair<string, GameObject> enemy = detectedObjects.FirstOrDefault();
+            GameObject detected = detectedList[0];
 
-            if (enemy.Value != null)
+            if(detected != null)
             {
-                return enemy.Value;
+                return detected;
             }
             else
             {
-                detectedObjects.Remove(enemy.Key);
+                detectedList.Remove(detected);
+                detectedList.Sort(CompareDetected);
+                
+                if(IsAnyDetected())
+                {
+                    return GetDetected();
+                }
             }
         }
         return null;

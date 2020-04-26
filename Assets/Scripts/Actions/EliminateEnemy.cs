@@ -35,7 +35,7 @@ public class EliminateEnemy : GoapAction
 		AddEffect(GoalKeys.ELIMINATE_ENEMY, true);
 
 	}
-	private void Awake()
+	private void Start()
 	{
 		agentMemory = GetComponent<Tank>().agentMemory;
 	}
@@ -91,7 +91,7 @@ public class EliminateEnemy : GoapAction
 				}
 				else
 				{
-					agentMemory.Enemies.RemoveDetected(targetKey);
+					agentMemory.Enemies.RemoveDetected(target);
 					succes.Invoke();
 					completed = true;
 					break;

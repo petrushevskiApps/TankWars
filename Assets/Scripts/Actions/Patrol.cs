@@ -21,10 +21,8 @@ public class Patrol : GoapAction
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
 
 		AddEffect(GoalKeys.PATROL, true);
-
-		
 	}
-	private void Awake()
+	private void Start() 
 	{
 		agentMemory = GetComponent<Tank>().agentMemory;
 	}

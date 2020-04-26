@@ -22,7 +22,7 @@ public class FindAmmo : GoapAction
 		AddEffect(StateKeys.AMMO_DETECTED, true);
 
 	}
-	private void Awake()
+	private void Start()
 	{
 		agentMemory = GetComponent<Tank>().agentMemory;
 	}

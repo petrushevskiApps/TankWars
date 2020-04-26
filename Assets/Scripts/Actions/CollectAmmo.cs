@@ -21,7 +21,7 @@ public class CollectAmmo : GoapAction
 		AddEffect(StateKeys.AMMO_AMOUNT, true);
 
 	}
-	private void Awake()
+	private void Start()
 	{
 		agentMemory = GetComponent<Tank>().agentMemory;
 	}
@@ -60,7 +60,7 @@ public class CollectAmmo : GoapAction
 		if (agentMemory.AmmoPacks.IsAnyDetected())
 		{
 			agentMemory.IncreaseAmmo();
-			agentMemory.AmmoPacks.RemoveDetected(target.name);
+			agentMemory.AmmoPacks.RemoveDetected(target);
 			
 			succes.Invoke();
 			completed = true;

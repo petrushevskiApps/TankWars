@@ -8,7 +8,7 @@ using UnityEngine;
 public class Memory
 {
     [SerializeField] private int teamID = 0;
-    [SerializeField] private int enemyRank = 1;
+    [SerializeField] private int agentRank = 1;
 
     public int ammoAmount = 10;
     public int specialAmmo = 1;
@@ -21,14 +21,14 @@ public class Memory
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
     private Dictionary<string, bool> agentGoals = new Dictionary<string, bool>();
 
-    public Memory()
+
+    public void Initialize(GameObject parent)
     {
-        Enemies = new Enemies();
-        AmmoPacks = new AmmoPacks();
+        Enemies = new Enemies(parent);
+        AmmoPacks = new AmmoPacks(parent);
 
         SetStates();
         SetGoals();
-        
     }
 
     private void SetStates()
