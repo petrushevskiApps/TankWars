@@ -32,10 +32,10 @@ namespace GOAP
 			return heading / distance;
 		}
 
-		public static void PrintTree(List<Node> leaves, Node cheapestLeaf)
+		public static void PrintTree(string agentName, List<Node> leaves, Node cheapestLeaf)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append("GOAP Tree: \n");
+			sb.Append($"{agentName} | GOAP Tree: \n");
 
 			foreach (Node leaf in leaves)
 			{
@@ -68,7 +68,7 @@ namespace GOAP
 			{
 				sb.Append(element);
 			}
-			Debug.Log(setName + " Count: " + set.Count + " List:" + sb.ToString());
+			//Debug.Log(setName + " Count: " + set.Count + " List:" + sb.ToString());
 		}
 
 

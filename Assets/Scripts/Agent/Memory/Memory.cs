@@ -15,8 +15,10 @@ public class Memory
     public int healthAmount = 100;
 
     public Enemies Enemies { get; private set; }
-    
+
     public AmmoPacks AmmoPacks { get; private set; }
+
+    public Navigation Navigation { get; private set; }
 
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
     private Dictionary<string, bool> agentGoals = new Dictionary<string, bool>();
@@ -26,6 +28,7 @@ public class Memory
     {
         Enemies = new Enemies(parent);
         AmmoPacks = new AmmoPacks(parent);
+        Navigation = new Navigation(parent);
 
         SetStates();
         SetGoals();
@@ -33,14 +36,16 @@ public class Memory
 
     private void SetStates()
     {
-        worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyDetected);
+        worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
         worldState.Add(StateKeys.HEALTH_AMOUNT, () => healthAmount > 30);
         worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
-        worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyDetected);
+        worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
         worldState.Add(StateKeys.AMMO_SPECIAL_AMOUNT, () => specialAmmo > 0);
     }
+
     private void SetGoals()
     {
+        agentGoals.Add(GoalKeys.SURVIVE, true);
         agentGoals.Add(GoalKeys.PATROL, true);
         agentGoals.Add(GoalKeys.ELIMINATE_ENEMY, true);
     }
@@ -50,6 +55,7 @@ public class Memory
         visionSensor.EnemyDetectedEvent.AddListener(Enemies.AddDetected);
         visionSensor.EnemyLostEvent.AddListener(Enemies.RemoveDetected);
         visionSensor.AmmoPackDetected.AddListener(AmmoPacks.AddDetected);
+        visionSensor.AmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
     }
 
     public void RemoveEvents(VisionController visionSensor)
@@ -57,6 +63,7 @@ public class Memory
         visionSensor.EnemyDetectedEvent.RemoveListener(Enemies.AddDetected);
         visionSensor.EnemyLostEvent.RemoveListener(Enemies.RemoveDetected);
         visionSensor.AmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
+        visionSensor.AmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
     }
 
     public Dictionary<string, bool> GetWorldState()

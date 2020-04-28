@@ -10,6 +10,7 @@ public class CollectAmmo : GoapAction
 
 	bool completed = false;
 	private Memory agentMemory;
+	private bool ammoCollected = false;
 
 	public CollectAmmo() 
 	{
@@ -27,6 +28,8 @@ public class CollectAmmo : GoapAction
 	}
 	public override void Reset ()
 	{
+		target = null;
+		ammoCollected = false;
 		destination = transform.position;
 		completed = false;
 	}
@@ -35,16 +38,37 @@ public class CollectAmmo : GoapAction
 	{
 		return completed;
 	}
-	
-	public override bool RequiresInRange ()
+
+	public override bool SetActionTarget()
 	{
-		target = agentMemory.AmmoPacks.GetDetected();
-		return true; 
+		if (agentMemory.AmmoPacks.IsAnyValidDetected())
+		{
+			target = agentMemory.AmmoPacks.GetDetected();
+		}
+		return target != null;
 	}
-	
+
 	public override bool CheckProceduralPrecondition (GameObject agent)
-	{	
-		return true;
+	{
+		if (agentMemory.Enemies.IsAnyValidDetected())
+		{
+			GameObject enemy = agentMemory.Enemies.GetDetected();
+
+			float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, target.transform.position);
+			float distanceToPacket = Vector3.Distance(agent.transform.forward, target.transform.position);
+
+			if (distanceToPacket < enemyDistanceToPacket)
+			{
+				return true;
+			}
+			else
+			{
+				agentMemory.AmmoPacks.InvalidateDetected(target);
+				return false;
+			}
+		}
+
+		else return true;
 	}
 	
 	public override void Perform(GameObject agent, Action success, Action fail)
@@ -69,7 +93,7 @@ public class CollectAmmo : GoapAction
 		}
 	}
 
-	private bool ammoCollected = false;
+	
 
 	private void OnTriggerEnter(Collider other)
 	{

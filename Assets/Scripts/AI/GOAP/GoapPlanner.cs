@@ -30,10 +30,7 @@ namespace GOAP
 
 			foreach (GoapAction action in availableActions)
 			{
-				if (action.CheckProceduralPrecondition(agent))
-				{
-					usableActions.Add(action);
-				}
+				usableActions.Add(action);
 			}
 
 			// we now have all actions that can run, stored in usableActions
@@ -53,7 +50,7 @@ namespace GOAP
 			}
 			else
 			{
-				Utilities.PrintTree(leaves, GetCheapestLeaf(leaves));
+				Utilities.PrintTree(agent.name, leaves, GetCheapestLeaf(leaves));
 
 				Queue<GoapAction> actionQueue = new Queue<GoapAction>();
 

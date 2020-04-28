@@ -12,7 +12,7 @@ public class Tank : MonoBehaviour, IGoap
 	Vector3 previousDestination;
 
 	public Memory agentMemory = new Memory();
-
+	public NavMeshPath path;
 
 	[SerializeField] private VisionController visionSensor; 
 
@@ -46,7 +46,7 @@ public class Tank : MonoBehaviour, IGoap
 		}
 
 		
-		NavMeshPath path = new NavMeshPath();
+		path = new NavMeshPath();
 		agent.isStopped = false;
 		agent.CalculatePath(currentDestination, path);
 		agent.stoppingDistance = nextAction.maxRequiredRange;
@@ -64,6 +64,7 @@ public class Tank : MonoBehaviour, IGoap
 				{
 					rotate = false;
 					nextAction.SetInRange(true);
+					agentMemory.Navigation.TargetReached(nextAction.target);
 					previousDestination = currentDestination;
 					agent.isStopped = false;
 					return true;
@@ -74,6 +75,7 @@ public class Tank : MonoBehaviour, IGoap
 		}
 		else
 		{
+			agentMemory.Navigation.InvalidateTarget();
 			return false;
 		}
 	}

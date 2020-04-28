@@ -19,6 +19,7 @@ public class GoalKeys
     public const string GET_READY = "getReady";
     public const string PATROL = "patrol";
     public const string ELIMINATE_ENEMY = "eliminateEnemy";
+    public const string SURVIVE = "survive";
 }
 
 public class FSMKeys

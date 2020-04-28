@@ -29,8 +29,8 @@ public class EliminateEnemy : GoapAction
 		name = "EliminateEnemy";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
-		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
 		AddEffect(GoalKeys.ELIMINATE_ENEMY, true);
 
@@ -51,34 +51,32 @@ public class EliminateEnemy : GoapAction
 		return completed;
 	}
 
-	public override bool RequiresInRange()
+	public override bool SetActionTarget()
 	{
-		if (agentMemory.Enemies.IsAnyDetected())
+		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
 			target = agentMemory.Enemies.GetDetected();
 		}
-		
-		return true;
+		return target != null;
 	}
 
 	public override bool CheckProceduralPrecondition(GameObject agent)
 	{
 		return true;
 	}
+
 	private bool CheckCurrentState(GameObject agent)
 	{
-		return agentMemory.Enemies.IsAnyDetected() && agentMemory.IsAmmoAvailable();
+		return agentMemory.Enemies.IsAnyValidDetected() && agentMemory.IsAmmoAvailable();
 	}
 
 	public override void Perform(GameObject agent, Action succes, Action fail)
 	{
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {this.name}</color>");
 		StartCoroutine(Fire(agent, succes, fail));
 	}
 
 	IEnumerator Fire(GameObject agent, Action succes, Action fail)
 	{
-		string targetKey = target.name;
 
 		while (true)
 		{ 

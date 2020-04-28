@@ -93,20 +93,29 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 	}
 
+	// Called from FSM
 	public void MoveToState()
 	{
 		GoapAction action = currentActions.Peek();
 
-		if (action.RequiresInRange() && action.target == null)
+		if (action.RequiresInRange())
 		{
-			Debug.Log("Fatal error: Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-			ChangeState(FSMKeys.IDLE_STATE);
-			return;
+			bool targetAcquired = action.SetActionTarget();
+
+			if(!targetAcquired)
+			{
+				Debug.LogError($"Fatal error:{gameObject.name} | {action.name} requires a target but has none. Planning failed.");
+				ChangeState(FSMKeys.IDLE_STATE);
+				return;
+			}
 		}
 
-		// get the agent to move itself
-		//Debug.Log("Move to do: " + action.name);
+		if(!action.CheckProceduralPrecondition(gameObject))
+		{
+			ChangeState(FSMKeys.IDLE_STATE);
+		}
 
+		// Get the agent to move itself
 		if (agentImplementation.MoveAgent(action))
 		{
 			// Destination Reached - Change State
@@ -117,6 +126,8 @@ public sealed class GoapAgent : MonoBehaviour
 			// Destination Not Reached - Loop
 			ChangeState(FSMKeys.MOVETO_STATE);
 		}
+
+
 	}
 
 
@@ -134,7 +145,8 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 
 		currentAction = currentActions.Peek();
-		
+		Debug.Log($"<color=green> {gameObject.name} Perform Action: {currentAction.name}</color>");
+
 		if (currentAction.IsActionDone())
 		{
 			// the action is done. Remove it so we can perform the next one
@@ -145,15 +157,13 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// perform the next action
 			currentAction = currentActions.Peek();
-			bool inRange = currentAction.RequiresInRange() ? currentAction.IsInRange() : true;
+			bool inRange  = currentAction.RequiresInRange() ? currentAction.IsInRange() : true;
 
 			if (inRange)
 			{
 				// we are in range, so perform the action
 				currentAction.Perform(gameObject, 
-					()=>{
-						ChangeState(FSMKeys.PERFORM_STATE);
-					},
+					()=> ChangeState(FSMKeys.PERFORM_STATE),
 					()=>{
 						// action failed, we need to plan again
 						ChangeState(FSMKeys.IDLE_STATE);

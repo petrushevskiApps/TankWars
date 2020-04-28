@@ -1,27 +1,26 @@
-﻿using GOAP;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Patrol : GoapAction 
+public class RunAway : GoapAction 
 {
 
-	private bool completed = false;
-
+	bool completed = false;
 	private Memory agentMemory;
 
-	public Patrol() 
+	public RunAway() 
 	{
-		name = "Patrol";
+		name = "RunAway";
 
-		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
-		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
+		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
 
-		AddEffect(GoalKeys.PATROL, true);
+
+		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
-	private void Start() 
+	private void Start()
 	{
 		agentMemory = GetComponent<Tank>().agentMemory;
 	}
@@ -35,25 +34,29 @@ public class Patrol : GoapAction
 	{
 		return completed;
 	}
-
 	public override bool SetActionTarget()
 	{
-		target = agentMemory.Navigation.GetActionTarget();
+		target = agentMemory.Navigation.GetActionTarget(agentMemory.Enemies.GetDetected());
 		return target != null;
 	}
 
-
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	
-		return !agentMemory.Enemies.IsAnyValidDetected();
+		return true;
 	}
 	
 	public override void Perform(GameObject agent, Action success, Action fail)
 	{
-		success.Invoke();
-		completed = true;
+		if(!agentMemory.Enemies.IsAnyValidDetected())
+		{
+			success.Invoke();
+			completed = true;
+		}
+		else
+		{
+			fail.Invoke();
+		}
 	}
-
 
 
 }

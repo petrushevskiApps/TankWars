@@ -11,6 +11,8 @@ public abstract class GoapAction : MonoBehaviour
 	private bool inRange = false;
 	public bool requireAngle = false;
 
+	public bool requiresRange = false;
+
 	public float minRequiredRange = 10f;
 	public float maxRequiredRange = 15f;
 
@@ -49,6 +51,8 @@ public abstract class GoapAction : MonoBehaviour
 	 */
 	public abstract bool IsActionDone();
 
+	public abstract bool SetActionTarget();
+
 	/**
 	 * Procedurally check if this action can run. Not all actions
 	 * will need this, but some might.
@@ -67,7 +71,10 @@ public abstract class GoapAction : MonoBehaviour
 	 * Does this action need to be within range of a target game object?
 	 * If not then the moveTo state will not need to run for this action.
 	 */
-	public abstract bool RequiresInRange ();
+	public bool RequiresInRange ()
+	{
+		return requiresRange;
+	}
 	
 	/**
 	 * Are we in range of the target?

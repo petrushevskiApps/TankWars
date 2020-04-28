@@ -9,8 +9,9 @@ public class VisionController : MonoBehaviour
     public EnemyDetected EnemyDetectedEvent = new EnemyDetected();
     public EnemyLost EnemyLostEvent = new EnemyLost();
 
-    public PackDetected AmmoPackDetected = new PackDetected();
-    public PackDetected HealthPackDetected = new PackDetected();
+    public PackageEvent AmmoPackDetected = new PackageEvent();
+    public PackageEvent AmmoPackLost = new PackageEvent();
+    public PackageEvent HealthPackDetected = new PackageEvent();
 
     // On Trigger is called when detectable object
     // is in radius range of visibility.
@@ -28,11 +29,18 @@ public class VisionController : MonoBehaviour
     // object is lost of sight.
     private void OnTriggerExit(Collider other)
     {
-        Tank targetTank = other.gameObject.GetComponent<Tank>();
-
-        if (targetTank != null)
+        GameObject target = other.gameObject;
+        
+        if (target.CompareTag("Tank"))
         {
-            EnemyLostEvent.Invoke(other.gameObject);
+            if (IsEnemy(target.GetComponent<Tank>()))
+            {
+                EnemyLostEvent.Invoke(target);
+            }
+        }
+        else if(target.CompareTag("Pickable"))
+        {
+            AmmoPackLost.Invoke(target);
         }
     }
 
@@ -110,7 +118,7 @@ public class VisionController : MonoBehaviour
 
     }
 
-    public class PackDetected : UnityEvent<GameObject>
+    public class PackageEvent : UnityEvent<GameObject>
     {
 
     }
