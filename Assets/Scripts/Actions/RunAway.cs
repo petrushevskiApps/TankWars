@@ -34,11 +34,13 @@ public class RunAway : GoapAction
 	{
 		return completed;
 	}
-	public override bool SetActionTarget()
+
+	public override void SetActionTarget()
 	{
-		target = agentMemory.Navigation.GetActionTarget(agentMemory.Enemies.GetDetected());
-		return target != null;
+		agentMemory.Navigation.SetTarget();
+		target = agentMemory.Navigation.GetTarget();
 	}
+
 
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{	

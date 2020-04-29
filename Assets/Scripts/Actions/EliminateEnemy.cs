@@ -51,13 +51,14 @@ public class EliminateEnemy : GoapAction
 		return completed;
 	}
 
-	public override bool SetActionTarget()
+	public override void SetActionTarget()
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
-			target = agentMemory.Enemies.GetDetected();
+			GameObject actionTarget = agentMemory.Enemies.GetDetected();
+			agentMemory.Navigation.SetTarget(actionTarget);
 		}
-		return target != null;
+		target = agentMemory.Navigation.GetTarget();
 	}
 
 	public override bool CheckProceduralPrecondition(GameObject agent)

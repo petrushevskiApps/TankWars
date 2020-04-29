@@ -6,8 +6,6 @@ using GOAP;
 
 public sealed class GoapAgent : MonoBehaviour 
 {
-	
-
 	private HashSet<GoapAction> availableActions;
 	private Queue<GoapAction> currentActions;
 
@@ -42,6 +40,7 @@ public sealed class GoapAgent : MonoBehaviour
 	{
 		availableActions.Remove(action);
 	}
+
 
 	private bool HasActionPlan()
 	{
@@ -98,61 +97,48 @@ public sealed class GoapAgent : MonoBehaviour
 	{
 		GoapAction action = currentActions.Peek();
 
-		if (action.RequiresInRange())
-		{
-			bool targetAcquired = action.SetActionTarget();
+		bool conditionsMeet = action.CheckProceduralPrecondition(gameObject);
+		bool onTarget = true;
 
-			if(!targetAcquired)
-			{
-				Debug.LogError($"Fatal error:{gameObject.name} | {action.name} requires a target but has none. Planning failed.");
-				ChangeState(FSMKeys.IDLE_STATE);
-				return;
-			}
-		}
-
-		if(!action.CheckProceduralPrecondition(gameObject))
+		if (!conditionsMeet)
 		{
 			ChangeState(FSMKeys.IDLE_STATE);
 		}
-
-		// Get the agent to move itself
-		if (agentImplementation.MoveAgent(action))
-		{
-			// Destination Reached - Change State
-			ChangeState(FSMKeys.PERFORM_STATE);
-		}
 		else
 		{
-			// Destination Not Reached - Loop
-			ChangeState(FSMKeys.MOVETO_STATE);
+			if (action.RequiresInRange())
+			{
+				action.SetActionTarget();
+
+				if (!action.IsTargetAcquired())
+				{
+					Debug.LogError($"Fatal error:{gameObject.name} | {action.name} target missing!");
+					ChangeState(FSMKeys.IDLE_STATE);
+					return;
+				}
+				else
+				{
+					// Get the agent to move itself
+					onTarget = agentImplementation.MoveAgent(action);
+				}
+			}
+
+			if (!action.RequiresInRange() || onTarget)
+			{
+				// Destination Reached - Change State
+				ChangeState(FSMKeys.PERFORM_STATE);
+			}
+			else
+			{
+				// Destination Not Reached - Loop
+				ChangeState(FSMKeys.MOVETO_STATE);
+			}
 		}
-
-
 	}
 
 
 	public void PerformActionState()
 	{
-		// perform the action
-
-		if (!HasActionPlan())
-		{
-			// no actions to perform
-			Debug.Log("<color=red>Done actions</color>");
-			ChangeState(FSMKeys.IDLE_STATE);
-			agentImplementation.ActionsFinished();
-			return;
-		}
-
-		currentAction = currentActions.Peek();
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {currentAction.name}</color>");
-
-		if (currentAction.IsActionDone())
-		{
-			// the action is done. Remove it so we can perform the next one
-			currentActions.Dequeue();
-		}
-
 		if (HasActionPlan())
 		{
 			// perform the next action
@@ -162,13 +148,7 @@ public sealed class GoapAgent : MonoBehaviour
 			if (inRange)
 			{
 				// we are in range, so perform the action
-				currentAction.Perform(gameObject, 
-					()=> ChangeState(FSMKeys.PERFORM_STATE),
-					()=>{
-						// action failed, we need to plan again
-						ChangeState(FSMKeys.IDLE_STATE);
-						agentImplementation.PlanAborted(currentAction);
-					});
+				currentAction.Perform(gameObject, OnActionSuccess, OnActionFail);
 			}
 			else
 			{
@@ -185,7 +165,23 @@ public sealed class GoapAgent : MonoBehaviour
 			agentImplementation.ActionsFinished();
 		}
 	}
-	
+	private void OnActionSuccess()
+	{
+		if (currentAction.IsActionDone())
+		{
+			// the action is done. Remove it so we can perform the next one
+			currentActions.Dequeue();
+		}
+		ChangeState(FSMKeys.PERFORM_STATE);
+	}
+
+	private void OnActionFail() 
+	{
+		// action failed, we need to plan again
+		ChangeState(FSMKeys.IDLE_STATE);
+		agentImplementation.PlanAborted(currentAction);
+	}
+
 	private void ChangeState(string stateKey)
 	{
 		FSM.SetTrigger(stateKey);

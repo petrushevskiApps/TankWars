@@ -39,18 +39,17 @@ public class FindAmmo : GoapAction
 		return completed;
 	}
 
-	public override bool SetActionTarget()
+	public override void SetActionTarget()
 	{
-		target = agentMemory.Navigation.GetActionTarget();
-		return target != null;
+		agentMemory.Navigation.SetTarget();
+		target = agentMemory.Navigation.GetTarget();
 	}
-
 
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{
 		if(agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
-			target = agent;
+			agentMemory.Navigation.AbortMoving();
 		}
 
 		return true;
@@ -58,7 +57,9 @@ public class FindAmmo : GoapAction
 
 	public override void Perform(GameObject agent, Action success, Action fail)
 	{
-		if(agentMemory.AmmoPacks.IsAnyValidDetected())
+		Debug.Log($"<color=green> {agent.name} Perform Action: {name}</color>");
+
+		if (agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
 			success.Invoke();
 			completed = true;
@@ -68,4 +69,5 @@ public class FindAmmo : GoapAction
 		fail.Invoke();
 	}
 
+	
 }

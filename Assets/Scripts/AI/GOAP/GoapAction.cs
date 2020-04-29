@@ -51,8 +51,12 @@ public abstract class GoapAction : MonoBehaviour
 	 */
 	public abstract bool IsActionDone();
 
-	public abstract bool SetActionTarget();
+	public abstract void SetActionTarget();
 
+	public bool IsTargetAcquired()
+	{
+		return target != null;
+	}
 	/**
 	 * Procedurally check if this action can run. Not all actions
 	 * will need this, but some might.

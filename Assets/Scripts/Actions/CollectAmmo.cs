@@ -39,32 +39,43 @@ public class CollectAmmo : GoapAction
 		return completed;
 	}
 
-	public override bool SetActionTarget()
+	public override void SetActionTarget()
 	{
 		if (agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
-			target = agentMemory.AmmoPacks.GetDetected();
+			GameObject actionTarget = agentMemory.AmmoPacks.GetDetected();
+			agentMemory.Navigation.SetTarget(actionTarget);
+			target = actionTarget;
 		}
-		return target != null;
 	}
+	
 
 	public override bool CheckProceduralPrecondition (GameObject agent)
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
 			GameObject enemy = agentMemory.Enemies.GetDetected();
-
-			float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, target.transform.position);
-			float distanceToPacket = Vector3.Distance(agent.transform.forward, target.transform.position);
-
-			if (distanceToPacket < enemyDistanceToPacket)
+			GameObject targetLocation = agentMemory.Navigation.GetTarget();
+			
+			if(targetLocation != null)
 			{
-				return true;
+				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, targetLocation.transform.position);
+				float distanceToPacket = Vector3.Distance(agent.transform.forward, targetLocation.transform.position);
+
+				if (distanceToPacket < enemyDistanceToPacket)
+				{
+					return true;
+				}
+				else
+				{
+					agentMemory.AmmoPacks.InvalidateDetected(target);
+					agentMemory.Navigation.AbortMoving();
+					return false;
+				}
 			}
 			else
 			{
-				agentMemory.AmmoPacks.InvalidateDetected(target);
-				return false;
+				return true;
 			}
 		}
 

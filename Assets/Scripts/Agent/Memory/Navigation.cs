@@ -5,12 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using GOAP;
+using UnityEngine.AI;
 
 public class Navigation
 {
 	private GameObject agent;
-	private GameObject actionTarget;
+	private NavMeshAgent navMeshAgent;
+	private NavMeshPath path;
+
+	private GameObject target;
 	private GameObject targetLocation;
+
+	private Vector3 previousDestination = Vector3.zero;
+	private bool abortMovement = false;
 
 	public Navigation(GameObject agent)
 	{
@@ -18,16 +25,60 @@ public class Navigation
 		targetLocation.SetActive(false);
 
 		this.agent = agent;
+		navMeshAgent = agent.GetComponent<NavMeshAgent>();
 	}
 
-	// Set specific target object
-	public void SetTarget(GameObject target)
+	public void MoveAgent(GoapAction action)
 	{
-		this.actionTarget = target;
+		Vector3 destination = target.transform.position;
+		
+		if (Vector3.Distance(destination, previousDestination) > 0.05f)
+		{
+			// Target is moving - Recalculate path
+			previousDestination = destination;
+
+			path = new NavMeshPath();
+			navMeshAgent.CalculatePath(destination, path);
+			navMeshAgent.stoppingDistance = action.maxRequiredRange;
+			navMeshAgent.updateRotation = true;
+		}
+		if (path.status == NavMeshPathStatus.PathComplete)
+		{
+			navMeshAgent.SetPath(path);
+		}
+		else
+		{
+			InvalidateTarget();
+		}
+	}
+
+	public bool IsAgentOnTarget(GoapAction action)
+	{
+		if (path != null)
+		{
+			bool isOnTarget = navMeshAgent.remainingDistance <= action.maxRequiredRange;
+			if (isOnTarget || abortMovement)
+			{
+				action.SetInRange(true);
+				InvalidateTarget();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void AbortMoving()
+	{
+		abortMovement = true;
+	}
+	public bool IsTargetSet()
+	{
+		return target != null;
 	}
 
 	// Create new target object
-	public GameObject SetTarget()
+	public GameObject CreateTarget()
 	{
 		targetLocation.transform.position = CornerCalculator.Instance.GetRandomInWorldCoordinates();
 		targetLocation.transform.rotation = Quaternion.identity;
@@ -45,34 +96,32 @@ public class Navigation
 
 		return targetLocation;
 	}
-	public GameObject GetActionTarget(GameObject otherTarget = null)
-	{
-		if (actionTarget == null)
-		{
-			if(otherTarget != null)
-			{
-				actionTarget = SetRunawayTarget(otherTarget);
-			}
-			else
-			{
-				actionTarget = SetTarget();
-			}
-			return actionTarget;
-		}
-		else return actionTarget;
-	}
 
-	public void TargetReached(GameObject target)
+	public GameObject SetTarget(GameObject actionTarget = null)
 	{
-		if(target.Equals(this.actionTarget))
+		if(actionTarget != null)
 		{
-			actionTarget = null;
-			targetLocation.SetActive(false);
+			target = actionTarget;
 		}
+		else
+		{
+			if(target == null)
+			{
+				target = CreateTarget();
+			}
+		}
+		
+		return target;
 	}
-
+	public GameObject GetTarget()
+	{
+		return target;
+	}
 	public void InvalidateTarget()
 	{
-		actionTarget = null;
+		abortMovement = false;
+		path = null;
+		target = null;
+		targetLocation.SetActive(false);
 	}
 }

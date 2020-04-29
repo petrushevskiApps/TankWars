@@ -16,9 +16,6 @@ public class Tank : MonoBehaviour, IGoap
 
 	[SerializeField] private VisionController visionSensor; 
 
-	private bool rotate = false;
-	private Vector3 currentDestination = Vector3.zero;
-
 	private void Awake()
 	{
 		agentMemory.Initialize(gameObject);
@@ -31,54 +28,52 @@ public class Tank : MonoBehaviour, IGoap
 	{
 		agentMemory.RemoveEvents(visionSensor);
 	}
-
-	public bool MoveAgent(GoapAction nextAction) 
+	
+	public bool MoveAgent(GoapAction nextAction)
 	{
-		rotate = true;
-		currentDestination = nextAction.target.transform.position;
-
-		// Agent at destination point
-		if(previousDestination == currentDestination)
-		{
-			Debug.Log("MoveAgent:: " + gameObject.name + "At Target Range");
-			nextAction.SetInRange(true);
-			return true;
-		}
-
-		
-		path = new NavMeshPath();
-		agent.isStopped = false;
-		agent.CalculatePath(currentDestination, path);
-		agent.stoppingDistance = nextAction.maxRequiredRange;
-
-		if (path.status == NavMeshPathStatus.PathComplete)
-		{
-			agent.SetPath(path);
-
-			if (agent.remainingDistance <= nextAction.maxRequiredRange)
-			{
-				bool requireAngle = nextAction.requireAngle;
-				bool checkAngle = CheckAngle(nextAction.target);
-
-				if (!requireAngle || (requireAngle && checkAngle))
-				{
-					rotate = false;
-					nextAction.SetInRange(true);
-					agentMemory.Navigation.TargetReached(nextAction.target);
-					previousDestination = currentDestination;
-					agent.isStopped = false;
-					return true;
-				}
-			}
-
-			return false;
-		}
-		else
-		{
-			agentMemory.Navigation.InvalidateTarget();
-			return false;
-		}
+		agentMemory.Navigation.MoveAgent(nextAction);
+		return agentMemory.Navigation.IsAgentOnTarget(nextAction);
 	}
+
+	//public bool MoveAgent(GoapAction nextAction) 
+	//{
+	//	rotate = true;
+	//	currentDestination = nextAction.target.transform.position;
+
+	//	path = new NavMeshPath();
+	//	agent.isStopped = false;
+	//	agent.CalculatePath(currentDestination, path);
+	//	agent.stoppingDistance = nextAction.maxRequiredRange;
+	//	agent.updateRotation = true;
+
+	//	if (path.status == NavMeshPathStatus.PathComplete)
+	//	{
+	//		agent.SetPath(path);
+
+	//		if (agent.remainingDistance <= nextAction.maxRequiredRange)
+	//		{
+	//			bool requireAngle = nextAction.requireAngle;
+	//			bool checkAngle = CheckAngle(nextAction.target);
+
+	//			if (!requireAngle || (requireAngle && checkAngle))
+	//			{
+	//				rotate = false;
+	//				nextAction.SetInRange(true);
+	//				agentMemory.Navigation.TargetReached(nextAction.target);
+	//				previousDestination = currentDestination;
+	//				agent.isStopped = false;
+	//				return true;
+	//			}
+	//		}
+
+	//		return false;
+	//	}
+	//	else
+	//	{
+	//		agentMemory.Navigation.InvalidateTarget();
+	//		return false;
+	//	}
+	//}
 
 	private bool CheckAngle(GameObject target)
 	{
@@ -88,16 +83,16 @@ public class Tank : MonoBehaviour, IGoap
 
 	private void Update()
 	{
-		if(rotate)
-		{
-			Vector3 dir = currentDestination - transform.position;
-			dir.y = 0;//This allows the object to only rotate on its y axis
-			if(!dir.Equals(Vector3.zero))
-			{
-				Quaternion rot = Quaternion.LookRotation(dir);
-				transform.rotation = Quaternion.Lerp(transform.rotation, rot, 5f * Time.deltaTime);
-			}
-		}
+		//if (rotate)
+		//{
+		//	Vector3 dir = currentDestination - transform.position;
+		//	dir.y = 0;//This allows the object to only rotate on its y axis
+		//	if (!dir.Equals(Vector3.zero))
+		//	{
+		//		Quaternion rot = Quaternion.LookRotation(dir);
+		//		transform.rotation = Quaternion.Lerp(transform.rotation, rot, 5f * Time.deltaTime);
+		//	}
+		//}
 	}
 
 	public Dictionary<string, bool> GetWorldState()

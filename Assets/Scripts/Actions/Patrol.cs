@@ -36,10 +36,10 @@ public class Patrol : GoapAction
 		return completed;
 	}
 
-	public override bool SetActionTarget()
+	public override void SetActionTarget()
 	{
-		target = agentMemory.Navigation.GetActionTarget();
-		return target != null;
+		agentMemory.Navigation.SetTarget();
+		target = agentMemory.Navigation.GetTarget();
 	}
 
 
