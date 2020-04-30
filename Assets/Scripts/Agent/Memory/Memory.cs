@@ -12,7 +12,7 @@ public class Memory
 
     public int ammoAmount = 10;
     public int specialAmmo = 1;
-    public int healthAmount = 100;
+    public float healthAmount = 100;
 
     public Enemies Enemies { get; private set; }
 

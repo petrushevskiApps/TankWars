@@ -8,11 +8,13 @@ using GOAP;
 
 public class Tank : MonoBehaviour, IGoap
 {
-	NavMeshAgent agent;
-	Vector3 previousDestination;
+	[SerializeField] private UIHealthBar healthBar;
+	[SerializeField] private GameObject deathParticles;
+
+	GameObject particles;
+	public bool isDead;
 
 	public Memory agentMemory = new Memory();
-	public NavMeshPath path;
 
 	[SerializeField] private VisionController visionSensor; 
 
@@ -20,9 +22,51 @@ public class Tank : MonoBehaviour, IGoap
 	{
 		agentMemory.Initialize(gameObject);
 		agentMemory.AddEvents(visionSensor);
-		agent = GetComponent<NavMeshAgent>();
+
+		SetParticles();
+		SetHealth();
+
 		
 	}
+	private void SetParticles()
+	{
+		particles = Instantiate(deathParticles);
+
+		particles.SetActive(false);
+	}
+	private void SetHealth()
+	{
+		healthBar.Initialize(agentMemory.healthAmount);
+	}
+
+	public void TakeDamage(float amount)
+	{
+		// Reduce current health by the amount of damage done.
+		agentMemory.healthAmount -= amount;
+
+		// Change the UI elements appropriately.
+		healthBar.SetHealth(agentMemory.healthAmount);
+
+		// If the current health is at or below zero and it has not yet been registered, call OnDeath.
+		if (!isDead && agentMemory.healthAmount <= 0f)
+		{
+			OnDeath();
+		}
+	}
+
+	private void OnDeath()
+	{
+		// Set the flag so that this function is only called once.
+		isDead = true;
+
+		particles.transform.position = transform.position;
+
+		particles.SetActive(true);
+		
+		// Turn the tank off.
+		Destroy(gameObject);
+	}
+
 
 	private void OnDestroy()
 	{
@@ -35,45 +79,6 @@ public class Tank : MonoBehaviour, IGoap
 		return agentMemory.Navigation.IsAgentOnTarget(nextAction);
 	}
 
-	//public bool MoveAgent(GoapAction nextAction) 
-	//{
-	//	rotate = true;
-	//	currentDestination = nextAction.target.transform.position;
-
-	//	path = new NavMeshPath();
-	//	agent.isStopped = false;
-	//	agent.CalculatePath(currentDestination, path);
-	//	agent.stoppingDistance = nextAction.maxRequiredRange;
-	//	agent.updateRotation = true;
-
-	//	if (path.status == NavMeshPathStatus.PathComplete)
-	//	{
-	//		agent.SetPath(path);
-
-	//		if (agent.remainingDistance <= nextAction.maxRequiredRange)
-	//		{
-	//			bool requireAngle = nextAction.requireAngle;
-	//			bool checkAngle = CheckAngle(nextAction.target);
-
-	//			if (!requireAngle || (requireAngle && checkAngle))
-	//			{
-	//				rotate = false;
-	//				nextAction.SetInRange(true);
-	//				agentMemory.Navigation.TargetReached(nextAction.target);
-	//				previousDestination = currentDestination;
-	//				agent.isStopped = false;
-	//				return true;
-	//			}
-	//		}
-
-	//		return false;
-	//	}
-	//	else
-	//	{
-	//		agentMemory.Navigation.InvalidateTarget();
-	//		return false;
-	//	}
-	//}
 
 	private bool CheckAngle(GameObject target)
 	{
