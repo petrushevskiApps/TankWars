@@ -61,5 +61,9 @@ public interface IGoap
 	 * False if it is not there yet.
 	 */
 	bool MoveAgent(GoapAction nextAction);
+
+	Memory GetMemory();
+
+	NavigationSystem GetNavigation();
 }
 

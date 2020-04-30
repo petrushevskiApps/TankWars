@@ -15,18 +15,19 @@ public class Tank : MonoBehaviour, IGoap
 	public bool isDead;
 
 	public Memory agentMemory = new Memory();
+	public NavigationSystem Navigation { get; private set; }
 
 	[SerializeField] private VisionController visionSensor; 
 
 	private void Awake()
 	{
+		Navigation = new NavigationSystem(gameObject);
+
 		agentMemory.Initialize(gameObject);
 		agentMemory.AddEvents(visionSensor);
 
 		SetParticles();
 		SetHealth();
-
-		
 	}
 	private void SetParticles()
 	{
@@ -75,30 +76,20 @@ public class Tank : MonoBehaviour, IGoap
 	
 	public bool MoveAgent(GoapAction nextAction)
 	{
-		agentMemory.Navigation.MoveAgent(nextAction);
-		return agentMemory.Navigation.IsAgentOnTarget(nextAction);
+		Navigation.MoveAgent(nextAction);
+		return Navigation.IsAgentOnTarget(nextAction);
 	}
 
-
-	private bool CheckAngle(GameObject target)
+	public Memory GetMemory()
 	{
-		float angle = Utilities.GetAngle(gameObject, target);
-		return angle < 5;
+		return agentMemory;
 	}
 
-	private void Update()
+	public NavigationSystem GetNavigation()
 	{
-		//if (rotate)
-		//{
-		//	Vector3 dir = currentDestination - transform.position;
-		//	dir.y = 0;//This allows the object to only rotate on its y axis
-		//	if (!dir.Equals(Vector3.zero))
-		//	{
-		//		Quaternion rot = Quaternion.LookRotation(dir);
-		//		transform.rotation = Quaternion.Lerp(transform.rotation, rot, 5f * Time.deltaTime);
-		//	}
-		//}
+		return Navigation;
 	}
+
 
 	public Dictionary<string, bool> GetWorldState()
 	{

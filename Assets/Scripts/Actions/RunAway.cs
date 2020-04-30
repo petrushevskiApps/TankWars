@@ -8,7 +8,10 @@ public class RunAway : GoapAction
 {
 
 	bool completed = false;
+	
+	private IGoap agent;
 	private Memory agentMemory;
+	private NavigationSystem agentNavigation;
 
 	public RunAway() 
 	{
@@ -17,12 +20,13 @@ public class RunAway : GoapAction
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
 
-
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
 	private void Start()
 	{
-		agentMemory = GetComponent<Tank>().agentMemory;
+		agent = GetComponent<IGoap>();
+		agentMemory = agent.GetMemory();
+		agentNavigation = agent.GetNavigation();
 	}
 	public override void Reset ()
 	{
@@ -37,8 +41,8 @@ public class RunAway : GoapAction
 
 	public override void SetActionTarget()
 	{
-		agentMemory.Navigation.SetTarget();
-		target = agentMemory.Navigation.GetTarget();
+		agentNavigation.SetTarget();
+		target = agentNavigation.GetTarget();
 	}
 
 
@@ -47,18 +51,22 @@ public class RunAway : GoapAction
 		return true;
 	}
 	
-	public override void Perform(GameObject agent, Action success, Action fail)
+	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
 		if(!agentMemory.Enemies.IsAnyValidDetected())
 		{
-			success.Invoke();
 			completed = true;
+			ExitAction(success);
 		}
 		else
 		{
-			fail.Invoke();
+			ExitAction(fail);
 		}
 	}
 
-
+	protected override void ExitAction(Action exitAction)
+	{
+		agentNavigation.InvalidateTarget();
+		exitAction?.Invoke();
+	}
 }

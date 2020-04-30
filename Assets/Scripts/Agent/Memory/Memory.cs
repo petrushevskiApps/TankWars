@@ -18,7 +18,7 @@ public class Memory
 
     public AmmoPacks AmmoPacks { get; private set; }
 
-    public Navigation Navigation { get; private set; }
+    
 
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
     private Dictionary<string, bool> agentGoals = new Dictionary<string, bool>();
@@ -28,7 +28,6 @@ public class Memory
     {
         Enemies = new Enemies(parent);
         AmmoPacks = new AmmoPacks(parent);
-        Navigation = new Navigation(parent);
 
         SetStates();
         SetGoals();

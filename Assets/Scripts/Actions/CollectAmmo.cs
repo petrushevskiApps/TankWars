@@ -6,11 +6,13 @@ using UnityEngine.AI;
 
 public class CollectAmmo : GoapAction 
 {
-	private Vector3 destination;
 
-	bool completed = false;
+	private IGoap agent;
 	private Memory agentMemory;
+	private NavigationSystem agentNavigation;
+
 	private bool ammoCollected = false;
+	private bool completed = false;
 
 	public CollectAmmo() 
 	{
@@ -24,13 +26,15 @@ public class CollectAmmo : GoapAction
 	}
 	private void Start()
 	{
-		agentMemory = GetComponent<Tank>().agentMemory;
+		agent = GetComponent<IGoap>();
+		agentMemory = agent.GetMemory();
+		agentNavigation = agent.GetNavigation();
 	}
+	
 	public override void Reset ()
 	{
 		target = null;
 		ammoCollected = false;
-		destination = transform.position;
 		completed = false;
 	}
 	
@@ -43,49 +47,45 @@ public class CollectAmmo : GoapAction
 	{
 		if (agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
-			GameObject actionTarget = agentMemory.AmmoPacks.GetDetected();
-			agentMemory.Navigation.SetTarget(actionTarget);
-			target = actionTarget;
+			target = agentMemory.AmmoPacks.GetDetected();
+			agentNavigation.SetTarget(target);
 		}
 	}
 	
 
-	public override bool CheckProceduralPrecondition (GameObject agent)
+	public override bool CheckProceduralPrecondition (GameObject agentGo)
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
 			GameObject enemy = agentMemory.Enemies.GetDetected();
-			GameObject targetLocation = agentMemory.Navigation.GetTarget();
 			
-			if(targetLocation != null)
+			if(target != null)
 			{
-				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, targetLocation.transform.position);
-				float distanceToPacket = Vector3.Distance(agent.transform.forward, targetLocation.transform.position);
+				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, target.transform.position);
+				float distanceToPacket = Vector3.Distance(agentGo.transform.forward, target.transform.position);
 
-				if (distanceToPacket < enemyDistanceToPacket)
-				{
-					return true;
-				}
-				else
+				if (distanceToPacket > enemyDistanceToPacket)
 				{
 					agentMemory.AmmoPacks.InvalidateDetected(target);
-					agentMemory.Navigation.AbortMoving();
+					agentNavigation.AbortMoving();
 					return false;
 				}
 			}
-			else
-			{
-				return true;
-			}
 		}
 
-		else return true;
+		return true;
 	}
 	
-	public override void Perform(GameObject agent, Action success, Action fail)
+	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {this.name}</color>");
+		Debug.Log($"<color=green> {gameObject.name} Perform Action: {name}</color>");
 		StartCoroutine(Collect(success, fail));
+	}
+	
+	protected override void ExitAction(Action exitAction)
+	{
+		agentNavigation.InvalidateTarget();
+		exitAction?.Invoke();
 	}
 
 	IEnumerator Collect(Action succes, Action fail)
@@ -94,13 +94,13 @@ public class CollectAmmo : GoapAction
 
 		if (ammoCollected)
 		{
-			succes.Invoke();
 			completed = true;
+			ExitAction(succes);
 		}
 		else
 		{
 			agentMemory.AmmoPacks.RemoveDetected(target);
-			fail.Invoke();
+			ExitAction(fail);
 		}
 	}
 

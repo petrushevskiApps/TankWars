@@ -10,7 +10,9 @@ public class Patrol : GoapAction
 
 	private bool completed = false;
 
+	private IGoap agent;
 	private Memory agentMemory;
+	private NavigationSystem agentNavigation;
 
 	public Patrol() 
 	{
@@ -23,7 +25,9 @@ public class Patrol : GoapAction
 	}
 	private void Start() 
 	{
-		agentMemory = GetComponent<Tank>().agentMemory;
+		agent = GetComponent<IGoap>();
+		agentMemory = agent.GetMemory();
+		agentNavigation = agent.GetNavigation();
 	}
 	public override void Reset ()
 	{
@@ -38,8 +42,8 @@ public class Patrol : GoapAction
 
 	public override void SetActionTarget()
 	{
-		agentMemory.Navigation.SetTarget();
-		target = agentMemory.Navigation.GetTarget();
+		agentNavigation.SetTarget();
+		target = agentNavigation.GetTarget();
 	}
 
 
@@ -48,12 +52,17 @@ public class Patrol : GoapAction
 		return !agentMemory.Enemies.IsAnyValidDetected();
 	}
 	
-	public override void Perform(GameObject agent, Action success, Action fail)
+	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
-		success.Invoke();
 		completed = true;
+		ExitAction(success);
 	}
-
+	
+	protected override void ExitAction(Action exitAction)
+	{
+		agentNavigation.InvalidateTarget();
+		exitAction?.Invoke();
+	}
 
 
 }

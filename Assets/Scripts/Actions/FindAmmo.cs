@@ -6,11 +6,12 @@ using UnityEngine.AI;
 
 public class FindAmmo : GoapAction 
 {
-	private Vector3 destination;
 
 	bool completed = false;
 
+	private IGoap agent;
 	private Memory agentMemory;
+	private NavigationSystem agentNavigation;
 
 	public FindAmmo() 
 	{
@@ -25,11 +26,12 @@ public class FindAmmo : GoapAction
 	}
 	private void Start()
 	{
-		agentMemory = GetComponent<Tank>().agentMemory;
+		agent = GetComponent<IGoap>();
+		agentMemory = agent.GetMemory();
+		agentNavigation = agent.GetNavigation();
 	}
 	public override void Reset()
 	{
-		destination = transform.position;
 		target = null;
 		completed = false;
 	}
@@ -41,33 +43,37 @@ public class FindAmmo : GoapAction
 
 	public override void SetActionTarget()
 	{
-		agentMemory.Navigation.SetTarget();
-		target = agentMemory.Navigation.GetTarget();
+		agentNavigation.SetTarget();
+		target = agentNavigation.GetTarget();
 	}
 
-	public override bool CheckProceduralPrecondition (GameObject agent)
+	public override bool CheckProceduralPrecondition (GameObject agentGo)
 	{
 		if(agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
-			agentMemory.Navigation.AbortMoving();
+			agentNavigation.AbortMoving();
 		}
 
 		return true;
 	}
 
-	public override void Perform(GameObject agent, Action success, Action fail)
+	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
 		Debug.Log($"<color=green> {agent.name} Perform Action: {name}</color>");
 
 		if (agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
-			success.Invoke();
 			completed = true;
+			ExitAction(success);
 			return;
 		}
 
-		fail.Invoke();
+		ExitAction(fail);
+	}
+	protected override void ExitAction(Action exitAction)
+	{
+		agentNavigation.InvalidateTarget();
+		exitAction?.Invoke();
 	}
 
-	
 }

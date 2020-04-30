@@ -20,8 +20,10 @@ public class EliminateEnemy : GoapAction
 	public AudioClip fireAudioClip;                
 	
 	bool completed = false;
-
+	private IGoap agent;
 	private Memory agentMemory;
+	private NavigationSystem agentNavigation;
+
 	private float fireAngle = 40f;
 
 	public EliminateEnemy()
@@ -37,7 +39,9 @@ public class EliminateEnemy : GoapAction
 	}
 	private void Start()
 	{
-		agentMemory = GetComponent<Tank>().agentMemory;
+		agent = GetComponent<IGoap>();
+		agentMemory = agent.GetMemory();
+		agentNavigation = agent.GetNavigation();
 	}
 
 	public override void Reset()
@@ -55,33 +59,34 @@ public class EliminateEnemy : GoapAction
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
-			GameObject actionTarget = agentMemory.Enemies.GetDetected();
-			agentMemory.Navigation.SetTarget(actionTarget);
+			target = agentMemory.Enemies.GetDetected();
+			agentNavigation.SetTarget(target);
 		}
-		target = agentMemory.Navigation.GetTarget();
 	}
 
 	public override bool CheckProceduralPrecondition(GameObject agent)
 	{
-		return true;
-	}
-
-	private bool CheckCurrentState(GameObject agent)
-	{
 		return agentMemory.Enemies.IsAnyValidDetected() && agentMemory.IsAmmoAvailable();
 	}
 
-	public override void Perform(GameObject agent, Action succes, Action fail)
+
+	public override void ExecuteAction(GameObject agent, Action succes, Action fail)
 	{
+		StartCoroutine(agentNavigation.LookAtTarget());
 		StartCoroutine(Fire(agent, succes, fail));
+	}
+
+	protected override void ExitAction(Action exitAction)
+	{
+		agentNavigation.InvalidateTarget();
+		exitAction?.Invoke();
 	}
 
 	IEnumerator Fire(GameObject agent, Action succes, Action fail)
 	{
-
 		while (true)
 		{ 
-			if (CheckCurrentState(agent))
+			if (CheckProceduralPrecondition(agent))
 			{
 				if (target != null)
 				{
@@ -91,14 +96,14 @@ public class EliminateEnemy : GoapAction
 				else
 				{
 					agentMemory.Enemies.RemoveDetected(target);
-					succes.Invoke();
+					ExitAction(succes);
 					completed = true;
 					break;
 				}
 			}
 			else
 			{
-				fail.Invoke();
+				ExitAction(fail);
 				break;
 			}
 		}

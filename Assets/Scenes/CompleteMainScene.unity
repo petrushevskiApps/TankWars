@@ -10284,7 +10284,7 @@ PrefabInstance:
     - target: {fileID: 6606727550952868652, guid: f05115efc3b7be04d96f2b77cfc2aa75,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f05115efc3b7be04d96f2b77cfc2aa75, type: 3}
@@ -21132,7 +21132,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1537651774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.52, y: 0, z: -17.02}
+  m_LocalPosition: {x: -7.52, y: 0, z: -19.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2110986600}
@@ -21507,7 +21507,7 @@ MonoBehaviour:
   agentMemory:
     teamID: 1
     agentRank: 2
-    ammoAmount: 0
+    ammoAmount: 20
     specialAmmo: 1
     healthAmount: 100
   visionSensor: {fileID: 2110986601}
@@ -22080,7 +22080,7 @@ MonoBehaviour:
   agentMemory:
     teamID: 0
     agentRank: 2
-    ammoAmount: 20
+    ammoAmount: 0
     specialAmmo: 1
     healthAmount: 100
   visionSensor: {fileID: 1772559890}
@@ -22368,7 +22368,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1586109169}
   m_LocalRotation: {x: -0, y: 0.89966476, z: -0, w: 0.4365814}
-  m_LocalPosition: {x: -14.32, y: 0, z: -2.84}
+  m_LocalPosition: {x: -12, y: 0, z: -4.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1772559892}
@@ -22698,7 +22698,7 @@ PrefabInstance:
     - target: {fileID: 6606727550952868652, guid: f05115efc3b7be04d96f2b77cfc2aa75,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f05115efc3b7be04d96f2b77cfc2aa75, type: 3}

@@ -148,7 +148,7 @@ public sealed class GoapAgent : MonoBehaviour
 			if (inRange)
 			{
 				// we are in range, so perform the action
-				currentAction.Perform(gameObject, OnActionSuccess, OnActionFail);
+				currentAction.ExecuteAction(gameObject, OnActionSuccess, OnActionFail);
 			}
 			else
 			{

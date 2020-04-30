@@ -6,10 +6,9 @@ using System;
 [System.Serializable]
 public abstract class GoapAction : MonoBehaviour 
 {
+	public new string name = "No Name";
 
-	public string name = "No Name";
 	private bool inRange = false;
-	public bool requireAngle = false;
 
 	public bool requiresRange = false;
 
@@ -69,8 +68,9 @@ public abstract class GoapAction : MonoBehaviour
 	 * if something happened and it can no longer perform. In this case
 	 * the action queue should clear out and the goal cannot be reached.
 	 */
-	public abstract void Perform(GameObject agent, Action success, Action fail);
+	public abstract void ExecuteAction(GameObject agent, Action success, Action fail);
 
+	protected abstract void ExitAction(Action exitAction);
 	/**
 	 * Does this action need to be within range of a target game object?
 	 * If not then the moveTo state will not need to run for this action.
@@ -132,6 +132,4 @@ public abstract class GoapAction : MonoBehaviour
 		}
 	}
 
-
-	
 }
