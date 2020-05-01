@@ -77,7 +77,7 @@ public class NavigationSystem
 			navMeshAgent.stoppingDistance = action.maxRequiredRange;
 			navMeshAgent.updateRotation = true;
 		}
-		if (path.status == NavMeshPathStatus.PathComplete)
+		if (path != null && path.status == NavMeshPathStatus.PathComplete)
 		{
 			navMeshAgent.SetPath(path);
 		}
@@ -117,6 +117,15 @@ public class NavigationSystem
 		return target;
 	}
 
+	public GameObject SetRunFromTarget(GameObject runFromTarget)
+	{
+		if(target == null && runFromTarget != null)
+		{
+			target = CreateRunawayTarget(runFromTarget);
+		}
+		
+		return target;
+	}
 	public GameObject SetTarget(GameObject actionTarget = null)
 	{
 		if(actionTarget != null)
@@ -147,8 +156,11 @@ public class NavigationSystem
 
 	private GameObject CreateRunawayTarget(GameObject otherTarget)
 	{
+		Vector3 runTo = otherTarget.transform.forward;
+		runTo.x += Random.Range(-20, 20);
+		runTo.z += Random.Range(20, 30);
 
-		targetLocation.transform.position = (agent.transform.InverseTransformDirection(Vector3.forward) * (-1)) * (5);
+		targetLocation.transform.position = runTo;
 		targetLocation.transform.rotation = Quaternion.identity;
 		targetLocation.SetActive(true);
 

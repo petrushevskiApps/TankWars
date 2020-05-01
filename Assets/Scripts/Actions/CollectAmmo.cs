@@ -59,15 +59,16 @@ public class CollectAmmo : GoapAction
 		{
 			GameObject enemy = agentMemory.Enemies.GetDetected();
 			
-			if(target != null)
+			if(target != null && enemy != null)
 			{
-				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, target.transform.position);
-				float distanceToPacket = Vector3.Distance(agentGo.transform.forward, target.transform.position);
+				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
+				float distanceToPacket = Vector3.Distance(agentGo.transform.position, target.transform.position);
 
 				if (distanceToPacket > enemyDistanceToPacket)
 				{
+					cost = 10;
 					agentMemory.AmmoPacks.InvalidateDetected(target);
-					agentNavigation.AbortMoving();
+					agentNavigation.InvalidateTarget();
 					return false;
 				}
 			}

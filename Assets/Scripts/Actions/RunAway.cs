@@ -41,7 +41,8 @@ public class RunAway : GoapAction
 
 	public override void SetActionTarget()
 	{
-		agentNavigation.SetTarget();
+		GameObject enemy = agentMemory.Enemies.GetDetected();
+		agentNavigation.SetRunFromTarget(enemy);
 		target = agentNavigation.GetTarget();
 	}
 
