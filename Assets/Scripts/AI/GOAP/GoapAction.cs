@@ -60,7 +60,7 @@ public abstract class GoapAction : MonoBehaviour
 	 * Procedurally check if this action can run. Not all actions
 	 * will need this, but some might.
 	 */
-	public abstract bool CheckProceduralPrecondition(GameObject agent);
+	public abstract bool CheckPreconditions(GameObject agent);
 
 	/**
 	 * Run the action.

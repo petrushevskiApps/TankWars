@@ -47,11 +47,18 @@ public class FindAmmo : GoapAction
 		target = agentNavigation.GetTarget();
 	}
 
-	public override bool CheckProceduralPrecondition (GameObject agentGo)
+	public override bool CheckPreconditions (GameObject agentGo)
 	{
+		if(agentMemory.Enemies.IsAnyValidDetected())
+		{
+			agentNavigation.AbortMoving();
+			return false;
+		}
+
 		if(agentMemory.AmmoPacks.IsAnyValidDetected())
 		{
 			agentNavigation.AbortMoving();
+			return true;
 		}
 
 		return true;

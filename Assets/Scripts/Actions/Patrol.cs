@@ -20,8 +20,9 @@ public class Patrol : GoapAction
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
-		AddEffect(GoalKeys.PATROL, true);
+		AddEffect(StateKeys.ENEMY_DETECTED, true);
 	}
 	private void Start() 
 	{
@@ -47,9 +48,15 @@ public class Patrol : GoapAction
 	}
 
 
-	public override bool CheckProceduralPrecondition (GameObject agent)
+	public override bool CheckPreconditions (GameObject agent)
 	{	
-		return !agentMemory.Enemies.IsAnyValidDetected();
+		if(agentMemory.Enemies.IsAnyValidDetected())
+		{
+			agentNavigation.AbortMoving();
+			completed = true;
+		}
+		return true;
+
 	}
 	
 	public override void ExecuteAction(GameObject agent, Action success, Action fail)

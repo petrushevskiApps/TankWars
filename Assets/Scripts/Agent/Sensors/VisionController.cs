@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class VisionController : MonoBehaviour
 {
+    public Detected SomethingDetected = new Detected();
+
     public EnemyDetected EnemyDetectedEvent = new EnemyDetected();
     public EnemyLost EnemyLostEvent = new EnemyLost();
 
@@ -17,7 +19,7 @@ public class VisionController : MonoBehaviour
     // is in radius range of visibility.
     private void OnTriggerStay(Collider other)
     {
-        float angle = Utilities.GetAngle(gameObject, other.gameObject);
+        float angle = Utilities.GetAngle(transform.parent.gameObject, other.gameObject);
 
         if(IsInFront(angle) && IsVisible(other.gameObject))
         {
@@ -51,6 +53,10 @@ public class VisionController : MonoBehaviour
         return angle < 90f;
     }
 
+    private bool IsDetectable(float angle)
+    {
+        return angle < 22;
+    }
     // Check if the target object is not behind
     // other objects in scene
     private bool IsVisible(GameObject target)
@@ -122,6 +128,9 @@ public class VisionController : MonoBehaviour
     {
 
     }
+    public class Detected : UnityEvent<GameObject>
+    {
 
+    }
 
 }

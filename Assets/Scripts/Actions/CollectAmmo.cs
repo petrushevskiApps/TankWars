@@ -53,7 +53,7 @@ public class CollectAmmo : GoapAction
 	}
 	
 
-	public override bool CheckProceduralPrecondition (GameObject agentGo)
+	public override bool CheckPreconditions (GameObject agentGo)
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{

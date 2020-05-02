@@ -30,44 +30,43 @@ public class NavigationSystem
 
 	public bool IsLookingAtTarget()
 	{
-		return CheckAngle();
+		return CheckAngle(target);
 	}
 
-	public IEnumerator LookAtTarget()
+	public IEnumerator LookAtTarget(GameObject lookAtTarget)
 	{
 		isLookAtActive = true;
 
-		while (isLookAtActive && target != null)
+		while (isLookAtActive && lookAtTarget != null)
 		{
-			while (!CheckAngle())
+			while (!CheckAngle(lookAtTarget))
 			{
-				Vector3 dir = target.transform.position - agent.transform.position;
+				Vector3 dir = lookAtTarget.transform.position - agent.transform.position;
 				dir.y = 0;//This allows the object to only rotate on its y axis
 
 				if (!dir.Equals(Vector3.zero))
 				{
 					Quaternion rot = Quaternion.LookRotation(dir);
-					agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, rot, 5f * Time.deltaTime);
+					agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, rot, 10f * Time.deltaTime);
 				}
 
 				yield return null;
 			}
-
 			yield return null;
 		}
 	}
 
-	private bool CheckAngle()
+	private bool CheckAngle(GameObject target)
 	{
 		float angle = Utilities.GetAngle(agent, target);
-		return angle < 5;
+		return angle < 5f;
 	}
 
-	public void MoveAgent(GoapAction action)
+	public void Move(GoapAction action)
 	{
 		Vector3 destination = target.transform.position;
 		
-		if (Vector3.Distance(destination, previousDestination) > 0.05f)
+		if (Vector3.Distance(destination, previousDestination) > 2f)
 		{
 			// Target is moving - Recalculate path
 			previousDestination = destination;
@@ -77,9 +76,15 @@ public class NavigationSystem
 			navMeshAgent.stoppingDistance = action.maxRequiredRange;
 			navMeshAgent.updateRotation = true;
 		}
+		
 		if (path != null && path.status == NavMeshPathStatus.PathComplete)
 		{
 			navMeshAgent.SetPath(path);
+
+			if(navMeshAgent.remainingDistance <= action.maxRequiredRange || abortMovement)
+			{
+				action.SetInRange(true);
+			}
 		}
 		else
 		{
@@ -87,26 +92,12 @@ public class NavigationSystem
 		}
 	}
 
-	public bool IsAgentOnTarget(GoapAction action)
-	{
-		if (path != null)
-		{
-			bool isOnTarget = navMeshAgent.remainingDistance <= action.maxRequiredRange;
-			
-			if (isOnTarget || abortMovement)
-			{
-				action.SetInRange(true);
-				return true;
-			}
-		}
-
-		return false;
-	}
 
 	public void AbortMoving()
 	{
 		abortMovement = true;
 	}
+
 	public bool IsTargetSet()
 	{
 		return target != null;
@@ -156,9 +147,12 @@ public class NavigationSystem
 
 	private GameObject CreateRunawayTarget(GameObject otherTarget)
 	{
-		Vector3 runTo = otherTarget.transform.forward;
-		runTo.x += Random.Range(-20, 20);
-		runTo.z += Random.Range(20, 30);
+		float angle = Utilities.GetAngle(agent, otherTarget);
+
+		Vector3 runTo = agent.transform.forward * (-1);
+
+		runTo.x *= Random.Range(-30, 30);
+		runTo.z *= Random.Range(10, 30);
 
 		targetLocation.transform.position = runTo;
 		targetLocation.transform.rotation = Quaternion.identity;

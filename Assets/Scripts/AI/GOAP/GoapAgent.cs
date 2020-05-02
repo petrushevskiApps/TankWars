@@ -68,6 +68,7 @@ public sealed class GoapAgent : MonoBehaviour
 		Dictionary<string, bool> goal = agentImplementation.CreateGoalState();
 
 
+		agentImplementation.ShowMessage("Planning...");
 		// Plan
 		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
 
@@ -97,39 +98,33 @@ public sealed class GoapAgent : MonoBehaviour
 	{
 		GoapAction action = currentActions.Peek();
 
-		bool conditionsMeet = action.CheckProceduralPrecondition(gameObject);
-		bool onTarget = true;
+		bool conditionsMeet = action.CheckPreconditions(gameObject);
 
 		if (!conditionsMeet)
 		{
+			// Plan Failed - RePlan
 			ChangeState(FSMKeys.IDLE_STATE);
+		}
+		else if(InRange())
+		{
+			// Destination Reached - Change State
+			ChangeState(FSMKeys.PERFORM_STATE);
 		}
 		else
 		{
-			if (action.RequiresInRange())
-			{
-				action.SetActionTarget();
+			action.SetActionTarget();
 
-				if (!action.IsTargetAcquired())
-				{
-					Debug.LogError($"Fatal error:{gameObject.name} | {action.name} target missing!");
-					ChangeState(FSMKeys.IDLE_STATE);
-					return;
-				}
-				else
-				{
-					// Get the agent to move itself
-					onTarget = agentImplementation.MoveAgent(action);
-				}
-			}
-
-			if (!action.RequiresInRange() || onTarget)
+			if (!action.IsTargetAcquired())
 			{
-				// Destination Reached - Change State
-				ChangeState(FSMKeys.PERFORM_STATE);
+				Debug.LogError($"Fatal error:{gameObject.name} | {action.name} target missing!");
+				ChangeState(FSMKeys.IDLE_STATE);
 			}
 			else
 			{
+				// Get the agent to move itself
+				agentImplementation.ShowMessage("Going to " + action.name);
+				agentImplementation.MoveAgent(action);
+
 				// Destination Not Reached - Loop
 				ChangeState(FSMKeys.MOVETO_STATE);
 			}
@@ -143,10 +138,10 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// perform the next action
 			currentAction = currentActions.Peek();
-			bool inRange  = currentAction.RequiresInRange() ? currentAction.IsInRange() : true;
 
-			if (inRange)
+			if (InRange())
 			{
+				agentImplementation.ShowMessage(currentAction.name);
 				// we are in range, so perform the action
 				currentAction.ExecuteAction(gameObject, OnActionSuccess, OnActionFail);
 			}
@@ -165,6 +160,12 @@ public sealed class GoapAgent : MonoBehaviour
 			agentImplementation.ActionsFinished();
 		}
 	}
+
+	private bool InRange()
+	{
+		return currentAction.RequiresInRange() ? currentAction.IsInRange() : true;
+	}
+
 	private void OnActionSuccess()
 	{
 		if (currentAction.IsActionDone())

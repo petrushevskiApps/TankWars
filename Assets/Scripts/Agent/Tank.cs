@@ -17,13 +17,17 @@ public class Tank : MonoBehaviour, IGoap
 	public Memory agentMemory = new Memory();
 	public NavigationSystem Navigation { get; private set; }
 
-	[SerializeField] private VisionController visionSensor; 
+	public CommunicationSystem communicationSystem = new CommunicationSystem();
+
+	[SerializeField] private VisionController visionSensor;
+
 
 	private void Awake()
 	{
 		Navigation = new NavigationSystem(gameObject);
 
 		agentMemory.Initialize(gameObject);
+
 		agentMemory.AddEvents(visionSensor);
 
 		SetParticles();
@@ -74,10 +78,9 @@ public class Tank : MonoBehaviour, IGoap
 		agentMemory.RemoveEvents(visionSensor);
 	}
 	
-	public bool MoveAgent(GoapAction nextAction)
+	public void MoveAgent(GoapAction nextAction)
 	{
-		Navigation.MoveAgent(nextAction);
-		return Navigation.IsAgentOnTarget(nextAction);
+		Navigation.Move(nextAction);
 	}
 
 	public Memory GetMemory()
@@ -101,6 +104,7 @@ public class Tank : MonoBehaviour, IGoap
 		return agentMemory.GetGoalState();
 	}
 
+
 	public void PlanFailed (Dictionary<string, bool> failedGoal)
 	{
 
@@ -121,5 +125,8 @@ public class Tank : MonoBehaviour, IGoap
 
 	}
 
-	
+	public void ShowMessage(string text)
+	{
+		communicationSystem.UpdateMessage(text);
+	}
 }

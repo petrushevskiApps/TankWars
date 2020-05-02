@@ -47,8 +47,9 @@ public class RunAway : GoapAction
 	}
 
 
-	public override bool CheckProceduralPrecondition (GameObject agent)
+	public override bool CheckPreconditions (GameObject agent)
 	{	
+		
 		return true;
 	}
 	

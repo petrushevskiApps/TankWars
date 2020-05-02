@@ -64,7 +64,7 @@ public class EliminateEnemy : GoapAction
 		}
 	}
 
-	public override bool CheckProceduralPrecondition(GameObject agent)
+	public override bool CheckPreconditions(GameObject agent)
 	{
 		return agentMemory.Enemies.IsAnyValidDetected() && agentMemory.IsAmmoAvailable();
 	}
@@ -72,7 +72,7 @@ public class EliminateEnemy : GoapAction
 
 	public override void ExecuteAction(GameObject agent, Action succes, Action fail)
 	{
-		StartCoroutine(agentNavigation.LookAtTarget());
+		StartCoroutine(agentNavigation.LookAtTarget(target));
 		StartCoroutine(Fire(agent, succes, fail));
 	}
 
@@ -86,7 +86,7 @@ public class EliminateEnemy : GoapAction
 	{
 		while (true)
 		{ 
-			if (CheckProceduralPrecondition(agent))
+			if (CheckPreconditions(agent))
 			{
 				if (target != null)
 				{

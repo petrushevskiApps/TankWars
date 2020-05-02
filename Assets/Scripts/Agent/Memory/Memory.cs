@@ -18,6 +18,7 @@ public class Memory
 
     public AmmoPacks AmmoPacks { get; private set; }
 
+
     
 
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
@@ -37,6 +38,7 @@ public class Memory
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
         worldState.Add(StateKeys.HEALTH_AMOUNT, () => healthAmount > 30);
+
         worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
         worldState.Add(StateKeys.AMMO_SPECIAL_AMOUNT, () => specialAmmo > 0);
@@ -44,8 +46,6 @@ public class Memory
 
     private void SetGoals()
     {
-        agentGoals.Add(GoalKeys.SURVIVE, true);
-        agentGoals.Add(GoalKeys.PATROL, true);
         agentGoals.Add(GoalKeys.ELIMINATE_ENEMY, true);
     }
 
@@ -56,6 +56,8 @@ public class Memory
         visionSensor.AmmoPackDetected.AddListener(AmmoPacks.AddDetected);
         visionSensor.AmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
     }
+
+    
 
     public void RemoveEvents(VisionController visionSensor)
     {

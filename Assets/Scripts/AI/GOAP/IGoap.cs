@@ -60,10 +60,12 @@ public interface IGoap
 	 * Return true if the Agent is at the target and the next action can perform.
 	 * False if it is not there yet.
 	 */
-	bool MoveAgent(GoapAction nextAction);
+	void MoveAgent(GoapAction nextAction);
 
 	Memory GetMemory();
 
 	NavigationSystem GetNavigation();
+
+	void ShowMessage(string text);
 }
 
