@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Pickable
   - Tank
+  - AmmoPack
+  - HealthPack
   layers:
   - Default
   - TransparentFX

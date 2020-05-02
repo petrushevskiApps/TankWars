@@ -7,7 +7,7 @@ public class StateKeys
     public const string AMMO_DETECTED = "ammoDetected";
     public const string AMMO_COLLECT = "ammoCollect";
     public const string AMMO_SPECIAL_AMOUNT = "specialAmmoAmount";
-    public const string GET_READY = "getReady";
+    public const string HEALTH_DETECTED = "healthDetected";
 }
 
 public class GoalKeys

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class AmmoPacks : Detected
+public class HealthPacks : Detected
 {
-    public AmmoPacks(GameObject agent)
+    public HealthPacks(GameObject agent)
     {
         this.agent = agent;
     }

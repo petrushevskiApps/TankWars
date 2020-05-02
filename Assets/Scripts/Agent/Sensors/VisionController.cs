@@ -6,7 +6,6 @@ using UnityEngine.Events;
 
 public class VisionController : MonoBehaviour
 {
-    public Detected SomethingDetected = new Detected();
 
     public EnemyDetected EnemyDetectedEvent = new EnemyDetected();
     public EnemyLost EnemyLostEvent = new EnemyLost();
@@ -14,6 +13,7 @@ public class VisionController : MonoBehaviour
     public PackageEvent AmmoPackDetected = new PackageEvent();
     public PackageEvent AmmoPackLost = new PackageEvent();
     public PackageEvent HealthPackDetected = new PackageEvent();
+    public PackageEvent HealthPackLost = new PackageEvent();
 
     // On Trigger is called when detectable object
     // is in radius range of visibility.
@@ -91,21 +91,17 @@ public class VisionController : MonoBehaviour
                 Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.blue);
             }
         }
-        else if(target.CompareTag("Pickable"))
+        else if(target.CompareTag("AmmoPack"))
         {
             Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
 
             AmmoPackDetected.Invoke(target);
-            //Pickable pickable = target.GetComponent<Pickable>();
-            
-            //if (pickable.GetType() == typeof(AmmoPack))
-            //{
-            //    AmmoPackDetected.Invoke(target);
-            //}
-            //else if(pickable.GetType() == typeof(HealthPack))
-            //{
-            //    HealthPackDetected.Invoke(target);
-            //}
+        }
+        else if (target.CompareTag("HealthPack"))
+        {
+            Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
+
+            HealthPackDetected.Invoke(target);
         }
     }
     private bool IsEnemy(Tank targetTank)
@@ -125,10 +121,6 @@ public class VisionController : MonoBehaviour
     }
 
     public class PackageEvent : UnityEvent<GameObject>
-    {
-
-    }
-    public class Detected : UnityEvent<GameObject>
     {
 
     }

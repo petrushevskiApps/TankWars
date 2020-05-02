@@ -17,9 +17,8 @@ public class Memory
     public Enemies Enemies { get; private set; }
 
     public AmmoPacks AmmoPacks { get; private set; }
+    public HealthPacks HealthPacks { get; private set; }
 
-
-    
 
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
     private Dictionary<string, bool> agentGoals = new Dictionary<string, bool>();
@@ -29,6 +28,7 @@ public class Memory
     {
         Enemies = new Enemies(parent);
         AmmoPacks = new AmmoPacks(parent);
+        HealthPacks = new HealthPacks(parent);
 
         SetStates();
         SetGoals();
@@ -37,7 +37,9 @@ public class Memory
     private void SetStates()
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
+
         worldState.Add(StateKeys.HEALTH_AMOUNT, () => healthAmount > 30);
+        worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
@@ -55,9 +57,12 @@ public class Memory
         visionSensor.EnemyLostEvent.AddListener(Enemies.RemoveDetected);
         visionSensor.AmmoPackDetected.AddListener(AmmoPacks.AddDetected);
         visionSensor.AmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
+        visionSensor.HealthPackDetected.AddListener(HealthPacks.AddDetected);
+        visionSensor.HealthPackLost.AddListener(HealthPacks.RemoveDetected);
+
     }
 
-    
+
 
     public void RemoveEvents(VisionController visionSensor)
     {
@@ -65,6 +70,8 @@ public class Memory
         visionSensor.EnemyLostEvent.RemoveListener(Enemies.RemoveDetected);
         visionSensor.AmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
         visionSensor.AmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
+        visionSensor.HealthPackDetected.RemoveListener(HealthPacks.AddDetected);
+        visionSensor.HealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
     }
 
     public Dictionary<string, bool> GetWorldState()
@@ -101,4 +108,8 @@ public class Memory
         ammoAmount--;
     }
     
+    public void AddHealth(float health)
+    {
+        healthAmount = Mathf.Clamp(healthAmount + health, 0, 100);
+    }
 }
