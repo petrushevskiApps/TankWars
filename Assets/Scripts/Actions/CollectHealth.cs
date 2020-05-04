@@ -66,7 +66,6 @@ public class CollectHealth : GoapAction
 
 				if (distanceToPacket > enemyDistanceToPacket)
 				{
-					cost = 10;
 					agentMemory.HealthPacks.InvalidateDetected(target);
 					agentNavigation.InvalidateTarget();
 					return false;
@@ -111,14 +110,38 @@ public class CollectHealth : GoapAction
 	{
 		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
 		{
-			if (!healthCollected)
+			if (other.gameObject.CompareTag("HealthPack"))
 			{
-				agentMemory.AddHealth(50);
-				agentMemory.HealthPacks.RemoveDetected(target);
-				healthCollected = true;
+				if (!healthCollected)
+				{
+					agentMemory.AddHealth(50);
+					agentMemory.HealthPacks.RemoveDetected(target);
+					healthCollected = true;
+				}
 			}
+			
 		}
 	}
 	
+	public override float GetCost()
+	{
+		if(agentMemory.healthAmount < 30)
+		{
+			cost = 1f;
+		}
+		else if(agentMemory.healthAmount < 50)
+		{
+			cost = 3f;
+		}
+		else if(agentMemory.healthAmount < 70)
+		{
+			cost = 6f;
+		}
+		else
+		{
+			cost = 10f;
+		}
 
+		return cost;
+	}
 }

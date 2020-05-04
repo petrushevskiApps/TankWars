@@ -34,7 +34,7 @@ public class EliminateEnemy : GoapAction
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
-		AddEffect(GoalKeys.ELIMINATE_ENEMY, true);
+		AddEffect(StateKeys.ENEMY_DETECTED, false);
 
 	}
 	private void Start()

@@ -111,12 +111,16 @@ public class CollectAmmo : GoapAction
 	{
 		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
 		{
-			if (!ammoCollected)
+			if (other.gameObject.CompareTag("AmmoPack"))
 			{
-				agentMemory.IncreaseAmmo();
-				agentMemory.AmmoPacks.RemoveDetected(target);
-				ammoCollected = true;
+				if (!ammoCollected)
+				{
+					agentMemory.AddAmmo(10);
+					agentMemory.AmmoPacks.RemoveDetected(target);
+					ammoCollected = true;
+				}
 			}
+				
 		}
 	}
 	

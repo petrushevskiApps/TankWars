@@ -8,6 +8,7 @@ TagManager:
   - Tank
   - AmmoPack
   - HealthPack
+  - HidingSpot
   layers:
   - Default
   - TransparentFX

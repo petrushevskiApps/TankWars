@@ -134,11 +134,11 @@ namespace GOAP
 					// apply the action's effects to the parent state
 					Dictionary<string, bool> currentState = UpdatedState(parent.state, action.Effects);
 
-					Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
+					Node node = new Node(parent, parent.runningCost + action.GetCost(), currentState, action);
 
 					// If the current state has the conditions for achieving
 					// agents goal, we have found one possible plan.
-					if (CheckGoal(goal, currentState))
+					if (InState(goal, currentState))
 					{
 						leaves.Add(node);
 						foundOne = true;
@@ -205,6 +205,7 @@ namespace GOAP
 			}
 			return true;
 		}
+
 		private bool CheckGoal(Dictionary<string, bool> goals, Dictionary<string, bool> state)
 		{
 			foreach (KeyValuePair<string, bool> goal in goals)

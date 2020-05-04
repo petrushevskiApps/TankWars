@@ -19,10 +19,8 @@ public class Patrol : GoapAction
 		name = "Patrol";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
-		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
-		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
-		AddEffect(StateKeys.ENEMY_DETECTED, true);
+		AddEffect(StateKeys.PATROL, true);
 	}
 	private void Start() 
 	{
@@ -55,8 +53,24 @@ public class Patrol : GoapAction
 			agentNavigation.AbortMoving();
 			completed = true;
 		}
+		else if (!agentMemory.IsHealthAvailable())
+		{
+			if(agentMemory.HealthPacks.IsAnyValidDetected() || agentMemory.HidingSpots.IsAnyValidDetected())
+			{
+				agentNavigation.AbortMoving();
+				completed = true;
+			}
+		}
+		else if (!agentMemory.IsAmmoAvailable())
+		{
+			if (agentMemory.AmmoPacks.IsAnyValidDetected())
+			{
+				agentNavigation.AbortMoving();
+				completed = true;
+			}
+		}
+		
 		return true;
-
 	}
 	
 	public override void ExecuteAction(GameObject agent, Action success, Action fail)

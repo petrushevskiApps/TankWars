@@ -59,13 +59,15 @@ public sealed class GoapAgent : MonoBehaviour
 		Debug.Log("Found actions: " + actions.Length);
 	}
 
+	int goalIndex = 0;
+
 	public void IdleState()
 	{
 		// GOAP Planning State
 
 		// get the world state and the goal we want to plan for
 		Dictionary<string, bool> worldState = agentImplementation.GetWorldState();
-		Dictionary<string, bool> goal = agentImplementation.CreateGoalState();
+		Dictionary<string, bool> goal = agentImplementation.GetGoalState(goalIndex);
 
 
 		agentImplementation.ShowMessage("Planning...");
@@ -77,17 +79,25 @@ public sealed class GoapAgent : MonoBehaviour
 			// we have a plan, hooray!
 			currentActions = plan;
 			agentImplementation.PlanFound(goal, plan);
+			goalIndex = 0;
 
 			// Plan Available - Change State
 			ChangeState(FSMKeys.PERFORM_STATE);
-
 		}
 		else
 		{
 			// ugh, we couldn't get a plan
 			Debug.Log("Failed Plan: " + goal);
 			agentImplementation.PlanFailed(goal);
-
+			
+			if (goalIndex < agentImplementation.GetGoalsCount() - 1)
+			{
+				goalIndex++;
+			}
+			else
+			{
+				goalIndex = 0;
+			}
 			// Plan Not Available - Loop State
 			ChangeState(FSMKeys.IDLE_STATE);
 		}

@@ -15,15 +15,29 @@ public class VisionController : MonoBehaviour
     public PackageEvent HealthPackDetected = new PackageEvent();
     public PackageEvent HealthPackLost = new PackageEvent();
 
+    public HiddingSpot HiddingSpotDetected = new HiddingSpot();
+
     // On Trigger is called when detectable object
     // is in radius range of visibility.
     private void OnTriggerStay(Collider other)
     {
         float angle = Utilities.GetAngle(transform.parent.gameObject, other.gameObject);
 
-        if(IsInFront(angle) && IsVisible(other.gameObject))
+        if(IsInFront(angle))
         {
-            CheckDetectableType(other.gameObject);
+            if(IsVisible(other.gameObject))
+            {
+                CheckDetectableType(other.gameObject);
+            }
+            else
+            {
+                if (other.gameObject.CompareTag("HidingSpot"))
+                {
+                    Debug.DrawRay(transform.position, other.gameObject.transform.position - transform.position, Color.magenta);
+
+                    HiddingSpotDetected.Invoke(other.gameObject);
+                }
+            }
         }
     }
 
@@ -124,5 +138,8 @@ public class VisionController : MonoBehaviour
     {
 
     }
+    public class HiddingSpot : UnityEvent<GameObject>
+    {
 
+    }
 }

@@ -29,8 +29,8 @@ public interface IGoap
 	 * Give the planner a new goal so it can figure out 
 	 * the actions needed to fulfill it.
 	 */
-	Dictionary<string, bool> CreateGoalState ();
-
+	Dictionary<string, bool> GetGoalState(int index);
+	int GetGoalsCount();
 	/**
 	 * No sequence of actions could be found for the supplied goal.
 	 * You will need to try another goal

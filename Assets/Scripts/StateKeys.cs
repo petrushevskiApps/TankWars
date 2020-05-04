@@ -8,12 +8,15 @@ public class StateKeys
     public const string AMMO_COLLECT = "ammoCollect";
     public const string AMMO_SPECIAL_AMOUNT = "specialAmmoAmount";
     public const string HEALTH_DETECTED = "healthDetected";
+    public const string HIDING_SPOT_DETECTED = "hiddingSpotDetected";
+    public const string HIDING = "hiding";
+    public const string PATROL = "patrol";
 }
 
 public class GoalKeys
 {
     public const string GET_READY = "getReady";
-    public const string PATROL = "patrol";
+    
     public const string ELIMINATE_ENEMY = "eliminateEnemy";
     public const string SURVIVE = "survive";
 }

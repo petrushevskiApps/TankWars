@@ -99,11 +99,15 @@ public class Tank : MonoBehaviour, IGoap
 		return agentMemory.GetWorldState();
 	}
 
-	public Dictionary<string, bool> CreateGoalState()
+	public Dictionary<string, bool> GetGoalState(int index)
 	{
-		return agentMemory.GetGoalState();
+		return agentMemory.GetGoals()[index];
 	}
 
+	public int GetGoalsCount()
+	{
+		return agentMemory.GetGoals().Count;
+	}
 
 	public void PlanFailed (Dictionary<string, bool> failedGoal)
 	{
@@ -129,4 +133,6 @@ public class Tank : MonoBehaviour, IGoap
 	{
 		communicationSystem.UpdateMessage(text);
 	}
+
+	
 }

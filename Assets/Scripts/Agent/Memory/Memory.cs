@@ -11,6 +11,8 @@ public class Memory
     [SerializeField] private int agentRank = 1;
 
     public int ammoAmount = 10;
+    public int maxAmmoCapacity = 10;
+
     public int specialAmmo = 1;
     public float healthAmount = 100;
 
@@ -19,16 +21,19 @@ public class Memory
     public AmmoPacks AmmoPacks { get; private set; }
     public HealthPacks HealthPacks { get; private set; }
 
+    public HidingSpots HidingSpots { get; private set; }
 
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
-    private Dictionary<string, bool> agentGoals = new Dictionary<string, bool>();
+    private Dictionary<string, bool> agentGoal = new Dictionary<string, bool>();
 
+    List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
 
     public void Initialize(GameObject parent)
     {
         Enemies = new Enemies(parent);
         AmmoPacks = new AmmoPacks(parent);
         HealthPacks = new HealthPacks(parent);
+        HidingSpots = new HidingSpots(parent);
 
         SetStates();
         SetGoals();
@@ -38,17 +43,31 @@ public class Memory
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.HEALTH_AMOUNT, () => healthAmount > 30);
+        worldState.Add(StateKeys.HEALTH_AMOUNT, IsHealthAvailable);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
         worldState.Add(StateKeys.AMMO_SPECIAL_AMOUNT, () => specialAmmo > 0);
+
+        worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
     }
 
     private void SetGoals()
     {
-        agentGoals.Add(GoalKeys.ELIMINATE_ENEMY, true);
+        // Survive
+        goals.Add(new Dictionary<string, bool>() 
+        {
+            { StateKeys.ENEMY_DETECTED, false },
+            { StateKeys.AMMO_AMOUNT, true },
+            { StateKeys.HEALTH_AMOUNT, true }, 
+        });
+
+        goals.Add(new Dictionary<string, bool>()
+        {
+            { StateKeys.PATROL, true },
+        });
+        
     }
 
     public void AddEvents(VisionController visionSensor)
@@ -59,10 +78,9 @@ public class Memory
         visionSensor.AmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
         visionSensor.HealthPackDetected.AddListener(HealthPacks.AddDetected);
         visionSensor.HealthPackLost.AddListener(HealthPacks.RemoveDetected);
+        visionSensor.HiddingSpotDetected.AddListener(HidingSpots.AddDetected);
 
     }
-
-
 
     public void RemoveEvents(VisionController visionSensor)
     {
@@ -72,6 +90,7 @@ public class Memory
         visionSensor.AmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
         visionSensor.HealthPackDetected.RemoveListener(HealthPacks.AddDetected);
         visionSensor.HealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
+        visionSensor.HiddingSpotDetected.RemoveListener(HidingSpots.AddDetected);
     }
 
     public Dictionary<string, bool> GetWorldState()
@@ -85,9 +104,9 @@ public class Memory
 
         return agentState;
     }
-    public Dictionary<string, bool> GetGoalState()
+    public List<Dictionary<string, bool>> GetGoals()
     {
-        return agentGoals;
+        return goals;
     }
 
     public int GetTeamID()
@@ -99,9 +118,9 @@ public class Memory
     {
         return ammoAmount > 0;
     }
-    public void IncreaseAmmo()
+    public void AddAmmo(int ammo)
     {
-        ammoAmount += 10;
+        ammoAmount = Mathf.Clamp(ammoAmount + ammo, 0, maxAmmoCapacity);
     }
     public void DecreaseAmmo()
     {
@@ -111,5 +130,10 @@ public class Memory
     public void AddHealth(float health)
     {
         healthAmount = Mathf.Clamp(healthAmount + health, 0, 100);
+    }
+
+    public bool IsHealthAvailable()
+    {
+        return healthAmount > 70;
     }
 }
