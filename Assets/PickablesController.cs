@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PickablesController : MonoBehaviour
 {
@@ -11,14 +12,32 @@ public class PickablesController : MonoBehaviour
     [SerializeField] private int hpMapLimit = 3;
     [SerializeField] private int ammoMapLimit = 3;
 
+    
     [SerializeField]  private List<GameObject> healthPacks;
     [SerializeField]  private List<GameObject> ammoPacks;
 
-    private void Start()
+    [SerializeField] private List<GameObject> hidingSpots;
+
+    private float minProximity = 20f;
+
+    private NavMeshAgent navMeshTest;
+    private NavMeshPath path;
+    private List<List<GameObject>> proximityCheckList = new List<List<GameObject>>();
+
+    private void Awake()
     {
+        navMeshTest = GetComponent<NavMeshAgent>();
+        path = new NavMeshPath();
+
         healthPacks = new List<GameObject>();
         ammoPacks = new List<GameObject>();
 
+        proximityCheckList.Add(healthPacks);
+        proximityCheckList.Add(ammoPacks);
+        proximityCheckList.Add(hidingSpots);
+    }
+    private void Start()
+    {
         InstantiatePickables(healthPackPrefab, hpMapLimit, healthPacks);
         InstantiatePickables(ammoPackPrefab, ammoMapLimit, ammoPacks);
     }
@@ -27,18 +46,54 @@ public class PickablesController : MonoBehaviour
     {
         for(int i=0; i < limit; i++)
         {
-            Vector3 location = CornerCalculator.Instance.GetRandomInWorldCoordinates();
-            location.y += 1f;
-            GameObject pickable = Instantiate(prefab, location, Quaternion.identity, transform);
-            list.Add(pickable);
+            CreatePickable(prefab, list);
         }
     }
+    private void CreatePickable(GameObject prefab, List<GameObject> list)
+    {
+        Vector3 location = GetLocation();
+        
+        GameObject pickable = Instantiate(prefab, location, Quaternion.identity, transform);
+        list.Add(pickable);
+    }
 
-    //private void Update()
-    //{
-    //    if(healthPacks.Count < hpMapLimit)
-    //    {
-    //        StartCoroutine()
-    //    }
-    //}
+    // Check is the random location to close
+    // to other pickables or hiding spots
+    private bool CheckProximity(Vector3 location)
+    {
+        foreach(List<GameObject> list in proximityCheckList)
+        {
+            foreach (GameObject element in list)
+            {
+                if (Vector3.Distance(location, element.transform.position) <= minProximity)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    // Check if the location of the pickable
+    // can be reached by the agents
+    private Vector3 GetLocation()
+    {
+        Vector3 location = CornerCalculator.Instance.GetRandomInWorldCoordinates();
+        location.y += 1f;
+
+        if(!CheckProximity(location))
+        {
+            return GetLocation();
+        }
+
+        path = new NavMeshPath();
+        navMeshTest.CalculatePath(location, path);
+
+        if(path.status == NavMeshPathStatus.PathComplete)
+        {
+            return location;
+        }
+
+        return GetLocation();
+    }
 }
