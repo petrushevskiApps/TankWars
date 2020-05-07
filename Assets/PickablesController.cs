@@ -11,8 +11,11 @@ public class PickablesController : MonoBehaviour
 
     [SerializeField] private int hpMapLimit = 3;
     [SerializeField] private int ammoMapLimit = 3;
-
     
+    // Relocation timer range in seconds
+    [SerializeField] private int minRelactionTime = 60;
+    [SerializeField] private int maxRelactionTime = 60 * 10;
+
     [SerializeField]  private List<GameObject> healthPacks;
     [SerializeField]  private List<GameObject> ammoPacks;
 
@@ -22,6 +25,7 @@ public class PickablesController : MonoBehaviour
 
     private NavMeshAgent navMeshTest;
     private NavMeshPath path;
+
     private List<List<GameObject>> proximityCheckList = new List<List<GameObject>>();
 
     private void Awake()
@@ -54,26 +58,23 @@ public class PickablesController : MonoBehaviour
         Vector3 location = GetLocation();
         
         GameObject pickable = Instantiate(prefab, location, Quaternion.identity, transform);
+        pickable.GetComponentInChildren<Pickable>().OnCollected.AddListener(ReActivatePickable);
         list.Add(pickable);
     }
 
-    // Check is the random location to close
-    // to other pickables or hiding spots
-    private bool CheckProximity(Vector3 location)
+    private void ReActivatePickable(GameObject pickable)
     {
-        foreach(List<GameObject> list in proximityCheckList)
-        {
-            foreach (GameObject element in list)
-            {
-                if (Vector3.Distance(location, element.transform.position) <= minProximity)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        StartCoroutine(ReactivationTimer(pickable));
     }
+    IEnumerator ReactivationTimer(GameObject pickable)
+    {
+        float realocationSeconds = UnityEngine.Random.Range(minRelactionTime, maxRelactionTime);
+        yield return new WaitForSecondsRealtime(realocationSeconds);
+        pickable.transform.position = GetLocation();
+        pickable.SetActive(true);
+
+    }
+
     // Check if the location of the pickable
     // can be reached by the agents
     private Vector3 GetLocation()
@@ -95,5 +96,23 @@ public class PickablesController : MonoBehaviour
         }
 
         return GetLocation();
+    }
+
+    // Check is the random location to close
+    // to other pickables or hiding spots
+    private bool CheckProximity(Vector3 location)
+    {
+        foreach (List<GameObject> list in proximityCheckList)
+        {
+            foreach (GameObject element in list)
+            {
+                if (Vector3.Distance(location, element.transform.position) <= minProximity)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

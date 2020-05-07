@@ -65,6 +65,16 @@ public class Memory
 
         goals.Add(new Dictionary<string, bool>()
         {
+            { StateKeys.HEALTH_AMOUNT, true },
+        });
+
+        goals.Add(new Dictionary<string, bool>()
+        {
+            { StateKeys.AMMO_AMOUNT, true },
+        });
+
+        goals.Add(new Dictionary<string, bool>()
+        {
             { StateKeys.PATROL, true },
         });
         

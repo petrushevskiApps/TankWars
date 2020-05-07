@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.Events;
 
 public class Pickable : MonoBehaviour
 {
+    public OnCollectedEvent OnCollected = new OnCollectedEvent();
+
     private float timeIn = 0;
     private float timeToCollect = 2f;
 
@@ -11,7 +16,7 @@ public class Pickable : MonoBehaviour
         {
             if (timeIn >= timeToCollect)
             {
-                Destroy(transform.parent.gameObject);
+                Collected();
             }
             else
             {
@@ -19,5 +24,17 @@ public class Pickable : MonoBehaviour
             }
         }
     }
- 
+
+    private void Collected()
+    {
+        OnCollected.Invoke(transform.parent.gameObject);
+        transform.parent.gameObject.SetActive(false);
+    }
+
+    
+
+    public class OnCollectedEvent : UnityEvent<GameObject>
+    {
+
+    }
 }

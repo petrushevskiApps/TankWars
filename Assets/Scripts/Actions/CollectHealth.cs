@@ -114,7 +114,7 @@ public class CollectHealth : GoapAction
 			{
 				if (!healthCollected)
 				{
-					agentMemory.AddHealth(50);
+					agentMemory.AddHealth(100);
 					agentMemory.HealthPacks.RemoveDetected(target);
 					healthCollected = true;
 				}
