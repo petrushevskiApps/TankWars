@@ -7,18 +7,13 @@ using UnityEngine;
 [Serializable]
 public class Memory
 {
-    [SerializeField] private int teamID = 0;
-    [SerializeField] private int agentRank = 1;
-
-    public int ammoAmount = 10;
-    public int maxAmmoCapacity = 10;
-
-    public int specialAmmo = 1;
-    public float healthAmount = 100;
+    
+    public float shootingRange = 10;
 
     public Enemies Enemies { get; private set; }
 
     public AmmoPacks AmmoPacks { get; private set; }
+    
     public HealthPacks HealthPacks { get; private set; }
 
     public HidingSpots HidingSpots { get; private set; }
@@ -26,14 +21,18 @@ public class Memory
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
     private Dictionary<string, bool> agentGoal = new Dictionary<string, bool>();
 
-    List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
+    private List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
 
-    public void Initialize(GameObject parent)
+    private Tank parent;
+
+    public void Initialize(Tank parent)
     {
-        Enemies = new Enemies(parent);
-        AmmoPacks = new AmmoPacks(parent);
-        HealthPacks = new HealthPacks(parent);
-        HidingSpots = new HidingSpots(parent);
+        this.parent = parent;
+
+        Enemies = new Enemies(parent.gameObject);
+        AmmoPacks = new AmmoPacks(parent.gameObject);
+        HealthPacks = new HealthPacks(parent.gameObject);
+        HidingSpots = new HidingSpots(parent.gameObject);
 
         SetStates();
         SetGoals();
@@ -42,13 +41,13 @@ public class Memory
     private void SetStates()
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
+        worldState.Add(StateKeys.IN_SHOOTING_RANGE, () => Enemies.InShootingRange(shootingRange));
 
-        worldState.Add(StateKeys.HEALTH_AMOUNT, IsHealthAvailable);
+        worldState.Add(StateKeys.HEALTH_AMOUNT, parent.GetInventory().IsHealthAvailable);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
+        worldState.Add(StateKeys.AMMO_AMOUNT, parent.GetInventory().IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
-        worldState.Add(StateKeys.AMMO_SPECIAL_AMOUNT, () => specialAmmo > 0);
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
     }
@@ -119,31 +118,7 @@ public class Memory
         return goals;
     }
 
-    public int GetTeamID()
-    {
-        return teamID;
-    }
-
-    public bool IsAmmoAvailable()
-    {
-        return ammoAmount > 0;
-    }
-    public void AddAmmo(int ammo)
-    {
-        ammoAmount = Mathf.Clamp(ammoAmount + ammo, 0, maxAmmoCapacity);
-    }
-    public void DecreaseAmmo()
-    {
-        ammoAmount--;
-    }
     
-    public void AddHealth(float health)
-    {
-        healthAmount = Mathf.Clamp(healthAmount + health, 0, 100);
-    }
 
-    public bool IsHealthAvailable()
-    {
-        return healthAmount > 70;
-    }
+    
 }

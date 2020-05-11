@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CanvasController : MonoBehaviour
+public class TankRenderController : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

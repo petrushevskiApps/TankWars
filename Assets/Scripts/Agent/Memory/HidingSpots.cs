@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class HidingSpots : Detected
 {
-    public HidingSpots(GameObject agent)
+    public HidingSpots(GameObject parent)
     {
-        this.agent = agent;
+        this.parent = parent;
     }
 }

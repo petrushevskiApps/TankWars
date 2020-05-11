@@ -6,7 +6,6 @@ using UnityEngine.AI;
 
 public class Hide : GoapAction 
 {
-
 	private IGoap agent;
 	private Memory agentMemory;
 	private NavigationSystem agentNavigation;
@@ -75,14 +74,14 @@ public class Hide : GoapAction
 
 	IEnumerator Regenerate(Action succes, Action fail)
 	{
-		while(agentMemory.healthAmount < 100)
+		while(agent.GetInventory().GetHealth() < 100)
 		{
-			agentMemory.AddHealth(10);
+			agent.GetInventory().IncreaseHealth(10);
 			yield return new WaitForSeconds(1f);
 		}
-		while(agentMemory.ammoAmount < agentMemory.maxAmmoCapacity)
+		while(agent.GetInventory().ammoAmount < agent.GetInventory().ammoCapacity)
 		{
-			agentMemory.AddAmmo(2);
+			agent.GetInventory().AddAmmo(2);
 			yield return new WaitForSeconds(1f);
 		}
 		completed = true;

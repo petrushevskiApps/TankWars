@@ -9,6 +9,6 @@ public class AmmoPacks : Detected
 {
     public AmmoPacks(GameObject agent)
     {
-        this.agent = agent;
+        this.parent = agent;
     }
 }

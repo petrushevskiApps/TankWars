@@ -31,6 +31,7 @@ public class EliminateEnemy : GoapAction
 		name = "EliminateEnemy";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
+		AddPrecondition(StateKeys.IN_SHOOTING_RANGE, true);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
@@ -61,12 +62,12 @@ public class EliminateEnemy : GoapAction
 		{
 			target = agentMemory.Enemies.GetDetected();
 			agentNavigation.SetTarget(target);
-		}
+		} 
 	}
 
-	public override bool CheckPreconditions(GameObject agent)
+	public override bool CheckPreconditions(GameObject agentGO)
 	{
-		return agentMemory.Enemies.IsAnyValidDetected() && agentMemory.IsAmmoAvailable();
+		return agentMemory.Enemies.IsAnyValidDetected() && agent.GetInventory().IsAmmoAvailable();
 	}
 
 
@@ -126,7 +127,7 @@ public class EliminateEnemy : GoapAction
 		shootingAudioSource.clip = fireAudioClip;
 		shootingAudioSource.Play();
 
-		agentMemory.DecreaseAmmo();
+		agent.GetInventory().DecreaseAmmo();
 
 	}
 

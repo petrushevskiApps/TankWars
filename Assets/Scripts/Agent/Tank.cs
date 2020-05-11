@@ -10,11 +10,16 @@ public class Tank : MonoBehaviour, IGoap
 {
 	[SerializeField] private UIHealthBar healthBar;
 	[SerializeField] private GameObject deathParticles;
+	[SerializeField] private int teamID = 0;
 
 	GameObject particles;
 	public bool isDead;
 
-	public Memory agentMemory = new Memory();
+	
+	public Memory memory = new Memory();
+
+	[SerializeField] private Inventory inventory = new Inventory();
+
 	public NavigationSystem Navigation { get; private set; }
 
 	public CommunicationSystem communicationSystem = new CommunicationSystem();
@@ -26,34 +31,38 @@ public class Tank : MonoBehaviour, IGoap
 	{
 		Navigation = new NavigationSystem(gameObject);
 
-		agentMemory.Initialize(gameObject);
+		memory.Initialize(this);
 
-		agentMemory.AddEvents(visionSensor);
+		memory.AddEvents(visionSensor);
 
 		SetParticles();
-		SetHealth();
+		SetHealthBar();
 	}
+
+	private void OnDestroy()
+	{
+		memory.RemoveEvents(visionSensor);
+	}
+
 	private void SetParticles()
 	{
 		particles = Instantiate(deathParticles);
-
 		particles.SetActive(false);
 	}
-	private void SetHealth()
+
+	private void SetHealthBar()
 	{
-		healthBar.Initialize(agentMemory.healthAmount);
+		healthBar.Initialize(inventory.GetHealth(), inventory.OnHealthChange);
 	}
 
 	public void TakeDamage(float amount)
 	{
 		// Reduce current health by the amount of damage done.
-		agentMemory.healthAmount -= amount;
-
-		// Change the UI elements appropriately.
-		healthBar.SetHealth(agentMemory.healthAmount);
+		
+		inventory.DecreaseHealth(amount);
 
 		// If the current health is at or below zero and it has not yet been registered, call OnDeath.
-		if (!isDead && agentMemory.healthAmount <= 0f)
+		if (!isDead && inventory.GetHealth() <= 0f)
 		{
 			OnDeath();
 		}
@@ -73,10 +82,7 @@ public class Tank : MonoBehaviour, IGoap
 	}
 
 
-	private void OnDestroy()
-	{
-		agentMemory.RemoveEvents(visionSensor);
-	}
+	
 	
 	public void MoveAgent(GoapAction nextAction)
 	{
@@ -85,28 +91,31 @@ public class Tank : MonoBehaviour, IGoap
 
 	public Memory GetMemory()
 	{
-		return agentMemory;
+		return memory;
 	}
 
 	public NavigationSystem GetNavigation()
 	{
 		return Navigation;
 	}
-
+	public Inventory GetInventory()
+	{
+		return inventory;
+	}
 
 	public Dictionary<string, bool> GetWorldState()
 	{
-		return agentMemory.GetWorldState();
+		return memory.GetWorldState();
 	}
 
 	public Dictionary<string, bool> GetGoalState(int index)
 	{
-		return agentMemory.GetGoals()[index];
+		return memory.GetGoals()[index];
 	}
 
 	public int GetGoalsCount()
 	{
-		return agentMemory.GetGoals().Count;
+		return memory.GetGoals().Count;
 	}
 
 	public void PlanFailed (Dictionary<string, bool> failedGoal)
@@ -134,5 +143,8 @@ public class Tank : MonoBehaviour, IGoap
 		communicationSystem.UpdateMessage(text);
 	}
 
-	
+	public int GetTeamID()
+	{
+		return teamID;
+	}
 }

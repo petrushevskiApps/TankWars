@@ -66,6 +66,8 @@ public interface IGoap
 
 	NavigationSystem GetNavigation();
 
+	Inventory GetInventory();
+
 	void ShowMessage(string text);
 }
 

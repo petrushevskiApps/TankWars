@@ -11,7 +11,16 @@ public class Enemies : Detected
 
     public Enemies(GameObject agent)
     {
-        this.agent = agent;
+        this.parent = agent;
     }
 
+    public bool InShootingRange(float range)
+    {
+        if(IsAnyValidDetected())
+        {
+            GameObject enemy = GetDetected();
+            return Vector3.Distance(parent.transform.position, enemy.transform.position) >= range;
+        }
+        return false;
+    }
 }

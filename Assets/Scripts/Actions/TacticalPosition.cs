@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Patrol : GoapAction 
+public class TacticalPosition : GoapAction 
 {
 
 	private bool completed = false;
@@ -14,13 +14,16 @@ public class Patrol : GoapAction
 	private Memory agentMemory;
 	private NavigationSystem agentNavigation;
 
-	public Patrol() 
+	public TacticalPosition() 
 	{
-		name = "Patrol";
+		name = "TacticalPosition";
 
-		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
+		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
+		AddPrecondition(StateKeys.IN_SHOOTING_RANGE, false);
+		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
-		AddEffect(StateKeys.PATROL, true);
+		AddEffect(StateKeys.IN_SHOOTING_RANGE, true);
 	}
 	private void Start() 
 	{
@@ -41,35 +44,14 @@ public class Patrol : GoapAction
 
 	public override void SetActionTarget()
 	{
-		agentNavigation.SetTarget();
+
+		agentNavigation.SetTarget(CalculateTacticalPosition());
 		target = agentNavigation.GetTarget();
 	}
 
 
-	public override bool CheckPreconditions (GameObject agentGO)
+	public override bool CheckPreconditions (GameObject agent)
 	{	
-		if(agentMemory.Enemies.IsAnyValidDetected())
-		{
-			agentNavigation.AbortMoving();
-			completed = true;
-		}
-		else if (!agent.GetInventory().IsHealthAvailable())
-		{
-			if(agentMemory.HealthPacks.IsAnyValidDetected() || agentMemory.HidingSpots.IsAnyValidDetected())
-			{
-				agentNavigation.AbortMoving();
-				completed = true;
-			}
-		}
-		else if (!agent.GetInventory().IsAmmoAvailable())
-		{
-			if (agentMemory.AmmoPacks.IsAnyValidDetected())
-			{
-				agentNavigation.AbortMoving();
-				completed = true;
-			}
-		}
-		
 		return true;
 	}
 	
@@ -85,6 +67,9 @@ public class Patrol : GoapAction
 		exitAction?.Invoke();
 	}
 
-	
+	private Vector3 CalculateTacticalPosition()
+	{
+		return gameObject.transform.position + (gameObject.transform.right * 5);
+	}
 
 }

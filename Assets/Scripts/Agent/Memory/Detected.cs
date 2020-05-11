@@ -7,7 +7,7 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Detected
 {
-    protected GameObject agent;
+    protected GameObject parent;
 
     [SerializeField] public List<Detectable> detectedList = new List<Detectable>();
 
@@ -19,17 +19,17 @@ public abstract class Detected
             return false;
         }
 
-        foreach(Detectable detected in detectedList)
+        foreach(Detectable detectable in detectedList)
         {
-            if (detected.status)
+            if (detectable.status)
             {
-                if(detected.detected != null)
+                if(detectable.detected != null)
                 {
                     count++;
                 }
                 else
                 {
-                    detectedList.Remove(detected);
+                    detectedList.Remove(detectable);
                     return IsAnyValidDetected();
                 }
             }
@@ -40,7 +40,7 @@ public abstract class Detected
 
     public void InvalidateDetected(GameObject ammoPack)
     {
-        Detectable detectable = new Detectable(ammoPack, true, agent);
+        Detectable detectable = new Detectable(ammoPack, true, parent);
 
         if(detectedList.Contains(detectable))
         {
@@ -51,7 +51,7 @@ public abstract class Detected
 
     public void AddDetected(GameObject detected)
     {
-        Detectable detectable = new Detectable(detected, true, agent);
+        Detectable detectable = new Detectable(detected, true, parent);
 
         if(!detectedList.Contains(detectable))
         {
@@ -63,7 +63,7 @@ public abstract class Detected
 
     public void RemoveDetected(GameObject detected) 
     {
-        Detectable detectable = new Detectable(detected, true, agent);
+        Detectable detectable = new Detectable(detected, true, parent);
 
         if (detectedList.Contains(detectable))
         {

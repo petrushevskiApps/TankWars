@@ -6,7 +6,7 @@ using System;
 [System.Serializable]
 public abstract class GoapAction : MonoBehaviour 
 {
-	public new string name = "No Name";
+	protected new string name = "No Name";
 
 	private bool inRange = false;
 
@@ -25,7 +25,7 @@ public abstract class GoapAction : MonoBehaviour
 
 	/**
 	 * An action often has to perform on an object. This is that object. Can be null. */
-	public GameObject target;
+	protected GameObject target;
 
 	public GoapAction() 
 	{

@@ -115,7 +115,7 @@ public class CollectAmmo : GoapAction
 			{
 				if (!ammoCollected)
 				{
-					agentMemory.AddAmmo(10);
+					agent.GetInventory().AddAmmo(10);
 					agentMemory.AmmoPacks.RemoveDetected(target);
 					ammoCollected = true;
 				}

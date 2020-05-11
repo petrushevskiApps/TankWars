@@ -9,10 +9,8 @@ using UnityEngine;
 [System.Serializable]
 public class CommunicationSystem
 {
-    [SerializeField] private TextMeshProUGUI message;
-
-    public void UpdateMessage(string text)
+    internal void UpdateMessage(string text)
     {
-        message.text = text;
+        
     }
 }

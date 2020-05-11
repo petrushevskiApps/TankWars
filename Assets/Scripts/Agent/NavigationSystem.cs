@@ -80,8 +80,9 @@ public class NavigationSystem
 		if (path != null && path.status == NavMeshPathStatus.PathComplete)
 		{
 			navMeshAgent.SetPath(path);
+			bool inRange = navMeshAgent.remainingDistance <= action.maxRequiredRange;
 
-			if(navMeshAgent.remainingDistance <= action.maxRequiredRange || abortMovement)
+			if (inRange || abortMovement)
 			{
 				action.SetInRange(true);
 			}
@@ -133,12 +134,27 @@ public class NavigationSystem
 		
 		return target;
 	}
-	
+	public GameObject SetTarget(Vector3 targetLocation)
+	{
+		if (target == null)
+		{
+			target = CreateTarget(targetLocation);
+		}
+		return target;
+	}
 
 	// Create new target object
 	private GameObject CreateTarget()
 	{
 		targetLocation.transform.position = CornerCalculator.Instance.GetRandomInWorldCoordinates();
+		targetLocation.transform.rotation = Quaternion.identity;
+		targetLocation.SetActive(true);
+
+		return targetLocation;
+	}
+	private GameObject CreateTarget(Vector3 targetPosition)
+	{
+		targetLocation.transform.position = targetPosition;
 		targetLocation.transform.rotation = Quaternion.identity;
 		targetLocation.SetActive(true);
 

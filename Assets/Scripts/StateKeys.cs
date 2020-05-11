@@ -2,6 +2,7 @@
 public class StateKeys
 {
     public const string ENEMY_DETECTED = "enemyDetected";
+    public const string IN_SHOOTING_RANGE = "inShootingRange";
     public const string HEALTH_AMOUNT = "healthCount";
     public const string AMMO_AMOUNT = "ammoAvailable";
     public const string AMMO_DETECTED = "ammoDetected";

@@ -114,7 +114,7 @@ public class CollectHealth : GoapAction
 			{
 				if (!healthCollected)
 				{
-					agentMemory.AddHealth(100);
+					agent.GetInventory().IncreaseHealth(100);
 					agentMemory.HealthPacks.RemoveDetected(target);
 					healthCollected = true;
 				}
@@ -125,15 +125,15 @@ public class CollectHealth : GoapAction
 	
 	public override float GetCost()
 	{
-		if(agentMemory.healthAmount < 30)
+		if(agent.GetInventory().GetHealth() < 30)
 		{
 			cost = 1f;
 		}
-		else if(agentMemory.healthAmount < 50)
+		else if(agent.GetInventory().GetHealth() < 50)
 		{
 			cost = 3f;
 		}
-		else if(agentMemory.healthAmount < 70)
+		else if(agent.GetInventory().GetHealth() < 70)
 		{
 			cost = 6f;
 		}

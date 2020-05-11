@@ -9,6 +9,6 @@ public class HealthPacks : Detected
 {
     public HealthPacks(GameObject agent)
     {
-        this.agent = agent;
+        this.parent = agent;
     }
 }

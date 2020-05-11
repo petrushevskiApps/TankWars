@@ -120,8 +120,8 @@ public class VisionController : MonoBehaviour
     }
     private bool IsEnemy(Tank targetTank)
     {
-        int targetID = targetTank.agentMemory.GetTeamID();
-        int ID = transform.parent.GetComponent<Tank>().agentMemory.GetTeamID();
+        int targetID = targetTank.GetTeamID();
+        int ID = transform.parent.GetComponent<Tank>().GetTeamID();
         return ID != targetID;
     }
     

@@ -1,34 +1,36 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class UIHealthBar : MonoBehaviour
 {
-    public Slider slider;                              // The slider to represent how much health the tank currently has.
-    public Image fillImage;                           // The image component of the slider.
-    public Color fullHealthColor = Color.green;       // The color the health bar will be when on full health.
-    public Color zeroHealthColor = Color.red;         // The color the health bar will be when on no health.
+    [SerializeField] private Slider slider;                              // The slider to represent how much health the tank currently has.
+    [SerializeField] private Image fillImage;                           // The image component of the slider.
+
+    [SerializeField] private Color fullHealthColor = Color.green;       // The color the health bar will be when on full health.
+    [SerializeField] private Color zeroHealthColor = Color.red;         // The color the health bar will be when on no health.
 
     private float startingHealth = 0;
     private float currentHealth = 0;
 
-    public void Initialize(float startingHealth)
+    public void Initialize(float startingHealth, UnityEvent<float> OnHealthChange)
     {
-        this.startingHealth = startingHealth;
-        currentHealth = startingHealth;
+        OnHealthChange.AddListener(UpdateHealth);
 
-        UpdateHealth();
+        this.startingHealth = startingHealth;
+
+        UpdateHealth(startingHealth);
 
     }
-    public void SetHealth(float health)
+
+    private void UpdateHealth(float health)
     {
         currentHealth = health;
-        UpdateHealth();
-    }
 
-    private void UpdateHealth()
-    {
         // Set the slider's value appropriately.
         slider.value = currentHealth;
 
