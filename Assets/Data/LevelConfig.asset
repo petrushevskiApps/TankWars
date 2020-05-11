@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739fe9335e28ac64999dd15151dd15de, type: 3}
   m_Name: LevelConfig
   m_EditorClassIdentifier: 
-  teams:
+  mode: 0
+  teamsConfig:
   - teamID: 0
-    npcCount: 3
+    npcCount: 1
     playerCount: 0
   - teamID: 1
-    npcCount: 3
+    npcCount: 1
     playerCount: 0
-  mode: 0

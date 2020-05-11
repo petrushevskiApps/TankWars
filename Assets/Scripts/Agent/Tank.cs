@@ -10,7 +10,10 @@ public class Tank : MonoBehaviour, IGoap
 {
 	[SerializeField] private UIHealthBar healthBar;
 	[SerializeField] private GameObject deathParticles;
+	[SerializeField] private RenderController renderController;
+
 	[SerializeField] private int teamID = 0;
+	private string name = "tankName";
 
 	GameObject particles;
 	public bool isDead;
@@ -50,7 +53,16 @@ public class Tank : MonoBehaviour, IGoap
 		particles.SetActive(false);
 	}
 
-	private void SetHealthBar()
+    public void Initialize(int teamID, string name, Material teamColor)
+    {
+		this.teamID = teamID;
+		this.name = name;
+		gameObject.name = name;
+		renderController.SetTeamColor(teamColor);
+		
+    }
+
+    private void SetHealthBar()
 	{
 		healthBar.Initialize(inventory.GetHealth(), inventory.OnHealthChange);
 	}

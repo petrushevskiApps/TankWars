@@ -7,8 +7,37 @@ public class NPCNames : ScriptableObject
 {
     [SerializeField] List<string> npcNames = new List<string>();
 
+    private static List<string> availableNames;
+
+    public void Setup()
+    {
+        availableNames = new List<string>();
+
+        if (availableNames.Count <= 0)
+        {
+            foreach (string npcName in npcNames)
+            {
+                availableNames.Add(npcName);
+            }
+        }
+    }
+
     public string GetRandomName()
     {
-        return npcNames[Random.Range(0, npcNames.Count)];
+        if(availableNames == null)
+        {
+            Setup();
+        }
+
+        if(availableNames.Count > 0)
+        {
+            int index = Random.Range(0, availableNames.Count);
+            string npcName = npcNames[index];
+            availableNames.RemoveAt(index);
+            return npcName;
+
+        }
+
+        return "NoNameAvailable";
     }
 }

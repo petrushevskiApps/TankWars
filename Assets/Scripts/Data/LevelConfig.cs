@@ -7,7 +7,7 @@ public class LevelConfig : ScriptableObject
 {
     [SerializeField] LevelModes mode = LevelModes.Simulation;
     
-    [SerializeField] List<Team> teams = new List<Team>();
+    public List<Team> teamsConfig = new List<Team>();
 
 
     public LevelModes GetLevelMode()

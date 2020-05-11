@@ -8,20 +8,20 @@ public class SpawnLocationsController : MonoBehaviour
 
     private List<Transform> availableLocations = new List<Transform>();
 
-    private void Awake()
-    {
-        foreach(Transform location in spawnLocations)
-        {
-            availableLocations.Add(location);
-        }
-    }
-
     public Transform GetSpawnLocation()
     {
-        if(availableLocations.Count > 0)
+        if(availableLocations.Count <= 0)
+        {
+            foreach (Transform location in spawnLocations)
+            {
+                availableLocations.Add(location);
+            }
+        }
+
+        if (availableLocations.Count > 0)
         {
             Transform location = availableLocations[Random.Range(0, availableLocations.Count)];
-            availableLocations.Remove(location);
+            availableLocations.RemoveAt(availableLocations.IndexOf(location));
             return location;
         }
 
