@@ -70,7 +70,19 @@ namespace GOAP
 			}
 			//Debug.Log(setName + " Count: " + set.Count + " List:" + sb.ToString());
 		}
+		public static string GetCollectionString<T>(ICollection<T> set)
+		{
+			set.Reverse<T>();
 
-
+			StringBuilder sb = new StringBuilder();
+			
+			foreach (T element in set)
+			{
+				sb.Append(element.GetType().ToString());
+				sb.Append("->");
+			}
+			return sb.ToString();
+		}
+		
 	}
 }

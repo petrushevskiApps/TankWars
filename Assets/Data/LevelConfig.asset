@@ -17,6 +17,3 @@ MonoBehaviour:
   - teamID: 0
     npcCount: 1
     playerCount: 0
-  - teamID: 1
-    npcCount: 1
-    playerCount: 0

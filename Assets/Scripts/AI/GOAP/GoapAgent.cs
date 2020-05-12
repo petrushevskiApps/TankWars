@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using GOAP;
+using System.Linq;
 
 public sealed class GoapAgent : MonoBehaviour 
 {
@@ -19,6 +20,11 @@ public sealed class GoapAgent : MonoBehaviour
 
 	private GoapAction currentAction;
 	
+	int goalIndex = 0;
+
+	public AgentState State { get; private set; }
+	public String currentPlan = "No Plan";
+
 	void Start () 
 	{
 		availableActions = new HashSet<GoapAction> ();
@@ -59,10 +65,11 @@ public sealed class GoapAgent : MonoBehaviour
 		Debug.Log("Found actions: " + actions.Length);
 	}
 
-	int goalIndex = 0;
+	
 
 	public void IdleState()
 	{
+		State = AgentState.Planning;
 		// GOAP Planning State
 
 		// get the world state and the goal we want to plan for
@@ -73,9 +80,11 @@ public sealed class GoapAgent : MonoBehaviour
 		agentImplementation.ShowMessage("Planning...");
 		// Plan
 		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
+		
 
 		if (plan != null)
 		{
+			currentPlan = Utilities.GetCollectionString(plan.ToList());
 			// we have a plan, hooray!
 			currentActions = plan;
 			agentImplementation.PlanFound(goal, plan);
@@ -106,6 +115,8 @@ public sealed class GoapAgent : MonoBehaviour
 	// Called from FSM
 	public void MoveToState()
 	{
+		State = AgentState.Moving;
+
 		GoapAction action = currentActions.Peek();
 
 		bool conditionsMeet = action.CheckPreconditions(gameObject);
@@ -144,6 +155,9 @@ public sealed class GoapAgent : MonoBehaviour
 
 	public void PerformActionState()
 	{
+
+		State = AgentState.ExecutingAction;
+
 		if (HasActionPlan())
 		{
 			// perform the next action
@@ -198,4 +212,17 @@ public sealed class GoapAgent : MonoBehaviour
 		FSM.SetTrigger(stateKey);
 	}
 
+	public string GetCurrentAction()
+	{
+		if(currentAction != null)
+		{
+			return currentAction.GetType().ToString();
+		}
+		return "No Action Selected";
+	}
+
+	public string GetCurrentPlanString()
+	{
+		return currentPlan;
+	}
 }

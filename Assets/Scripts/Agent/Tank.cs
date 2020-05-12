@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using System;
 using GOAP;
 
-public class Tank : MonoBehaviour, IGoap
+public class Tank : MonoBehaviour, IGoap, ICollector
 {
 	[SerializeField] private UIHealthBar healthBar;
 	[SerializeField] private GameObject deathParticles;
@@ -129,6 +129,17 @@ public class Tank : MonoBehaviour, IGoap
 	{
 		return memory.GetGoals().Count;
 	}
+
+	public void PickableCollected(AmmoPack collected)
+	{
+		inventory.AddAmmo(10);
+	}
+
+	public void PickableCollected(HealthPack collected)
+	{
+		inventory.IncreaseHealth(100);
+	}
+
 
 	public void PlanFailed (Dictionary<string, bool> failedGoal)
 	{

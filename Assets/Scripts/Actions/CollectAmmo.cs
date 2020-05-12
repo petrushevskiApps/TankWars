@@ -13,6 +13,7 @@ public class CollectAmmo : GoapAction
 
 	private bool ammoCollected = false;
 	private bool completed = false;
+	private Action actionCompleted;
 
 	public CollectAmmo() 
 	{
@@ -36,6 +37,7 @@ public class CollectAmmo : GoapAction
 		target = null;
 		ammoCollected = false;
 		completed = false;
+		actionCompleted = null;
 	}
 	
 	public override bool IsActionDone ()
@@ -76,53 +78,37 @@ public class CollectAmmo : GoapAction
 
 		return true;
 	}
+
 	
 	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {name}</color>");
-		StartCoroutine(Collect(success, fail));
+
+		if (!ammoCollected)
+		{
+			ExitAction(fail);
+		}
+		else
+		{
+			actionCompleted = success;
+		}
 	}
 	
 	protected override void ExitAction(Action exitAction)
 	{
+		completed = true;
+		agentMemory.AmmoPacks.RemoveDetected(target);
 		agentNavigation.InvalidateTarget();
 		exitAction?.Invoke();
 	}
-
-	IEnumerator Collect(Action succes, Action fail)
-	{
-		yield return new WaitForSeconds(2f);
-
-		if (ammoCollected)
-		{
-			completed = true;
-			ExitAction(succes);
-		}
-		else
-		{
-			agentMemory.AmmoPacks.RemoveDetected(target);
-			ExitAction(fail);
-		}
-	}
-
-	
 
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
 		{
-			if (other.gameObject.CompareTag("AmmoPack"))
-			{
-				if (!ammoCollected)
-				{
-					agent.GetInventory().AddAmmo(10);
-					agentMemory.AmmoPacks.RemoveDetected(target);
-					ammoCollected = true;
-				}
-			}
-				
+			ammoCollected = true;
+			other.gameObject.GetComponent<Pickable>().OnCollected.AddListener((go)=>ExitAction(actionCompleted));	
 		}
 	}
-	
 
 }

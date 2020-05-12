@@ -53,9 +53,17 @@ public class Patrol : GoapAction
 			agentNavigation.AbortMoving();
 			completed = true;
 		}
+		else if (!agent.GetInventory().IsHealthAvailable() && !agent.GetInventory().IsAmmoAvailable())
+		{
+			if (agentMemory.HidingSpots.IsAnyValidDetected())
+			{
+				agentNavigation.AbortMoving();
+				completed = true;
+			}
+		}
 		else if (!agent.GetInventory().IsHealthAvailable())
 		{
-			if(agentMemory.HealthPacks.IsAnyValidDetected() || agentMemory.HidingSpots.IsAnyValidDetected())
+			if(agentMemory.HealthPacks.IsAnyValidDetected())
 			{
 				agentNavigation.AbortMoving();
 				completed = true;

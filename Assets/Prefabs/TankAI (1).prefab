@@ -5234,6 +5234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9a07630984c23e48a79079359aca64c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentPlan: No Plan
 --- !u!95 &6882259522593062891
 Animator:
   serializedVersion: 3
@@ -5291,7 +5292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiresRange: 1
-  minRequiredRange: 5
+  minRequiredRange: 0
   maxRequiredRange: 2
   cost: 3
 --- !u!114 &6882259522593062890
@@ -5327,7 +5328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiresRange: 1
-  minRequiredRange: 10
+  minRequiredRange: 0
   maxRequiredRange: 2
   cost: 1
 --- !u!114 &6882259522593062893
@@ -5343,7 +5344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiresRange: 1
-  minRequiredRange: 10
+  minRequiredRange: 0
   maxRequiredRange: 2
   cost: 2
 --- !u!114 &6882259522593062894
@@ -5359,7 +5360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiresRange: 1
-  minRequiredRange: 10
+  minRequiredRange: 0
   maxRequiredRange: 2
   cost: 1
 --- !u!114 &6882259522593062880
@@ -5391,7 +5392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiresRange: 1
-  minRequiredRange: 10
+  minRequiredRange: 0
   maxRequiredRange: 2
   cost: 1
 --- !u!1 &6882259522593068461

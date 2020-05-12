@@ -9,12 +9,12 @@ public class LevelController : MonoBehaviour
     [SerializeField] private NPCNames npcNames;
 
     [SerializeField] private GameObject npcPrefab;
-    [SerializeField] private List<List<Tank>> teamsList;
+    [SerializeField] private static List<List<Tank>> teamsList;
 
     private void Awake()
     {
         teamsList = new List<List<Tank>>();
-        npcNames.Setup();
+        //npcNames.Setup();
 
         CreateTeams();
     }
@@ -46,4 +46,8 @@ public class LevelController : MonoBehaviour
         npc.SetActive(true);
     }
 
+    public static List<List<Tank>> GetTeamsList()
+    {
+        return teamsList;
+    }
 }

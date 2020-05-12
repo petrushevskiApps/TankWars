@@ -32,7 +32,7 @@ public class NPCNames : ScriptableObject
         if(availableNames.Count > 0)
         {
             int index = Random.Range(0, availableNames.Count);
-            string npcName = npcNames[index];
+            string npcName = availableNames[index];
             availableNames.RemoveAt(index);
             return npcName;
 

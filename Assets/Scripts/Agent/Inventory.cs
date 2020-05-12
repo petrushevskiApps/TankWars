@@ -28,7 +28,10 @@ public class Inventory
     {
         ammoAmount--;
     }
-
+    public int GetAmmo()
+    {
+        return ammoAmount;
+    }
     public void IncreaseHealth(float amount)
     {
         healthAmount = Mathf.Clamp(healthAmount + amount, 0, healthCapacity);
@@ -49,6 +52,7 @@ public class Inventory
         return healthAmount > 30;
     }
 
+    
     public class HealthChangeEvent : UnityEvent<float>
     {
 

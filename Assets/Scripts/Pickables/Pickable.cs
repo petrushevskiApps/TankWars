@@ -16,7 +16,8 @@ public class Pickable : MonoBehaviour
         {
             if (timeIn >= timeToCollect)
             {
-                Collected();
+                ICollector agent = other.gameObject.transform.parent.GetComponent<ICollector>();
+                Collected(agent);
             }
             else
             {
@@ -25,7 +26,7 @@ public class Pickable : MonoBehaviour
         }
     }
 
-    private void Collected()
+    protected virtual void Collected(ICollector collector)
     {
         OnCollected.Invoke(transform.parent.gameObject);
         transform.parent.gameObject.SetActive(false);
