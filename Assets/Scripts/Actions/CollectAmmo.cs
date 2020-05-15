@@ -17,7 +17,7 @@ public class CollectAmmo : GoapAction
 
 	public CollectAmmo() 
 	{
-		name = "CollectAmmo";
+		actionName = "CollectAmmo";
 
 		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
 		AddPrecondition(StateKeys.AMMO_DETECTED, true);
@@ -82,7 +82,7 @@ public class CollectAmmo : GoapAction
 	
 	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {name}</color>");
+		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
 		if (!ammoCollected)
 		{
@@ -106,9 +106,16 @@ public class CollectAmmo : GoapAction
 	{
 		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
 		{
-			ammoCollected = true;
-			other.gameObject.GetComponent<Pickable>().OnCollected.AddListener((go)=>ExitAction(actionCompleted));	
+			if(other.gameObject.CompareTag("AmmoPack"))
+			{
+				ammoCollected = true;
+				other.gameObject.GetComponent<Pickable>().OnCollected.AddListener(OnCollectedHandler);
+			}
 		}
 	}
 
+	private void OnCollectedHandler(GameObject go)
+	{
+		ExitAction(actionCompleted);
+	}
 }

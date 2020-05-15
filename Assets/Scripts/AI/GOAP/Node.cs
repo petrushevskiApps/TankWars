@@ -7,26 +7,81 @@ namespace GOAP
 	/**
 	* Used for building up the graph and holding the running costs of actions.
 	*/
-	public class Node
+	public class Node : IEquatable<Node>, IComparable<Node>
     {
 		public Node parent;
-		public float runningCost;
-		public Dictionary<string, bool> state;
-		public GoapAction action;
+		public float StateCost => GetHeuristic() + runningCost;
 
-		public Node(Node parent, float runningCost, Dictionary<string, bool> state, GoapAction action)
+		public float runningCost;
+
+		private Dictionary<string, bool> goalState;
+		public Dictionary<string, bool> state;
+		public GoapAction action; 
+
+		public Node(Node parent, float runningCost, Dictionary<string, bool> state, GoapAction action, Dictionary<string, bool> goalState)
 		{
 			this.parent = parent;
 			this.runningCost = runningCost;
 			this.state = state;
 			this.action = action;
+			this.goalState = goalState;
 		}
+		private float GetHeuristic()
+		{
+			float differences = 0;
 
-		public override string ToString()
+			foreach(KeyValuePair<string, bool> gState in goalState)
+			{
+				foreach (KeyValuePair<string, bool> cState in state)
+				{
+					if(gState.Key.Equals(cState.Key) && gState.Value != cState.Value)
+					{
+						differences++;
+					}
+				}
+			}
+
+			return differences;
+		}
+        public int CompareTo(Node other)
+        {
+            if (StateCost > other.StateCost)
+            {
+                return 1;
+            }
+            else if (StateCost < other.StateCost)
+            {
+                return -1;
+            }
+            else
+            {
+                if(GetHeuristic() > other.GetHeuristic())
+				{
+					return 1;
+				}
+				else if(GetHeuristic() < other.GetHeuristic())
+				{
+					return -1;
+				}
+				else
+				{
+					return 0;
+				}
+            }
+
+        }
+
+        public bool Equals(Node other)
+        {
+            if (state.Equals(other.state)) return true;
+            else return false;
+        }
+
+        public override string ToString()
 		{
 			if (parent != null)
 			{
-				return "(" + runningCost.ToString() + ")" + action.name.ToString() + "->";
+				return "(" + StateCost.ToString() + ")" + action.actionName.ToString();
 			}
 			else
 			{

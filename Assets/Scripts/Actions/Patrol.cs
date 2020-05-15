@@ -16,7 +16,7 @@ public class Patrol : GoapAction
 
 	public Patrol() 
 	{
-		name = "Patrol";
+		actionName = "Patrol";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
 

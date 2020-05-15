@@ -17,7 +17,7 @@ public class CollectHealth : GoapAction
 
 	public CollectHealth() 
 	{
-		name = "CollectHealth";
+		actionName = "CollectHealth";
 
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, false);
 		AddPrecondition(StateKeys.HEALTH_DETECTED, true);
@@ -82,7 +82,7 @@ public class CollectHealth : GoapAction
 
 	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {name}</color>");
+		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
 		if (!healthCollected)
 		{
@@ -107,11 +107,18 @@ public class CollectHealth : GoapAction
 	{
 		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
 		{
-			healthCollected = true;
-			other.gameObject.GetComponent<Pickable>().OnCollected.AddListener((go) => ExitAction(actionCompleted));
+			if (other.gameObject.CompareTag("HealthPack"))
+			{
+				healthCollected = true;
+				other.gameObject.GetComponent<Pickable>().OnCollected.AddListener(OnCollectedHandler);
+			}
+			
 		}
 	}
-
+	private void OnCollectedHandler(GameObject go)
+	{
+		ExitAction(actionCompleted);
+	}
 
 	public override float GetCost()
 	{

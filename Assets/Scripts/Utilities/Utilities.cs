@@ -32,32 +32,17 @@ namespace GOAP
 			return heading / distance;
 		}
 
-		public static void PrintTree(string agentName, List<Node> leaves, Node cheapestLeaf)
+		public static void PrintGOAPPlan(string agentName, List<Node> leaves)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append($"{agentName} | GOAP Tree: \n");
 
 			foreach (Node leaf in leaves)
 			{
-				Node node = leaf;
-
-				if (leaf.Equals(cheapestLeaf))
-				{
-					sb.Append("<b><color=green> ");
-				}
-				while (node != null)
-				{
-					sb.Append(node.ToString());
-					node = node.parent;
-				}
-				if (leaf.Equals(cheapestLeaf))
-				{
-					sb.Append(" </color></b>");
-				}
-
-				sb.Append("\n");
+				sb.Append(leaf.ToString());
+				sb.Append("->");
 			}
-
+			sb.Append("Goal");
 			Debug.Log(sb.ToString());
 		}
 

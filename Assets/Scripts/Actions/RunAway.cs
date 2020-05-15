@@ -15,7 +15,7 @@ public class RunAway : GoapAction
 
 	public RunAway() 
 	{
-		name = "RunAway";
+		actionName = "RunAway";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, false);

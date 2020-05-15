@@ -9,9 +9,17 @@ public class Pickable : MonoBehaviour
 
     private float timeIn = 0;
     private float timeToCollect = 2f;
+    public bool isCollected = false;
 
+    private void OnEnable()
+    {
+        isCollected = false;
+        timeIn = 0;
+    }
     private void OnTriggerStay(Collider other)
     {
+        if (isCollected) return;
+
         if (other.gameObject.layer == LayerMask.NameToLayer("Tank"))
         {
             if (timeIn >= timeToCollect)
@@ -25,9 +33,14 @@ public class Pickable : MonoBehaviour
             }
         }
     }
+    private void OnTriggerExit(Collider other)
+    {
+        timeIn = 0;
+    }
 
     protected virtual void Collected(ICollector collector)
     {
+        isCollected = true;
         OnCollected.Invoke(transform.parent.gameObject);
         transform.parent.gameObject.SetActive(false);
     }

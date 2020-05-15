@@ -28,7 +28,7 @@ public class EliminateEnemy : GoapAction
 
 	public EliminateEnemy()
 	{
-		name = "EliminateEnemy";
+		actionName = "EliminateEnemy";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 		AddPrecondition(StateKeys.IN_SHOOTING_RANGE, true);

@@ -11,7 +11,8 @@ public class PickablesController : MonoBehaviour
 
     [SerializeField] private int hpMapLimit = 3;
     [SerializeField] private int ammoMapLimit = 3;
-    
+    [SerializeField] private float minProximity = 20f;
+
     // Relocation timer range in seconds
     [SerializeField] private int minRelactionTime = 60;
     [SerializeField] private int maxRelactionTime = 60 * 10;
@@ -21,7 +22,7 @@ public class PickablesController : MonoBehaviour
 
     [SerializeField] private List<GameObject> hidingSpots;
 
-    private float minProximity = 20f;
+    
 
     private NavMeshAgent navMeshTest;
     private NavMeshPath path;
@@ -66,11 +67,13 @@ public class PickablesController : MonoBehaviour
     {
         StartCoroutine(ReactivationTimer(pickable));
     }
+
     IEnumerator ReactivationTimer(GameObject pickable)
     {
         float realocationSeconds = UnityEngine.Random.Range(minRelactionTime, maxRelactionTime);
         yield return new WaitForSecondsRealtime(realocationSeconds);
         pickable.transform.position = GetLocation();
+        
         pickable.SetActive(true);
 
     }

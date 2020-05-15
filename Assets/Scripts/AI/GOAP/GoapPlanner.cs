@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace GOAP
 {
-	//using State = KeyValuePair<string, bool>; 
-	//using Goals = Dictionary<string, bool>;
-	//using GoapActions = HashSet<GoapAction>;
 
 	/**
 	 * Plans what actions can be completed in order to fulfill a goal state.
 	 */
 	public class GoapPlanner
 	{
+		private List<Node> openListStates;
+		private List<Node> closedListStates;
+		private List<Node> adjacentStates;
 		
 		/**
 		 * Plan what sequence of actions can fulfill the goal.
@@ -39,26 +39,131 @@ namespace GOAP
 			List<Node> leaves = new List<Node>();
 
 			// build graph
-			Node start = new Node(null, 0, worldState, null);
-			bool success = BuildTree(start, leaves, usableActions, goals);
-			
+			//Node start = new Node(null, 0, worldState, null);
+			//bool success = BuildTree(start, leaves, usableActions, goals);
 
-			if (!success)
+			leaves = FindPlan(usableActions, worldState, goals);
+			
+			if (leaves.Count == 0)
 			{
 				Debug.Log("NO PLAN");
 				return null;
 			}
 			else
 			{
-				Utilities.PrintTree(agent.name, leaves, GetCheapestLeaf(leaves));
+				Utilities.PrintGOAPPlan(agent.name, leaves);
 
 				Queue<GoapAction> actionQueue = new Queue<GoapAction>();
 
-				GetActionList(leaves).ForEach(x => actionQueue.Enqueue(x));
+				leaves.ForEach(x => { if (x.action != null) actionQueue.Enqueue(x.action); });
 
 				return actionQueue;
 			}
 
+		}
+
+		
+
+		private List<Node> FindPlan(HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goal)
+		{
+			openListStates = new List<Node>();
+			closedListStates = new List<Node>();
+			adjacentStates = new List<Node>();
+
+			// start by adding the original state to the open list
+			AddToListAndSort(openListStates, new Node(null, 0, worldState, null, goal));
+
+			while (openListStates.Count > 0)
+			{
+				//TODO: Open List should be Sorted ( Ascending order by F )
+				// Get the square with the lowest F score
+				Node currentState = openListStates[0];
+
+				// add the current state to the closed list
+				closedListStates.Add(currentState);
+
+				// Remove used action
+				availableActions.Remove(currentState.action);
+
+				// remove it from the open list
+				openListStates.Remove(currentState);
+
+				// if we added the destination to the closed list, we've found a path
+				if (CheckState(goal, closedListStates))
+				{
+					break;
+				}
+
+				// Retrieve all states next possible
+				adjacentStates = GetAdjacentStates(currentState, availableActions, goal);
+
+				foreach(Node state in adjacentStates)
+				{
+					// if this adjacent square is already in the closed list ignore it
+					if (closedListStates.Contains(state))
+					{
+						continue;
+					}
+					// if its not in the open list
+					if(!openListStates.Contains(state))
+					{
+						// compute its score, set the parent
+						AddToListAndSort(openListStates, state);
+					}
+					// if its already in the open list
+					else
+					{
+						// test if using the current G score make the aSquare F score lower,
+						// if yes update the parent because it means its a better path
+						Node updatedState = openListStates[openListStates.IndexOf(state)];
+						updatedState.runningCost = state.runningCost;
+
+					}
+				}
+
+			}
+			return closedListStates;
+		}
+		
+		private List<Node> GetAdjacentStates(Node parent, HashSet<GoapAction> availableActions, Dictionary<string, bool> goal)
+		{
+			List<Node> adjacent = new List<Node>();
+
+			// Go through each action available at this node
+			// and see if we can use it here
+			foreach (GoapAction action in availableActions)
+			{
+				// if the parent state has the conditions for this
+				// action's preconditions, we can use it here
+				if (InState(action.Preconditions, parent.state))
+				{
+					// apply the action's effects to the parent state
+					Dictionary<string, bool> state = UpdatedState(parent.state, action.Effects);
+
+					// Create new Node State
+					Node node = new Node(parent, parent.runningCost + action.GetCost(), state, action, goal);
+
+					// Add the new state to adjacent states
+					AddToListAndSort(adjacent, node);
+				}
+			}
+
+			return adjacent;
+		}
+
+		private bool CheckState(Dictionary<string, bool> goal, List<Node> states)
+		{
+			foreach(Node n in states)
+			{
+				if (InState(goal, n.state)) return true;
+			}
+			return false;
+		}
+
+		private void AddToListAndSort(List<Node> list, Node element)
+		{
+			list.Insert(0, element);
+			list.Sort();
 		}
 
 		private void ResetActions(HashSet<GoapAction> availableActions)
@@ -69,118 +174,7 @@ namespace GOAP
 			}
 		}
 		
-		private Node GetCheapestLeaf(List<Node> leaves)
-		{
-			Node result = null;
-
-			foreach (Node leaf in leaves)
-			{
-				if (result == null)
-				{
-					result = leaf;
-				}
-				else if (leaf.runningCost < result.runningCost)
-				{
-					result = leaf;
-				}
-			}
-
-			return result;
-		}
-
-		private List<GoapAction> GetActionList(List<Node> leaves)
-		{
-			List<GoapAction> result = new List<GoapAction>();
-
-			Node node = GetCheapestLeaf(leaves);
-
-			while (node != null)
-			{
-				if (node.action != null)
-				{
-					// insert the action in the front
-					result.Insert(0, node.action);
-				}
-				node = node.parent;
-			}
-
-			Utilities.PrintCollection("Actions", result);
-
-			return result;
-		}
 		
-		/**
-		 * Returns true if at least one solution was found.
-		 * The possible paths are stored in the leaves list. Each leaf has a
-		 * 'runningCost' value where the lowest cost will be the best action
-		 * sequence.
-		 */
-		private bool BuildTree(Node parent, List<Node> leaves, HashSet<GoapAction> usableActions, Dictionary<string, bool> goal)
-		{
-			bool foundOne = false;
-
-			Utilities.PrintCollection("Usable Actions", usableActions);
-
-			// Go through each action available at this node
-			// and see if we can use it here
-			foreach (GoapAction action in usableActions)
-			{
-				
-				// if the parent state has the conditions for this
-				// action's preconditions, we can use it here
-				if (InState(action.Preconditions, parent.state))
-				{
-
-					// apply the action's effects to the parent state
-					Dictionary<string, bool> currentState = UpdatedState(parent.state, action.Effects);
-
-					Node node = new Node(parent, parent.runningCost + action.GetCost(), currentState, action);
-
-					// If the current state has the conditions for achieving
-					// agents goal, we have found one possible plan.
-					if (InState(goal, currentState))
-					{
-						leaves.Add(node);
-						foundOne = true;
-					}
-					else
-					{
-						// not at a solution yet, so test all the remaining actions and branch out the tree
-						HashSet<GoapAction> actionsSubset = GetActionsSubset(usableActions, action);
-						Utilities.PrintCollection("Usable Actions Subset", actionsSubset);
-						bool found = BuildTree(node, leaves, actionsSubset, goal);
-						
-						if (found)
-						{
-							foundOne = true; 
-						}
-					}
-				}
-			}
-
-			return foundOne;
-		}
-
-		/**
-		 * Create a subset of the actions excluding 
-		 * the used action = removeAction. 
-		 * Creates a new set.
-		 */
-		private HashSet<GoapAction> GetActionsSubset(HashSet<GoapAction> actions, GoapAction removeAction)
-		{
-			HashSet<GoapAction> subset = new HashSet<GoapAction>();
-
-			foreach (GoapAction a in actions)
-			{
-				if (!a.Equals(removeAction))
-				{
-					subset.Add(a);
-				}
-			}
-
-			return subset;
-		}
-
 		/**
 		 * Check that all items in 'test' are in 'state'.
 		 * If just one does not match or is not there
@@ -206,18 +200,6 @@ namespace GOAP
 			return true;
 		}
 
-		private bool CheckGoal(Dictionary<string, bool> goals, Dictionary<string, bool> state)
-		{
-			foreach (KeyValuePair<string, bool> goal in goals)
-			{
-				if(state.ContainsKey(goal.Key))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-		
 
 		/**
 		 * Apply the stateChange to the currentState.
@@ -255,12 +237,6 @@ namespace GOAP
 			
 			return updatedState;
 		}
-
-		
-
-		
-		
-
 
 	}
 }

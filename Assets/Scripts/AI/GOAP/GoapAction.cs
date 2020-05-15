@@ -6,7 +6,7 @@ using System;
 [System.Serializable]
 public abstract class GoapAction : MonoBehaviour 
 {
-	protected new string name = "No Name";
+	[HideInInspector] public new string actionName = "No Name";
 
 	private bool inRange = false;
 

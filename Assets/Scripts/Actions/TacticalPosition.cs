@@ -16,7 +16,7 @@ public class TacticalPosition : GoapAction
 
 	public TacticalPosition() 
 	{
-		name = "TacticalPosition";
+		actionName = "TacticalPosition";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 		AddPrecondition(StateKeys.IN_SHOOTING_RANGE, false);

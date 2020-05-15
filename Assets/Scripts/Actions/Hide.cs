@@ -14,7 +14,7 @@ public class Hide : GoapAction
 
 	public Hide() 
 	{
-		name = "Hide";
+		actionName = "Hide";
 
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, false);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
@@ -62,7 +62,7 @@ public class Hide : GoapAction
 	
 	public override void ExecuteAction(GameObject agent, Action success, Action fail)
 	{
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {name}</color>");
+		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 		StartCoroutine(Regenerate(success, fail));
 	}
 	
