@@ -11,9 +11,7 @@ public class CollectAmmo : GoapAction
 	private Memory agentMemory;
 	private NavigationSystem agentNavigation;
 
-	private bool ammoCollected = false;
-	private bool completed = false;
-	private Action actionCompleted;
+	private Coroutine Update;
 
 	public CollectAmmo() 
 	{
@@ -25,6 +23,7 @@ public class CollectAmmo : GoapAction
 		AddEffect(StateKeys.AMMO_AMOUNT, true);
 
 	}
+
 	private void Start()
 	{
 		agent = GetComponent<IGoap>();
@@ -32,17 +31,9 @@ public class CollectAmmo : GoapAction
 		agentNavigation = agent.GetNavigation();
 	}
 	
-	public override void Reset ()
+	public override void ResetAction()
 	{
-		target = null;
-		ammoCollected = false;
-		completed = false;
-		actionCompleted = null;
-	}
-	
-	public override bool IsActionDone ()
-	{
-		return completed;
+		base.ResetAction();
 	}
 
 	public override void SetActionTarget()
@@ -57,65 +48,75 @@ public class CollectAmmo : GoapAction
 
 	public override bool CheckPreconditions (GameObject agentGo)
 	{
-		if (agentMemory.Enemies.IsAnyValidDetected())
-		{
-			GameObject enemy = agentMemory.Enemies.GetDetected();
-			
-			if(target != null && enemy != null)
-			{
-				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
-				float distanceToPacket = Vector3.Distance(agentGo.transform.position, target.transform.position);
-
-				if (distanceToPacket > enemyDistanceToPacket)
-				{
-					cost = 10;
-					agentMemory.AmmoPacks.InvalidateDetected(target);
-					agentNavigation.InvalidateTarget();
-					return false;
-				}
-			}
-		}
-
 		return true;
 	}
 
-	
-	public override void ExecuteAction(GameObject agent, Action success, Action fail)
+	public override void EnterAction(Action success, Action fail)
+	{
+		actionCompleted = success;
+		actionFailed = fail;
+
+		SetActionTarget();
+		
+		Update = StartCoroutine(ActionUpdate());
+	}
+
+	public override void ExecuteAction(GameObject agent)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-		if (!ammoCollected)
+		if(target != null && target.activeSelf)
 		{
-			ExitAction(fail);
+			StartCoroutine(WaitAction());
 		}
 		else
 		{
-			actionCompleted = success;
+			ExitAction(actionFailed);
 		}
+	}
+	IEnumerator WaitAction()
+	{
+		yield return new WaitUntil(() => agent.GetInventory().IsAmmoAvailable());
+		agentMemory.AmmoPacks.RemoveDetected(target);
+		ExitAction(actionCompleted);
 	}
 	
-	protected override void ExitAction(Action exitAction)
-	{
-		completed = true;
-		agentMemory.AmmoPacks.RemoveDetected(target);
-		agentNavigation.InvalidateTarget();
-		exitAction?.Invoke();
-	}
 
-	private void OnTriggerEnter(Collider other)
+	IEnumerator ActionUpdate()
 	{
-		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
+		while(true)
 		{
-			if(other.gameObject.CompareTag("AmmoPack"))
+			if (agentMemory.Enemies.IsAnyValidDetected())
 			{
-				ammoCollected = true;
-				other.gameObject.GetComponent<Pickable>().OnCollected.AddListener(OnCollectedHandler);
+				GameObject enemy = agentMemory.Enemies.GetDetected();
+
+				if (target != null && enemy != null)
+				{
+					float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, target.transform.position);
+					float distanceToPacket = Vector3.Distance(transform.forward, target.transform.position);
+
+					if (distanceToPacket > enemyDistanceToPacket)
+					{
+						agentMemory.AmmoPacks.RemoveDetected(target);
+						ExitAction(actionFailed);
+					}
+				}
 			}
+			yield return null;
 		}
+		
 	}
 
-	private void OnCollectedHandler(GameObject go)
+	protected override void ExitAction(Action ExitAction)
 	{
-		ExitAction(actionCompleted);
+		if (Update != null)
+		{
+			StopCoroutine(Update);
+		}
+
+		IsActionDone = true;
+		target = null;
+		agentNavigation.InvalidateTarget();
+		ExitAction?.Invoke();
 	}
 }

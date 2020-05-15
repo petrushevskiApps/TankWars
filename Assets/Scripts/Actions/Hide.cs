@@ -10,7 +10,6 @@ public class Hide : GoapAction
 	private Memory agentMemory;
 	private NavigationSystem agentNavigation;
 
-	private bool completed = false;
 
 	public Hide() 
 	{
@@ -29,17 +28,12 @@ public class Hide : GoapAction
 		agentMemory = agent.GetMemory();
 		agentNavigation = agent.GetNavigation();
 	}
-	
-	public override void Reset ()
+
+	public override void ResetAction()
 	{
-		target = null;
-		completed = false;
+		base.ResetAction();
 	}
-	
-	public override bool IsActionDone ()
-	{
-		return completed;
-	}
+
 
 	public override void SetActionTarget()
 	{
@@ -60,19 +54,28 @@ public class Hide : GoapAction
 		return true;
 	}
 	
-	public override void ExecuteAction(GameObject agent, Action success, Action fail)
+	public override void EnterAction(Action success, Action fail)
+	{
+		actionCompleted = success;
+		actionFailed = fail;
+		SetActionTarget();
+	}
+
+	public override void ExecuteAction(GameObject agent)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
-		StartCoroutine(Regenerate(success, fail));
+		StartCoroutine(Regenerate());
 	}
 	
 	protected override void ExitAction(Action exitAction)
 	{
+		IsActionDone = true;
+		target = null;
 		agentNavigation.InvalidateTarget();
 		exitAction?.Invoke();
 	}
 
-	IEnumerator Regenerate(Action succes, Action fail)
+	IEnumerator Regenerate()
 	{
 		while(agent.GetInventory().GetHealth() < 100)
 		{
@@ -84,8 +87,8 @@ public class Hide : GoapAction
 			agent.GetInventory().AddAmmo(2);
 			yield return new WaitForSeconds(1f);
 		}
-		completed = true;
-		ExitAction(succes);
+		
+		ExitAction(actionCompleted);
 	}
 
 

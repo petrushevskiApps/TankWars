@@ -7,48 +7,48 @@ using System;
 public abstract class GoapAction : MonoBehaviour 
 {
 	[HideInInspector] public new string actionName = "No Name";
-
-	private bool inRange = false;
-
-	public bool requiresRange = false;
+	
 
 	public float minRequiredRange = 10f;
 	public float maxRequiredRange = 15f;
+	public bool requiresRange = false;
 
 	public Dictionary<string, bool> Preconditions { get; }
 	public Dictionary<string, bool> Effects { get; }
 
-	/* The cost of performing the action. 
-	 * Figure out a weight that suits the action. 
-	 * Changing it will affect what actions are chosen during planning.*/
 	[SerializeField] protected float cost = 1f;
-
-	/**
-	 * An action often has to perform on an object. This is that object. Can be null. */
+	protected Action actionCompleted;
+	protected Action actionFailed;
 	protected GameObject target;
+
+	private bool inRange = false;
+
+	public bool IsInRange
+	{
+		get => requiresRange ? inRange : true;
+		set => inRange = value;
+	}
+
+	public bool IsActionDone { get; set; } = false;
 
 	public GoapAction() 
 	{
 		Preconditions = new Dictionary<string, bool>();
 		Effects = new Dictionary<string, bool>();
-		//target = target;
 	}
 
-	public void ResetAction() 
+	/**
+	 * Reset any variables that need to be reset 
+	 * before planning happens again.
+	 */
+	public virtual void ResetAction() 
 	{
-		inRange = false;
-		Reset ();
+		target = null;
+		IsInRange = false;
+		IsActionDone = false;
+		actionCompleted = null;
+		actionFailed = null;
 	}
-
-	/**
-	 * Reset any variables that need to be reset before planning happens again.
-	 */
-	public abstract void Reset();
-
-	/**
-	 * Is the action done?
-	 */
-	public abstract bool IsActionDone();
 
 	public abstract void SetActionTarget();
 
@@ -56,50 +56,26 @@ public abstract class GoapAction : MonoBehaviour
 	{
 		return target != null;
 	}
-	/**
-	 * Procedurally check if this action can run. Not all actions
-	 * will need this, but some might.
-	 */
+
+	public virtual float GetCost()
+	{
+		return cost;
+	}
+
+	/* Action Lifecycle */
 	public abstract bool CheckPreconditions(GameObject agent);
 
-	/**
-	 * Run the action.
-	 * Returns True if the action performed successfully or false
-	 * if something happened and it can no longer perform. In this case
-	 * the action queue should clear out and the goal cannot be reached.
-	 */
-	public abstract void ExecuteAction(GameObject agent, Action success, Action fail);
+	public abstract void EnterAction(Action success, Action fail);
+
+	public abstract void ExecuteAction(GameObject agent);
 
 	protected abstract void ExitAction(Action exitAction);
-	/**
-	 * Does this action need to be within range of a target game object?
-	 * If not then the moveTo state will not need to run for this action.
-	 */
-	public bool RequiresInRange ()
-	{
-		return requiresRange;
-	}
-	
-	/**
-	 * Are we in range of the target?
-	 * The MoveTo state will set this and it gets reset each time this action is performed.
-	 */
-	public bool IsInRange ()  
-	{
-		return inRange;
-	}
-	
-	public void SetInRange(bool inRange) 
-	{
-		this.inRange = inRange;
-	}
 
-
+	/* Action Preconditions & Effects */
 	public void AddPrecondition(string key, bool value)  
 	{
 		Preconditions.Add (key, value);
 	}
-
 
 	public void RemovePrecondition(string key)  
 	{
@@ -113,12 +89,10 @@ public abstract class GoapAction : MonoBehaviour
 		}
 	}
 
-
 	public void AddEffect(string key, bool value)  
 	{
 		Effects.Add (key, value);
 	}
-
 
 	public void RemoveEffect(string key)  
 	{
@@ -132,8 +106,6 @@ public abstract class GoapAction : MonoBehaviour
 		}
 	}
 
-	public virtual float GetCost()
-	{
-		return cost;
-	}
+
+	
 }

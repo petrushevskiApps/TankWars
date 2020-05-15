@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CornerCalculator : MonoBehaviour
+public class World : MonoBehaviour
 {
     [SerializeField] private List<Transform> corners;
 
-    public float minX = Mathf.Infinity;
-    public float maxX = 0;
-    public float minZ = Mathf.Infinity;
-    public float maxZ = 0;
+    private float minX = Mathf.Infinity;
+    private float maxX = 0;
+    private float minZ = Mathf.Infinity;
+    private float maxZ = 0;
 
-    public static CornerCalculator Instance;
-
+    public Transform worldLocations;
+    public static World Instance;
+    
     private void Awake()
     {
         if(Instance != null)
@@ -50,7 +51,7 @@ public class CornerCalculator : MonoBehaviour
         }
     }
 
-    public Vector3 GetRandomInWorldCoordinates()
+    public Vector3 GetRandomLocation()
     {
         float x = Random.Range(minX, maxX);
         float z = Random.Range(minZ, maxZ);

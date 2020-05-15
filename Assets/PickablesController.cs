@@ -82,7 +82,7 @@ public class PickablesController : MonoBehaviour
     // can be reached by the agents
     private Vector3 GetLocation()
     {
-        Vector3 location = CornerCalculator.Instance.GetRandomInWorldCoordinates();
+        Vector3 location = World.Instance.GetRandomLocation();
         location.y += 1f;
 
         if(!CheckProximity(location))

@@ -19,7 +19,6 @@ public class EliminateEnemy : GoapAction
 	// Audio that plays when each shot is fired.
 	public AudioClip fireAudioClip;                
 	
-	bool completed = false;
 	private IGoap agent;
 	private Memory agentMemory;
 	private NavigationSystem agentNavigation;
@@ -45,15 +44,9 @@ public class EliminateEnemy : GoapAction
 		agentNavigation = agent.GetNavigation();
 	}
 
-	public override void Reset()
+	public override void ResetAction()
 	{
-		target = null;
-		completed = false;
-	}
-
-	public override bool IsActionDone()
-	{
-		return completed;
+		base.ResetAction();
 	}
 
 	public override void SetActionTarget()
@@ -70,20 +63,28 @@ public class EliminateEnemy : GoapAction
 		return agentMemory.Enemies.IsAnyValidDetected() && agent.GetInventory().IsAmmoAvailable();
 	}
 
+	public override void EnterAction(Action success, Action fail)
+	{
+		actionCompleted = success;
+		actionFailed = fail;
+		SetActionTarget();
+	}
 
-	public override void ExecuteAction(GameObject agent, Action succes, Action fail)
+	public override void ExecuteAction(GameObject agent)
 	{
 		StartCoroutine(agentNavigation.LookAtTarget(target));
-		StartCoroutine(Fire(agent, succes, fail));
+		StartCoroutine(Fire(agent));
 	}
 
 	protected override void ExitAction(Action exitAction)
 	{
+		IsActionDone = true;
+		target = null;
 		agentNavigation.InvalidateTarget();
 		exitAction?.Invoke();
 	}
 
-	IEnumerator Fire(GameObject agent, Action succes, Action fail)
+	IEnumerator Fire(GameObject agent)
 	{
 		while (true)
 		{ 
@@ -97,14 +98,13 @@ public class EliminateEnemy : GoapAction
 				else
 				{
 					agentMemory.Enemies.RemoveDetected(target);
-					ExitAction(succes);
-					completed = true;
+					ExitAction(actionCompleted);
 					break;
 				}
 			}
 			else
 			{
-				ExitAction(fail);
+				ExitAction(actionFailed);
 				break;
 			}
 		}

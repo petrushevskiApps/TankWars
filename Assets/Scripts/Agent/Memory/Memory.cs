@@ -19,7 +19,6 @@ public class Memory
     public HidingSpots HidingSpots { get; private set; }
 
     private Dictionary<string, Func<bool>> worldState = new Dictionary<string, Func<bool>>();
-    private Dictionary<string, bool> agentGoal = new Dictionary<string, bool>();
 
     private List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
 

@@ -18,14 +18,17 @@ public class Pickable : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        if (isCollected) return;
-
         if (other.gameObject.layer == LayerMask.NameToLayer("Tank"))
         {
             if (timeIn >= timeToCollect)
             {
-                ICollector agent = other.gameObject.transform.parent.GetComponent<ICollector>();
-                Collected(agent);
+                if(!isCollected)
+                {
+                    ICollector agent = other.gameObject.transform.parent.GetComponent<ICollector>();
+                    Collected(agent);
+                    isCollected = true;
+                }
+                
             }
             else
             {
@@ -40,7 +43,6 @@ public class Pickable : MonoBehaviour
 
     protected virtual void Collected(ICollector collector)
     {
-        isCollected = true;
         OnCollected.Invoke(transform.parent.gameObject);
         transform.parent.gameObject.SetActive(false);
     }

@@ -3,90 +3,82 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public abstract class Detected
 {
+    public UnityEvent OnDetected = new UnityEvent();
+    public UnityEvent OnLost = new UnityEvent();
+
     protected GameObject parent;
 
-    [SerializeField] public List<Detectable> detectedList = new List<Detectable>();
+    [SerializeField] public List<Detectable> detectables = new List<Detectable>();
 
     public bool IsAnyValidDetected()
     {
         int count = 0;
-        if(detectedList.Count == 0)
+
+        if(detectables.Count == 0)
         {
             return false;
         }
 
-        foreach(Detectable detectable in detectedList)
+        foreach(Detectable detectable in detectables)
         {
-            if (detectable.status)
+            if (detectable.IsValid())
             {
-                if(detectable.detected != null)
-                {
-                    count++;
-                }
-                else
-                {
-                    detectedList.Remove(detectable);
-                    return IsAnyValidDetected();
-                }
+                count++;
+            }
+            else
+            {
+                detectables.Remove(detectable);
+                return IsAnyValidDetected();
             }
         }
 
         return count > 0;
     }
-
-    public void InvalidateDetected(GameObject ammoPack)
-    {
-        Detectable detectable = new Detectable(ammoPack, true, parent);
-
-        if(detectedList.Contains(detectable))
-        {
-            detectedList[detectedList.IndexOf(detectable)].status = false;
-            detectedList.Sort();
-        }
-    }
-
+    
     public void AddDetected(GameObject detected)
     {
-        Detectable detectable = new Detectable(detected, true, parent);
+        Detectable detectable = new Detectable(detected, parent);
 
-        if(!detectedList.Contains(detectable))
+        if(!detectables.Contains(detectable))
         {
-            detectedList.Add(detectable);
-            detectedList.Sort();
+            detectables.Add(detectable);
+            detectables.Sort();
+            OnDetected.Invoke();
             Debug.Log($"<color=green>InternalState::{this.GetType()} Added</color>");
         }
     }
 
     public void RemoveDetected(GameObject detected) 
     {
-        Detectable detectable = new Detectable(detected, true, parent);
+        Detectable detectable = new Detectable(detected, parent);
 
-        if (detectedList.Contains(detectable))
+        if (detectables.Contains(detectable))
         {
-            detectedList.Remove(detectable);
+            detectables.Remove(detectable);
+            OnLost.Invoke();
         }
     }
 
     // Return closes detected with valid status
     public GameObject GetDetected()
     {
-
         if(IsAnyValidDetected())
         {
-            Detectable detected = detectedList[0];
+            Detectable detected = detectables[0];
 
-            if(detected.detected != null && detected.status)
+            if(detected.detected != null)
             {
                 return detected.detected;
             }
             else
             {
-                detectedList.Remove(detected);
-                detectedList.Sort();
+                detectables.Remove(detected);
+                detectables.Sort();
                 
                 if(IsAnyValidDetected())
                 {
@@ -101,47 +93,42 @@ public abstract class Detected
     {
         public GameObject agent;
         public GameObject detected;
-        public bool status;
 
-        public Detectable(GameObject detected, bool status, GameObject agent)
+        public Detectable(GameObject detected, GameObject agent)
         {
             this.detected = detected;
-            this.status = status;
             this.agent = agent;
+        }
+
+        public bool IsValid()
+        {
+            return detected != null && detected.activeSelf;
         }
 
         public int CompareTo(Detectable other)
         {
-            if (status && !other.status) return 1;
-            else if (!status && other.status) return -1;
+            if (detected != null && other.detected != null)
+            {
+                float distanceX = Vector3.Distance(agent.transform.position, detected.transform.position);
+                float distanceY = Vector3.Distance(agent.transform.position, other.detected.transform.position);
+
+                if (distanceX > distanceY) return 1;
+                else if (distanceX < distanceY) return -1;
+                else return 0;
+            }
             else
             {
-                if(detected != null && other.detected != null)
+                if (detected == null)
                 {
-                    float distanceX = Vector3.Distance(agent.transform.position, detected.transform.position);
-                    float distanceY = Vector3.Distance(agent.transform.position, other.detected.transform.position);
-
-                    if (distanceX > distanceY) return 1;
-                    else if (distanceX < distanceY) return -1;
-                    else return 0;
+                    return -1;
                 }
-                else
+                if (other.detected == null)
                 {
-                    if(detected == null)
-                    {
-                        status = false;
-                        return -1;
-                    }
-                    if (other.detected == null)
-                    {
-                        other.status = false;
-                        return 1;
-                    }
-
-                    return 0;
+                    return 1;
                 }
+
+                return 0;
             }
-            
         }
 
         public bool Equals(Detectable other)

@@ -6,15 +6,11 @@ using UnityEngine.AI;
 
 public class CollectHealth : GoapAction 
 {
-
 	private IGoap agent;
 	private Memory agentMemory;
 	private NavigationSystem agentNavigation;
 
-	private bool healthCollected = false;
-	private bool completed = false;
-	private Action actionCompleted;
-
+	
 	public CollectHealth() 
 	{
 		actionName = "CollectHealth";
@@ -31,18 +27,10 @@ public class CollectHealth : GoapAction
 		agentMemory = agent.GetMemory();
 		agentNavigation = agent.GetNavigation();
 	}
-	
-	public override void Reset ()
+
+	public override void ResetAction()
 	{
-		target = null;
-		healthCollected = false;
-		completed = false;
-		actionCompleted = null;
-	}
-	
-	public override bool IsActionDone ()
-	{
-		return completed;
+		base.ResetAction();
 	}
 
 	public override void SetActionTarget()
@@ -57,88 +45,76 @@ public class CollectHealth : GoapAction
 
 	public override bool CheckPreconditions (GameObject agentGo)
 	{
-		if (agentMemory.Enemies.IsAnyValidDetected())
-		{
-			GameObject enemy = agentMemory.Enemies.GetDetected();
-			
-			if(target != null && enemy != null)
-			{
-				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
-				float distanceToPacket = Vector3.Distance(agentGo.transform.position, target.transform.position);
-
-				if (distanceToPacket > enemyDistanceToPacket)
-				{
-					agentMemory.HealthPacks.InvalidateDetected(target);
-					agentNavigation.InvalidateTarget();
-					return false;
-				}
-			}
-		}
-
 		return true;
 	}
 
-	
 
-	public override void ExecuteAction(GameObject agent, Action success, Action fail)
+	public override void EnterAction(Action success, Action fail)
+	{
+		actionCompleted = success;
+		actionFailed = fail;
+
+		SetActionTarget();
+
+		AddListeners();
+	}
+
+	public override void ExecuteAction(GameObject agent)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-		if (!healthCollected)
+		if (target != null && target.activeSelf)
 		{
-			ExitAction(fail);
+			StartCoroutine(WaitAction());
 		}
 		else
 		{
-			actionCompleted = success;
+			ExitAction(actionFailed);
 		}
 	}
 
-
-	protected override void ExitAction(Action exitAction)
+	IEnumerator WaitAction()
 	{
-		completed = true;
-		agentMemory.AmmoPacks.RemoveDetected(target);
-		agentNavigation.InvalidateTarget();
-		exitAction?.Invoke();
-	}
-
-	private void OnTriggerEnter(Collider other)
-	{
-		if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
-		{
-			if (other.gameObject.CompareTag("HealthPack"))
-			{
-				healthCollected = true;
-				other.gameObject.GetComponent<Pickable>().OnCollected.AddListener(OnCollectedHandler);
-			}
-			
-		}
-	}
-	private void OnCollectedHandler(GameObject go)
-	{
+		yield return new WaitUntil(() => this.agent.GetInventory().IsHealthAvailable());
+		agentMemory.HealthPacks.RemoveDetected(target);
 		ExitAction(actionCompleted);
 	}
 
-	public override float GetCost()
+	protected override void ExitAction(Action exitAction)
 	{
-		if(agent.GetInventory().GetHealth() < 30)
-		{
-			cost = 1f;
-		}
-		else if(agent.GetInventory().GetHealth() < 50)
-		{
-			cost = 3f;
-		}
-		else if(agent.GetInventory().GetHealth() < 70)
-		{
-			cost = 6f;
-		}
-		else
-		{
-			cost = 10f;
-		}
+		IsActionDone = true;
+		target = null;
+		agentNavigation.InvalidateTarget();
+		RemoveListeners();
+		exitAction?.Invoke();
+	}
 
-		return cost;
+
+	private void AddListeners()
+	{
+		agentMemory.Enemies.OnDetected.AddListener(OnEnemyDetected);
+	}
+	private void RemoveListeners()
+	{
+		agentMemory.Enemies.OnDetected.RemoveListener(OnEnemyDetected);
+	}
+
+	private void OnEnemyDetected()
+	{
+		if (agentMemory.Enemies.IsAnyValidDetected())
+		{
+			GameObject enemy = agentMemory.Enemies.GetDetected();
+
+			if (target != null && enemy != null)
+			{
+				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
+				float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
+
+				if (distanceToPacket > enemyDistanceToPacket)
+				{
+					ExitAction(actionFailed);
+				}
+			}
+		}
 	}
 }

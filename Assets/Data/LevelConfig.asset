@@ -15,8 +15,8 @@ MonoBehaviour:
   mode: 0
   teamsConfig:
   - teamID: 0
-    npcCount: 2
+    npcCount: 1
     playerCount: 0
   - teamID: 1
-    npcCount: 2
+    npcCount: 1
     playerCount: 0

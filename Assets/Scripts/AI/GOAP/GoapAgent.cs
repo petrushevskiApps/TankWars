@@ -126,14 +126,14 @@ public sealed class GoapAgent : MonoBehaviour
 			// Plan Failed - RePlan
 			ChangeState(FSMKeys.IDLE_STATE);
 		}
-		else if(InRange())
+		else if(currentAction.IsInRange)
 		{
 			// Destination Reached - Change State
 			ChangeState(FSMKeys.PERFORM_STATE);
 		}
 		else
 		{
-			action.SetActionTarget();
+			//action.SetActionTarget();
 
 			if (!action.IsTargetAcquired())
 			{
@@ -162,12 +162,13 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// perform the next action
 			currentAction = currentActions.Peek();
+			currentAction.EnterAction(OnActionSuccess, OnActionFail);
 
-			if (InRange())
+			if (currentAction.IsInRange)
 			{
 				agentImplementation.ShowMessage(currentAction.name);
 				// we are in range, so perform the action
-				currentAction.ExecuteAction(gameObject, OnActionSuccess, OnActionFail);
+				currentAction.ExecuteAction(gameObject);
 			}
 			else
 			{
@@ -185,14 +186,9 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 	}
 
-	private bool InRange()
-	{
-		return currentAction.RequiresInRange() ? currentAction.IsInRange() : true;
-	}
-
 	private void OnActionSuccess()
 	{
-		if (currentAction.IsActionDone())
+		if (currentAction.IsActionDone)
 		{
 			// the action is done. Remove it so we can perform the next one
 			currentActions.Dequeue();

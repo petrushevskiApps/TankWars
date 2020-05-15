@@ -1,4 +1,5 @@
 ﻿using GOAP;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,26 +12,26 @@ public class NavigationSystem
 	private NavMeshAgent navMeshAgent;
 	private NavMeshPath path;
 
-	[SerializeField] GameObject target;
-	private GameObject targetLocation;
+	private GameObject navigationTarget;
+	private GameObject internalCachedTarget;
 
 	private Vector3 previousDestination = Vector3.zero;
 	
 	private bool abortMovement = false;
 	private bool isLookAtActive = false;
+	
 
 	public NavigationSystem(GameObject agent)
 	{
-		targetLocation = new GameObject("targetLocation");
-		targetLocation.SetActive(false);
-
 		this.agent = agent;
 		navMeshAgent = agent.GetComponent<NavMeshAgent>();
+
+		InstantiateLocationPointer();
 	}
 
 	public bool IsLookingAtTarget()
 	{
-		return CheckAngle(target);
+		return CheckAngle(navigationTarget);
 	}
 
 	public IEnumerator LookAtTarget(GameObject lookAtTarget)
@@ -64,17 +65,13 @@ public class NavigationSystem
 
 	public void Move(GoapAction action)
 	{
-		Vector3 destination = target.transform.position;
-		
+		Vector3 destination = navigationTarget.transform.position;
+
+		// Target is moving - Recalculate path
 		if (Vector3.Distance(destination, previousDestination) > 2f)
 		{
-			// Target is moving - Recalculate path
 			previousDestination = destination;
-
-			path = new NavMeshPath();
-			navMeshAgent.CalculatePath(destination, path);
-			navMeshAgent.stoppingDistance = action.maxRequiredRange;
-			navMeshAgent.updateRotation = true;
+			SetNavMeshAgent(destination, action.maxRequiredRange);
 		}
 		
 		if (path != null && path.status == NavMeshPathStatus.PathComplete)
@@ -82,107 +79,106 @@ public class NavigationSystem
 			navMeshAgent.SetPath(path);
 			bool inRange = navMeshAgent.remainingDistance <= action.maxRequiredRange;
 
-			if (inRange || abortMovement)
+			if (inRange)
 			{
-				action.SetInRange(true);
+				action.IsInRange = true;
 			}
 		}
 		else
 		{
 			InvalidateTarget();
+			SetTarget();
 		}
 	}
-
-
-	public void AbortMoving()
+	private void SetNavMeshAgent(Vector3 destination, float stoppingDistance)
 	{
-		abortMovement = true;
-	}
-
-	public bool IsTargetSet()
-	{
-		return target != null;
-	}
-
-	public GameObject GetTarget()
-	{
-		return target;
-	}
-
-	public GameObject SetRunFromTarget(GameObject runFromTarget)
-	{
-		if(target == null && runFromTarget != null)
-		{
-			target = CreateRunawayTarget(runFromTarget);
-		}
-		
-		return target;
-	}
-	public GameObject SetTarget(GameObject actionTarget = null)
-	{
-		if(actionTarget != null)
-		{
-			target = actionTarget;
-		}
-		else
-		{
-			if(target == null)
-			{
-				target = CreateTarget();
-			}
-		}
-		
-		return target;
-	}
-	public GameObject SetTarget(Vector3 targetLocation)
-	{
-		if (target == null)
-		{
-			target = CreateTarget(targetLocation);
-		}
-		return target;
-	}
-
-	// Create new target object
-	private GameObject CreateTarget()
-	{
-		targetLocation.transform.position = CornerCalculator.Instance.GetRandomInWorldCoordinates();
-		targetLocation.transform.rotation = Quaternion.identity;
-		targetLocation.SetActive(true);
-
-		return targetLocation;
-	}
-	private GameObject CreateTarget(Vector3 targetPosition)
-	{
-		targetLocation.transform.position = targetPosition;
-		targetLocation.transform.rotation = Quaternion.identity;
-		targetLocation.SetActive(true);
-
-		return targetLocation;
-	}
-
-	private GameObject CreateRunawayTarget(GameObject otherTarget)
-	{
-		float angle = Utilities.GetAngle(agent, otherTarget);
-
-		Vector3 runTo = agent.transform.forward * (-1);
-
-		runTo.x *= Random.Range(-30, 30);
-		runTo.z *= Random.Range(10, 30);
-
-		targetLocation.transform.position = runTo;
-		targetLocation.transform.rotation = Quaternion.identity;
-		targetLocation.SetActive(true);
-
-		return targetLocation;
+		path = new NavMeshPath();
+		navMeshAgent.CalculatePath(destination, path);
+		navMeshAgent.stoppingDistance = stoppingDistance;
+		navMeshAgent.updateRotation = true;
 	}
 
 	public void InvalidateTarget()
 	{
 		isLookAtActive = false;
-		abortMovement = false;
 		path = null;
-		target = null;
-		targetLocation.SetActive(false);
+
+		navigationTarget = internalCachedTarget;
+		navigationTarget.SetActive(false);
+	}
+
+	public bool IsTargetSet()
+	{
+		return navigationTarget != null && navigationTarget.activeSelf;
+	}
+
+	public GameObject GetNavigationTarget()
+	{
+		return navigationTarget;
+	}
+
+	public void SetTarget(GameObject actionTarget)
+	{
+		if (actionTarget != null)
+		{
+			navigationTarget = actionTarget;
+		}
+	}
+
+	public void SetTarget()
+	{
+		if (!IsTargetSet())
+		{
+			SetTargetLocation(World.Instance.GetRandomLocation());
+		}
+	}
+	public void SetTarget(Vector3 targetLocation)
+	{
+		if (!IsTargetSet())
+		{
+			SetTargetLocation(targetLocation);
+		}
+	}
+
+	// Runaway Navigation Target
+	public void SetRunFromTarget(GameObject runFrom)
+	{
+		if(!IsTargetSet() && runFrom != null)
+		{
+			CreateRunawayLocation(runFrom);
+		}
+	}
+	
+	private GameObject CreateRunawayLocation(GameObject otherTarget)
+	{
+		Vector3 runTo = agent.transform.forward * (-1);
+
+		runTo.x *= UnityEngine.Random.Range(-30, 30);
+		runTo.z *= UnityEngine.Random.Range(10, 30);
+
+		return SetTargetLocation(runTo);
+	}
+
+	private GameObject SetTargetLocation(Vector3 targetPosition)
+	{
+		if(navigationTarget == null)
+		{
+			navigationTarget = internalCachedTarget;
+		}
+
+		navigationTarget.transform.position = targetPosition;
+		navigationTarget.transform.rotation = Quaternion.identity;
+		navigationTarget.SetActive(true);
+
+		return navigationTarget;
+	}
+
+	private void InstantiateLocationPointer()
+	{
+		navigationTarget = new GameObject("TargetLocation ( " + agent.name + " )");
+		navigationTarget.transform.parent = World.Instance.worldLocations;
+		navigationTarget.SetActive(false);
+
+		internalCachedTarget = navigationTarget;
 	}
 }
