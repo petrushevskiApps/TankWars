@@ -78,27 +78,27 @@ public class Memory
         
     }
 
-    public void AddEvents(VisionController visionSensor)
+    public void RegisterEvents(PerceptorSystem perceptor)
     {
-        visionSensor.EnemyDetectedEvent.AddListener(Enemies.AddDetected);
-        visionSensor.EnemyLostEvent.AddListener(Enemies.RemoveDetected);
-        visionSensor.AmmoPackDetected.AddListener(AmmoPacks.AddDetected);
-        visionSensor.AmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
-        visionSensor.HealthPackDetected.AddListener(HealthPacks.AddDetected);
-        visionSensor.HealthPackLost.AddListener(HealthPacks.RemoveDetected);
-        visionSensor.HiddingSpotDetected.AddListener(HidingSpots.AddDetected);
+        perceptor.OnEnemyDetected.AddListener(Enemies.AddDetected);
+        perceptor.OnEnemyLost.AddListener(Enemies.RemoveDetected);
+        perceptor.OnAmmoPackDetected.AddListener(AmmoPacks.AddDetected);
+        perceptor.OnAmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
+        perceptor.OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
+        perceptor.OnHealthPackLost.AddListener(HealthPacks.RemoveDetected);
+        perceptor.OnHiddingSpotDetected.AddListener(HidingSpots.AddDetected);
 
     }
 
-    public void RemoveEvents(VisionController visionSensor)
+    public void RemoveEvents(PerceptorSystem perceptor)
     {
-        visionSensor.EnemyDetectedEvent.RemoveListener(Enemies.AddDetected);
-        visionSensor.EnemyLostEvent.RemoveListener(Enemies.RemoveDetected);
-        visionSensor.AmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
-        visionSensor.AmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
-        visionSensor.HealthPackDetected.RemoveListener(HealthPacks.AddDetected);
-        visionSensor.HealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
-        visionSensor.HiddingSpotDetected.RemoveListener(HidingSpots.AddDetected);
+        perceptor.OnEnemyDetected.RemoveListener(Enemies.AddDetected);
+        perceptor.OnEnemyLost.RemoveListener(Enemies.RemoveDetected);
+        perceptor.OnAmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
+        perceptor.OnAmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
+        perceptor.OnHealthPackDetected.RemoveListener(HealthPacks.AddDetected);
+        perceptor.OnHealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
+        perceptor.OnHiddingSpotDetected.RemoveListener(HidingSpots.AddDetected);
     }
 
     public Dictionary<string, bool> GetWorldState()
@@ -112,6 +112,7 @@ public class Memory
 
         return agentState;
     }
+
     public List<Dictionary<string, bool>> GetGoals()
     {
         return goals;

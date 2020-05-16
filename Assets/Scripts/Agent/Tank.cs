@@ -27,7 +27,7 @@ public class Tank : MonoBehaviour, IGoap, ICollector
 
 	public CommunicationSystem communicationSystem = new CommunicationSystem();
 
-	[SerializeField] private VisionController visionSensor;
+	[SerializeField] private PerceptorSystem perceptor;
 
 
 	private void Awake()
@@ -36,7 +36,7 @@ public class Tank : MonoBehaviour, IGoap, ICollector
 
 		memory.Initialize(this);
 
-		memory.AddEvents(visionSensor);
+		memory.RegisterEvents(perceptor);
 
 		SetParticles();
 		SetHealthBar();
@@ -44,7 +44,7 @@ public class Tank : MonoBehaviour, IGoap, ICollector
 
 	private void OnDestroy()
 	{
-		memory.RemoveEvents(visionSensor);
+		memory.RemoveEvents(perceptor);
 	}
 
 	private void SetParticles()
@@ -105,7 +105,6 @@ public class Tank : MonoBehaviour, IGoap, ICollector
 	{
 		return memory;
 	}
-
 	public NavigationSystem GetNavigation()
 	{
 		return Navigation;
@@ -113,6 +112,10 @@ public class Tank : MonoBehaviour, IGoap, ICollector
 	public Inventory GetInventory()
 	{
 		return inventory;
+	}
+	public PerceptorSystem GetPerceptor()
+	{
+		return perceptor;
 	}
 
 	public Dictionary<string, bool> GetWorldState()

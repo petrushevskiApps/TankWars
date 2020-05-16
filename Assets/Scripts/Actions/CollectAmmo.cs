@@ -57,8 +57,8 @@ public class CollectAmmo : GoapAction
 		actionFailed = fail;
 
 		SetActionTarget();
-		
-		Update = StartCoroutine(ActionUpdate());
+
+		AddListeners();
 	}
 
 	public override void ExecuteAction(GameObject agent)
@@ -80,43 +80,38 @@ public class CollectAmmo : GoapAction
 		agentMemory.AmmoPacks.RemoveDetected(target);
 		ExitAction(actionCompleted);
 	}
-	
 
-	IEnumerator ActionUpdate()
-	{
-		while(true)
-		{
-			if (agentMemory.Enemies.IsAnyValidDetected())
-			{
-				GameObject enemy = agentMemory.Enemies.GetDetected();
-
-				if (target != null && enemy != null)
-				{
-					float enemyDistanceToPacket = Vector3.Distance(enemy.transform.forward, target.transform.position);
-					float distanceToPacket = Vector3.Distance(transform.forward, target.transform.position);
-
-					if (distanceToPacket > enemyDistanceToPacket)
-					{
-						agentMemory.AmmoPacks.RemoveDetected(target);
-						ExitAction(actionFailed);
-					}
-				}
-			}
-			yield return null;
-		}
-		
-	}
 
 	protected override void ExitAction(Action ExitAction)
 	{
-		if (Update != null)
-		{
-			StopCoroutine(Update);
-		}
-
+		RemoveListeners();
 		IsActionDone = true;
 		target = null;
 		agentNavigation.InvalidateTarget();
 		ExitAction?.Invoke();
+	}
+
+	private void AddListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
+	}
+	private void RemoveListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
+	}
+
+	private void OnEnemyDetected(GameObject enemy)
+	{
+		if (target != null && enemy != null)
+		{
+			float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
+			float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
+
+			if (distanceToPacket > enemyDistanceToPacket)
+			{
+				agentMemory.AmmoPacks.RemoveDetected(target);
+				ExitAction(actionFailed);
+			}
+		}
 	}
 }

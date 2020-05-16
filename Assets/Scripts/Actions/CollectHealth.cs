@@ -92,28 +92,23 @@ public class CollectHealth : GoapAction
 
 	private void AddListeners()
 	{
-		agentMemory.Enemies.OnDetected.AddListener(OnEnemyDetected);
+		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
 	}
 	private void RemoveListeners()
 	{
-		agentMemory.Enemies.OnDetected.RemoveListener(OnEnemyDetected);
+		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
 	}
 
-	private void OnEnemyDetected()
+	private void OnEnemyDetected(GameObject enemy)
 	{
-		if (agentMemory.Enemies.IsAnyValidDetected())
+		if (target != null && enemy != null)
 		{
-			GameObject enemy = agentMemory.Enemies.GetDetected();
+			float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
+			float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
 
-			if (target != null && enemy != null)
+			if (distanceToPacket > enemyDistanceToPacket)
 			{
-				float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
-				float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
-
-				if (distanceToPacket > enemyDistanceToPacket)
-				{
-					ExitAction(actionFailed);
-				}
+				ExitAction(actionFailed);
 			}
 		}
 	}

@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4802280623178038713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2551475806745616521}
+  - component: {fileID: 4081871276758882543}
+  m_Layer: 0
+  m_Name: PerceptorSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2551475806745616521
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4802280623178038713}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 6882259522157597377}
+  m_Father: {fileID: 6882259522592773317}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4081871276758882543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4802280623178038713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6839b4a55fa6b264097ae8b527432c9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensors:
+  - {fileID: 6882259522157597376}
 --- !u!1 &6882259520838691897
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,7 +90,7 @@ GameObject:
   - component: {fileID: 6882259522157597379}
   - component: {fileID: 6882259522157597376}
   m_Layer: 8
-  m_Name: Sensors
+  m_Name: VisionSensors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,11 +103,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6882259522157597390}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6882259522592773317}
+  m_Father: {fileID: 2551475806745616521}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &6882259522157597379
@@ -4969,7 +5015,7 @@ Transform:
   m_LocalPosition: {x: 26.3, y: 0, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6882259522157597377}
+  - {fileID: 2551475806745616521}
   - {fileID: 6882259522592739357}
   - {fileID: 6882259522592799845}
   - {fileID: 6882259520838691896}
@@ -5278,7 +5324,7 @@ MonoBehaviour:
     healthCapacity: 100
     ammoAmount: 0
     ammoCapacity: 10
-  visionSensor: {fileID: 6882259522157597376}
+  perceptor: {fileID: 4081871276758882543}
 --- !u!114 &6882259522593062806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5292,9 +5338,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Patrol
-  requiresRange: 1
   minRequiredRange: 0
   maxRequiredRange: 2
+  requiresRange: 1
   cost: 3
 --- !u!114 &6882259522593062890
 MonoBehaviour:
@@ -5309,9 +5355,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: EliminateEnemy
-  requiresRange: 1
   minRequiredRange: 10
   maxRequiredRange: 15
+  requiresRange: 1
   cost: 1
   bullet: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
   turretTransform: {fileID: 6882259522592799845}
@@ -5330,9 +5376,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: CollectAmmo
-  requiresRange: 1
   minRequiredRange: 0
   maxRequiredRange: 2
+  requiresRange: 1
   cost: 1
 --- !u!114 &6882259522593062893
 MonoBehaviour:
@@ -5347,9 +5393,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: RunAway
-  requiresRange: 1
   minRequiredRange: 0
   maxRequiredRange: 2
+  requiresRange: 1
   cost: 2
 --- !u!114 &6882259522593062894
 MonoBehaviour:
@@ -5364,9 +5410,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: CollectHealth
-  requiresRange: 1
   minRequiredRange: 0
   maxRequiredRange: 2
+  requiresRange: 1
   cost: 1
 --- !u!114 &6882259522593062880
 MonoBehaviour:
@@ -5381,9 +5427,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Hide
-  requiresRange: 1
   minRequiredRange: 10
   maxRequiredRange: 2
+  requiresRange: 1
   cost: 1
 --- !u!114 &6882259522593062895
 MonoBehaviour:
@@ -5398,9 +5444,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: TacticalPosition
-  requiresRange: 1
   minRequiredRange: 0
   maxRequiredRange: 2
+  requiresRange: 1
   cost: 1
 --- !u!1 &6882259522593068461
 GameObject:

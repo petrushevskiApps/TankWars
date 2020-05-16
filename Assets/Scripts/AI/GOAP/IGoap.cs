@@ -68,6 +68,8 @@ public interface IGoap
 
 	Inventory GetInventory();
 
+	PerceptorSystem GetPerceptor();
+
 	void ShowMessage(string text);
 }
 

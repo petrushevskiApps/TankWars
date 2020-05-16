@@ -43,43 +43,44 @@ public class Patrol : MoveAction
 
 	private void AddListeners()
 	{
-		agentMemory.Enemies.OnDetected.AddListener(OnEnemyDetected);
-		agentMemory.AmmoPacks.OnDetected.AddListener(OnAmmoDetected);
-		agentMemory.HealthPacks.OnDetected.AddListener(OnHealthDetected);
-		agentMemory.HidingSpots.OnDetected.AddListener(OnHidingSpotDetected);
+		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
+		agent.GetPerceptor().OnAmmoPackDetected.AddListener(OnAmmoDetected);
+		agent.GetPerceptor().OnHealthPackDetected.AddListener(OnHealthDetected);
+		agent.GetPerceptor().OnHiddingSpotDetected.AddListener(OnHidingSpotDetected);
 
 	}
 
 	private void RemoveListeners()
 	{
-		agentMemory.Enemies.OnDetected.RemoveListener(OnEnemyDetected);
-		agentMemory.AmmoPacks.OnDetected.RemoveListener(OnAmmoDetected);
-		agentMemory.HealthPacks.OnDetected.RemoveListener(OnHealthDetected);
-		agentMemory.HidingSpots.OnDetected.RemoveListener(OnHidingSpotDetected);
+		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
+		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(OnAmmoDetected);
+		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(OnHealthDetected);
+		agent.GetPerceptor().OnHiddingSpotDetected.RemoveListener(OnHidingSpotDetected);
 	}
 
-	private void OnEnemyDetected()
+	private void OnEnemyDetected(GameObject enemy)
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
 			ExitAction(actionFailed);
 		}
 	}
-	private void OnAmmoDetected()
+
+	private void OnAmmoDetected(GameObject ammo)
 	{
 		if (!agent.GetInventory().IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
 	}
-	private void OnHealthDetected()
+	private void OnHealthDetected(GameObject health)
 	{
 		if (!agent.GetInventory().IsHealthAvailable())
 		{
-			ExitAction(actionCompleted);
+			ExitAction(actionCompleted); 
 		}
 	}
-	private void OnHidingSpotDetected()
+	private void OnHidingSpotDetected(GameObject hiddingSpot)
 	{
 		if (!agent.GetInventory().IsHealthAvailable() && !agent.GetInventory().IsAmmoAvailable())
 		{
