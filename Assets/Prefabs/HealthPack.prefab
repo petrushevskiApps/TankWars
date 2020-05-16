@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1266401672512697664}
   - component: {fileID: 1266401672512697667}
   - component: {fileID: 5673073590993323067}
+  - component: {fileID: 3478355754811992040}
   m_Layer: 9
   m_Name: HealthPack
   m_TagString: HealthPack
@@ -42,7 +43,7 @@ BoxCollider:
   m_GameObject: {fileID: 1266401672512697669}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.79, y: 1.29, z: 1.66}
   m_Center: {x: 0, y: 0, z: 0}
@@ -65,6 +66,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &3478355754811992040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266401672512697669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa16dc5d4ee8e9847b2cd1486a67fd19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCollected: 0
 --- !u!1 &6592404020754708247
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,8 +90,6 @@ GameObject:
   - component: {fileID: 6587329257240622655}
   - component: {fileID: 6561112832089936171}
   - component: {fileID: 6570698330006884043}
-  - component: {fileID: 6592404020754708244}
-  - component: {fileID: 210616174958615151}
   m_Layer: 11
   m_Name: firstaid
   m_TagString: HealthPack
@@ -146,29 +158,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &6592404020754708244
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6592404020754708247}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.8, y: 0.3, z: 0.7}
-  m_Center: {x: 0, y: 0.15, z: 0}
---- !u!114 &210616174958615151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6592404020754708247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa16dc5d4ee8e9847b2cd1486a67fd19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isCollected: 0

@@ -5322,7 +5322,7 @@ MonoBehaviour:
   inventory:
     healthAmount: 100
     healthCapacity: 100
-    ammoAmount: 0
+    ammoAmount: 10
     ammoCapacity: 10
   perceptor: {fileID: 4081871276758882543}
 --- !u!114 &6882259522593062806
@@ -5427,7 +5427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Hide
-  minRequiredRange: 10
+  minRequiredRange: 0
   maxRequiredRange: 2
   requiresRange: 1
   cost: 1

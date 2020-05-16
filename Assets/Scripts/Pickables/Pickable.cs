@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Pickable : MonoBehaviour
+public class Pickable : MonoBehaviour, IDestroyable
 {
     public OnCollectedEvent OnCollected = new OnCollectedEvent();
 
@@ -43,11 +43,14 @@ public class Pickable : MonoBehaviour
 
     protected virtual void Collected(ICollector collector)
     {
-        OnCollected.Invoke(transform.parent.gameObject);
-        transform.parent.gameObject.SetActive(false);
+        OnCollected.Invoke(transform.gameObject);
+        transform.gameObject.SetActive(false);
     }
 
-    
+    public void RegisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
+    {
+        OnCollected.AddListener(OnDestroyAction);
+    }
 
     public class OnCollectedEvent : UnityEvent<GameObject>
     {

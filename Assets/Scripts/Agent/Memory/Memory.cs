@@ -22,9 +22,9 @@ public class Memory
 
     private List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
 
-    private Tank parent;
+    private NPC parent;
 
-    public void Initialize(Tank parent)
+    public void Initialize(NPC parent)
     {
         this.parent = parent;
 
