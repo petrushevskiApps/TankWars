@@ -47,10 +47,6 @@ public class Hide : GoapAction
 
 	public override bool CheckPreconditions (GameObject agentGo)
 	{
-		if(agentMemory.Enemies.IsAnyValidDetected())
-		{
-			return false;
-		}
 		return true;
 	}
 	
