@@ -8,7 +8,7 @@ using UnityEngine;
 public abstract class MoveAction : GoapAction
 {
 	protected IGoap agent;
-	protected Memory agentMemory;
+	protected MemorySystem agentMemory;
 	protected NavigationSystem agentNavigation;
 
 	private void Start()

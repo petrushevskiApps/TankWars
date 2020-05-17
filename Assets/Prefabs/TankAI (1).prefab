@@ -5290,21 +5290,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 6882259522593062807}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a5c0794d059e434ab8b371a32e58feb, type: 3}
+  m_Script: {fileID: 11500000, guid: 8518d601ac0ff0a40a9ef8334c48a1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 6882259522593093682}
   deathParticles: {fileID: 6882259520838691897}
   renderController: {fileID: 6882259522593068463}
   teamID: 0
-  isDead: 0
-  memory:
-    shootingRange: 10
   inventory:
     healthAmount: 100
     healthCapacity: 100
     ammoAmount: 10
     ammoCapacity: 10
+  memory:
+    shootingRange: 10
   perceptor: {fileID: 4081871276758882543}
 --- !u!114 &6882259522593062806
 MonoBehaviour:

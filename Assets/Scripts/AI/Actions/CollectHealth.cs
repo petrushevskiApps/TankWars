@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class CollectHealth : GoapAction 
 {
 	private IGoap agent;
-	private Memory agentMemory;
+	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
 	

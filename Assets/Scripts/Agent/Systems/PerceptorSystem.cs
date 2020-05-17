@@ -51,7 +51,7 @@ public class PerceptorSystem : MonoBehaviour
     {
         if (target.CompareTag("Tank"))
         {
-            if (IsEnemy(target.GetComponent<NPC>()))
+            if (IsEnemy(target.GetComponent<Player>()))
             {
                 OnEnemyLost.Invoke(target);
             }
@@ -67,7 +67,7 @@ public class PerceptorSystem : MonoBehaviour
     {
         if (target.CompareTag("Tank"))
         {
-            NPC targetTank = target.GetComponent<NPC>();
+            Player targetTank = target.GetComponent<Player>();
 
             if (IsEnemy(targetTank))
             {
@@ -102,10 +102,10 @@ public class PerceptorSystem : MonoBehaviour
         }
     }
 
-    private bool IsEnemy(NPC targetTank)
+    private bool IsEnemy(Player targetTank)
     {
         int targetID = targetTank.GetTeamID();
-        int ID = transform.parent.GetComponent<NPC>().GetTeamID();
+        int ID = transform.parent.GetComponent<Player>().GetTeamID();
         return ID != targetID;
     }
 

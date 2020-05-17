@@ -8,7 +8,7 @@ public class CollectAmmo : GoapAction
 {
 
 	private IGoap agent;
-	private Memory agentMemory;
+	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
 	private Coroutine Update;

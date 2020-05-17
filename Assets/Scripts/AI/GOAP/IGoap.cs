@@ -62,7 +62,7 @@ public interface IGoap
 	 */
 	void MoveAgent(GoapAction nextAction);
 
-	Memory GetMemory();
+	MemorySystem GetMemory();
 
 	NavigationSystem GetNavigation();
 

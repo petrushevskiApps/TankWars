@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class Hide : GoapAction 
 {
 	private IGoap agent;
-	private Memory agentMemory;
+	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
 

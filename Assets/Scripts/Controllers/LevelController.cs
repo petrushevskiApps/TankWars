@@ -9,11 +9,11 @@ public class LevelController : MonoBehaviour
     [SerializeField] private NPCNames npcNames;
 
     [SerializeField] private GameObject npcPrefab;
-    [SerializeField] private static List<List<NPC>> teamsList;
+    [SerializeField] private static List<List<Player>> teamsList;
 
     private void Awake()
     {
-        teamsList = new List<List<NPC>>();
+        teamsList = new List<List<Player>>();
         //npcNames.Setup();
 
         CreateTeams();
@@ -23,7 +23,7 @@ public class LevelController : MonoBehaviour
     {
         foreach(Team team in levelConfig.teamsConfig)
         {
-            List<NPC> currentTeam = new List<NPC>();
+            List<Player> currentTeam = new List<Player>();
 
             for(int i=0; i<team.npcCount; i++)
             {
@@ -34,10 +34,10 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    private void InstantiateNPC(int teamID, List<NPC> teamList)
+    private void InstantiateNPC(int teamID, List<Player> teamList)
     {
         GameObject npc = Instantiate(npcPrefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
-        NPC tankNpc = npc.GetComponent<NPC>();
+        Player tankNpc = npc.GetComponent<Player>();
         
         tankNpc.Initialize(teamID, npcNames.GetRandomName(), teamColors.GetTeamColor(teamID));
         
@@ -46,7 +46,7 @@ public class LevelController : MonoBehaviour
         npc.SetActive(true);
     }
 
-    public static List<List<NPC>> GetTeamsList()
+    public static List<List<Player>> GetTeamsList()
     {
         return teamsList;
     }

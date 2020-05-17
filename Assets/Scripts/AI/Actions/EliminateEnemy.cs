@@ -20,7 +20,7 @@ public class EliminateEnemy : GoapAction
 	public AudioClip fireAudioClip;                
 	
 	private IGoap agent;
-	private Memory agentMemory;
+	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
 	private float fireAngle = 40f;

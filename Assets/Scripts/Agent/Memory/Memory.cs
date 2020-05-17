@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class Memory
+public class MemorySystem
 {
     
     public float shootingRange = 10;
@@ -22,9 +22,9 @@ public class Memory
 
     private List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
 
-    private NPC parent;
+    private Player parent;
 
-    public void Initialize(NPC parent)
+    public void Initialize(Player parent)
     {
         this.parent = parent;
 
