@@ -68,21 +68,21 @@ public class Patrol : MoveAction
 
 	private void OnAmmoDetected(GameObject ammo)
 	{
-		if (!agent.GetInventory().IsAmmoAvailable())
+		if (!agentMemory.IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
 	}
 	private void OnHealthDetected(GameObject health)
 	{
-		if (!agent.GetInventory().IsHealthAvailable())
+		if (!agentMemory.IsHealthAvailable())
 		{
 			ExitAction(actionCompleted); 
 		}
 	}
 	private void OnHidingSpotDetected(GameObject hiddingSpot)
 	{
-		if (!agent.GetInventory().IsHealthAvailable() && !agent.GetInventory().IsAmmoAvailable())
+		if (!agentMemory.IsHealthAvailable() && !agentMemory.IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}

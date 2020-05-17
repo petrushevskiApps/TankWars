@@ -76,7 +76,7 @@ public class CollectAmmo : GoapAction
 	}
 	IEnumerator WaitAction()
 	{
-		yield return new WaitUntil(() => agent.GetInventory().IsAmmoAvailable());
+		yield return new WaitUntil(() => agentMemory.IsAmmoAvailable());
 		agentMemory.AmmoPacks.RemoveDetected(target);
 		ExitAction(actionCompleted);
 	}

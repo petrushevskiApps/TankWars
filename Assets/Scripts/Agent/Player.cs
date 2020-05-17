@@ -77,7 +77,7 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 	}
 	public void PickableCollected(AmmoPack collected)
 	{
-		inventory.AddAmmo(10);
+		inventory.IncreaseAmmo(10);
 	}
 
 	public void PickableCollected(HealthPack collected)

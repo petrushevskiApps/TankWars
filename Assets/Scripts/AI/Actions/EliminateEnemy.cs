@@ -46,7 +46,7 @@ public class EliminateEnemy : GoapAction
 
 	public override bool CheckPreconditions(GameObject agentGO)
 	{
-		return agentMemory.Enemies.IsAnyValidDetected() && agent.GetInventory().IsAmmoAvailable();
+		return agentMemory.Enemies.IsAnyValidDetected() && agentMemory.IsAmmoAvailable();
 	}
 
 	public override void EnterAction(Action success, Action fail)

@@ -75,7 +75,7 @@ public class CollectHealth : GoapAction
 
 	IEnumerator WaitAction()
 	{
-		yield return new WaitUntil(() => this.agent.GetInventory().IsHealthAvailable());
+		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
 		agentMemory.HealthPacks.RemoveDetected(target);
 		ExitAction(actionCompleted);
 	}
@@ -126,7 +126,7 @@ public class CollectHealth : GoapAction
 		{
 			GoapAgent friendly = friend.GetComponent<GoapAgent>();
 
-			if (friendly != null && friendly.GetCurrentAction().Equals("CollectAmmo"))
+			if (friendly != null && friendly.GetCurrentAction().Equals("CollectHealth"))
 			{
 				CompareDistanceToPacket(friend);
 			}

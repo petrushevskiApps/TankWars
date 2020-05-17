@@ -82,14 +82,14 @@ public class Hide : GoapAction
 
 	IEnumerator Regenerate()
 	{
-		while(agent.GetInventory().GetHealth() < 100)
+		while(agent.GetInventory().HealthStatus != InventoryStatus.Full)
 		{
 			agent.GetInventory().IncreaseHealth(10);
 			yield return new WaitForSeconds(1f);
 		}
-		while(agent.GetInventory().ammoAmount < agent.GetInventory().ammoCapacity)
+		while(agent.GetInventory().AmmoStatus != InventoryStatus.Full)
 		{
-			agent.GetInventory().AddAmmo(2);
+			agent.GetInventory().IncreaseAmmo(2);
 			yield return new WaitForSeconds(1f);
 		}
 		

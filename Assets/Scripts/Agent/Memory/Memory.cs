@@ -42,10 +42,10 @@ public class MemorySystem
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
         worldState.Add(StateKeys.IN_SHOOTING_RANGE, () => Enemies.InShootingRange(shootingRange));
 
-        worldState.Add(StateKeys.HEALTH_AMOUNT, parent.GetInventory().IsHealthAvailable);
+        worldState.Add(StateKeys.HEALTH_AMOUNT, IsHealthAvailable);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.AMMO_AMOUNT, parent.GetInventory().IsAmmoAvailable);
+        worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
@@ -63,16 +63,6 @@ public class MemorySystem
 
         goals.Add(new Dictionary<string, bool>()
         {
-            { StateKeys.HEALTH_AMOUNT, true },
-        });
-
-        goals.Add(new Dictionary<string, bool>()
-        {
-            { StateKeys.AMMO_AMOUNT, true },
-        });
-
-        goals.Add(new Dictionary<string, bool>()
-        {
             { StateKeys.PATROL, true },
         });
         
@@ -82,10 +72,13 @@ public class MemorySystem
     {
         perceptor.OnEnemyDetected.AddListener(Enemies.AddDetected);
         perceptor.OnEnemyLost.AddListener(Enemies.RemoveDetected);
+        
         perceptor.OnAmmoPackDetected.AddListener(AmmoPacks.AddDetected);
-        perceptor.OnHealthPackLost.AddListener(AmmoPacks.RemoveDetected);
+        perceptor.OnAmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
+        
         perceptor.OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
         perceptor.OnHealthPackLost.AddListener(HealthPacks.RemoveDetected);
+        
         perceptor.OnHiddingSpotDetected.AddListener(HidingSpots.AddDetected);
 
     }
@@ -94,10 +87,13 @@ public class MemorySystem
     {
         perceptor.OnEnemyDetected.RemoveListener(Enemies.AddDetected);
         perceptor.OnEnemyLost.RemoveListener(Enemies.RemoveDetected);
+        
         perceptor.OnAmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
-        perceptor.OnHealthPackLost.RemoveListener(AmmoPacks.RemoveDetected);
+        perceptor.OnAmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
+        
         perceptor.OnHealthPackDetected.RemoveListener(HealthPacks.AddDetected);
         perceptor.OnHealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
+        
         perceptor.OnHiddingSpotDetected.RemoveListener(HidingSpots.AddDetected);
     }
 
@@ -118,7 +114,47 @@ public class MemorySystem
         return goals;
     }
 
-    
 
-    
+    public bool IsAmmoAvailable()
+    {
+        InventoryStatus status = parent.GetInventory().AmmoStatus;
+
+        if (status == InventoryStatus.Empty)
+        {
+            return false;
+        }
+        else if (status == InventoryStatus.Low || status == InventoryStatus.Medium)
+        {
+            if (Enemies.IsAnyValidDetected())
+            {
+                return true;
+            }
+            else return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    public bool IsHealthAvailable()
+    {
+        InventoryStatus status = parent.GetInventory().HealthStatus;
+
+        if (status == InventoryStatus.Low)
+        {
+            return false;
+        }
+        else if (status == InventoryStatus.Medium)
+        {
+            if (Enemies.IsAnyValidDetected())
+            {
+                return true;
+            }
+            else return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }
