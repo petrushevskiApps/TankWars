@@ -59,8 +59,12 @@ public class NavigationSystem
 
 	private bool CheckAngle(GameObject target)
 	{
-		float angle = Utilities.GetAngle(agent, target);
-		return angle < 5f;
+		if(target != null)
+		{
+			float angle = Utilities.GetAngle(agent, target);
+			return angle < 5f;
+		}
+		return true;
 	}
 
 	public void Move(GoapAction action)

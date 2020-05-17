@@ -83,7 +83,7 @@ public class MemorySystem
         perceptor.OnEnemyDetected.AddListener(Enemies.AddDetected);
         perceptor.OnEnemyLost.AddListener(Enemies.RemoveDetected);
         perceptor.OnAmmoPackDetected.AddListener(AmmoPacks.AddDetected);
-        perceptor.OnAmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
+        perceptor.OnHealthPackLost.AddListener(AmmoPacks.RemoveDetected);
         perceptor.OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
         perceptor.OnHealthPackLost.AddListener(HealthPacks.RemoveDetected);
         perceptor.OnHiddingSpotDetected.AddListener(HidingSpots.AddDetected);
@@ -95,7 +95,7 @@ public class MemorySystem
         perceptor.OnEnemyDetected.RemoveListener(Enemies.AddDetected);
         perceptor.OnEnemyLost.RemoveListener(Enemies.RemoveDetected);
         perceptor.OnAmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
-        perceptor.OnAmmoPackLost.RemoveListener(AmmoPacks.RemoveDetected);
+        perceptor.OnHealthPackLost.RemoveListener(AmmoPacks.RemoveDetected);
         perceptor.OnHealthPackDetected.RemoveListener(HealthPacks.AddDetected);
         perceptor.OnHealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
         perceptor.OnHiddingSpotDetected.RemoveListener(HidingSpots.AddDetected);

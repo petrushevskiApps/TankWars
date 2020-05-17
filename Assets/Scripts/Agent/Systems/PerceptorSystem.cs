@@ -8,8 +8,9 @@ public class PerceptorSystem : MonoBehaviour
 {
     [SerializeField] private List<Sensor> sensors = new List<Sensor>();
 
-    public EnemyEvent OnEnemyDetected = new EnemyEvent();
-    public EnemyEvent OnEnemyLost = new EnemyEvent();
+    public PlayerEvent OnFriendlyDetected = new PlayerEvent();
+    public PlayerEvent OnEnemyDetected = new PlayerEvent();
+    public PlayerEvent OnEnemyLost = new PlayerEvent();
 
     public PackageEvent OnAmmoPackDetected = new PackageEvent();
     public PackageEvent OnAmmoPackLost = new PackageEvent();
@@ -55,10 +56,18 @@ public class PerceptorSystem : MonoBehaviour
             {
                 OnEnemyLost.Invoke(target);
             }
+            else
+            {
+                OnFriendlyDetected.Invoke(target);
+            }
         }
-        else if (target.CompareTag("Pickable"))
+        else if (target.CompareTag("AmmoPack"))
         {
             OnAmmoPackLost.Invoke(target);
+        }
+        else if (target.CompareTag("HealthPack"))
+        {
+            OnHealthPackLost.Invoke(target);
         }
     }
 
@@ -77,6 +86,7 @@ public class PerceptorSystem : MonoBehaviour
             else
             {
                 Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.blue);
+                OnFriendlyDetected.Invoke(target);
             }
         }
         else if (target.CompareTag("AmmoPack"))
@@ -109,7 +119,7 @@ public class PerceptorSystem : MonoBehaviour
         return ID != targetID;
     }
 
-    public class EnemyEvent : UnityEvent<GameObject>
+    public class PlayerEvent : UnityEvent<GameObject>
     {
 
     }

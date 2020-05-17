@@ -144,8 +144,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6882259522592799845}
+  - component: {fileID: 3659655715927590510}
   m_Layer: 0
-  m_Name: FireTransform
+  m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -165,6 +166,23 @@ Transform:
   m_Father: {fileID: 6882259522592773317}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3659655715927590510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6882259522593043725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58704736e638fb349818e9ff09fd837b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
+  fireRange: 10
+  shootingAudioSource: {fileID: 0}
+  fireAudioClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
+  fireAngle: 40
 --- !u!1 &6882259522593049601
 GameObject:
   m_ObjectHideFlags: 0
@@ -4886,6 +4904,7 @@ GameObject:
   - component: {fileID: 6882259522612799685}
   - component: {fileID: 6882259522599644395}
   - component: {fileID: 6882259522599592593}
+  - component: {fileID: 4872470276943766358}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -4973,6 +4992,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &4872470276943766358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6882259522593062215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88f5cf04f94ac0e459afdb4f838d66f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 6882259522593093682}
 --- !u!1 &6882259522593062807
 GameObject:
   m_ObjectHideFlags: 0
@@ -5293,15 +5325,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8518d601ac0ff0a40a9ef8334c48a1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 6882259522593093682}
-  deathParticles: {fileID: 6882259520838691897}
-  renderController: {fileID: 6882259522593068463}
   teamID: 0
+  uiController: {fileID: 4872470276943766358}
+  renderController: {fileID: 6882259522593068463}
   inventory:
     healthAmount: 100
     healthCapacity: 100
-    ammoAmount: 10
+    ammoAmount: 20
     ammoCapacity: 10
+  weapon: {fileID: 3659655715927590510}
   memory:
     shootingRange: 10
   perceptor: {fileID: 4081871276758882543}
@@ -5339,10 +5371,6 @@ MonoBehaviour:
   maxRequiredRange: 15
   requiresRange: 1
   cost: 1
-  bullet: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
-  turretTransform: {fileID: 6882259522592799845}
-  shootingAudioSource: {fileID: 6882259522594395421}
-  fireAudioClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
 --- !u!114 &6882259522593062892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5508,6 +5536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdb2c16e8e305354c80558172c881727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deathParticles: {fileID: 151086, guid: 6bc6d0dd8b8428e4ca316513f2cf13c6, type: 3}
   renderMaterials:
   - {fileID: 6882259522590851621}
   - {fileID: 6882259522590854355}

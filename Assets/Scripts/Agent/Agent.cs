@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Agent : Player, IGoap
 {
-	[Header("Systems")]
+	[Header("Agent Systems")]
 
 	[SerializeField] private MemorySystem memory = new MemorySystem();
 

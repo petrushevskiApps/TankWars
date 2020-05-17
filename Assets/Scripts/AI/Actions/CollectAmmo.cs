@@ -95,13 +95,16 @@ public class CollectAmmo : GoapAction
 	{
 		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
 		agent.GetPerceptor().OnAmmoPackLost.AddListener(AmmoPackLost);
+		agent.GetPerceptor().OnFriendlyDetected.AddListener(FriendlyUnityDetected);
 	}
 
 	
+
 	private void RemoveListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
+		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
 		agent.GetPerceptor().OnAmmoPackLost.RemoveListener(AmmoPackLost);
+		agent.GetPerceptor().OnFriendlyDetected.RemoveListener(FriendlyUnityDetected);
 	}
 
 	private void AmmoPackLost(GameObject ammoPack)
@@ -117,14 +120,32 @@ public class CollectAmmo : GoapAction
 	{
 		if (target != null && enemy != null)
 		{
-			float enemyDistanceToPacket = Vector3.Distance(enemy.transform.position, target.transform.position);
-			float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
+			CompareDistanceToPacket(enemy);
+		}
+	}
 
-			if (distanceToPacket > enemyDistanceToPacket)
+	private void FriendlyUnityDetected(GameObject friend)
+	{
+		if(target != null && friend != null)
+		{
+			GoapAgent friendly = friend.GetComponent<GoapAgent>();
+			
+			if (friendly != null && friendly.GetCurrentAction().Equals("CollectAmmo"))
 			{
-				agentMemory.AmmoPacks.RemoveDetected(target);
-				ExitAction(actionFailed);
+				CompareDistanceToPacket(friend);
 			}
+		}
+	}
+
+	private void CompareDistanceToPacket(GameObject otherPlayer)
+	{
+		float otherDistanceToPacket = Vector3.Distance(otherPlayer.transform.position, target.transform.position);
+		float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
+
+		if (distanceToPacket > otherDistanceToPacket)
+		{
+			agentMemory.AmmoPacks.RemoveDetected(target);
+			ExitAction(actionFailed);
 		}
 	}
 }

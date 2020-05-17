@@ -10,11 +10,13 @@ public class Hide : GoapAction
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
+	private Coroutine RegenerateAction;
 
 	public Hide() 
 	{
 		actionName = "Hide";
 
+		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, false);
 		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
 		AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, true);
@@ -55,19 +57,26 @@ public class Hide : GoapAction
 		actionCompleted = success;
 		actionFailed = fail;
 		SetActionTarget();
+		AddListeners();
 	}
 
 	public override void ExecuteAction(GameObject agent)
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
-		StartCoroutine(Regenerate());
+		RegenerateAction = StartCoroutine(Regenerate());
 	}
 	
 	protected override void ExitAction(Action exitAction)
 	{
+		if(RegenerateAction != null)
+		{
+			StopCoroutine(RegenerateAction);
+		}
+
 		IsActionDone = true;
 		target = null;
 		agentNavigation.InvalidateTarget();
+		RemoveListeners();
 		exitAction?.Invoke();
 	}
 
@@ -87,5 +96,47 @@ public class Hide : GoapAction
 		ExitAction(actionCompleted);
 	}
 
+	private void AddListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
+		agent.GetPerceptor().OnFriendlyDetected.AddListener(FriendlyUnityDetected);
+	}
+	private void RemoveListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
+		agent.GetPerceptor().OnFriendlyDetected.RemoveListener(FriendlyUnityDetected);
+	}
 
+	private void OnEnemyDetected(GameObject enemy)
+	{
+		if (target != null && enemy != null)
+		{
+			ExitAction(actionFailed);
+		}
+	}
+
+	private void FriendlyUnityDetected(GameObject friend)
+	{
+		if (target != null && friend != null)
+		{
+			GoapAgent friendly = friend.GetComponent<GoapAgent>();
+
+			if (friendly != null && friendly.GetCurrentAction().Equals("Hide"))
+			{
+				CompareDistanceToSpot(friend);
+			}
+		}
+	}
+
+	private void CompareDistanceToSpot(GameObject otherPlayer)
+	{
+		float otherDistanceToPacket = Vector3.Distance(otherPlayer.transform.position, target.transform.position);
+		float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
+
+		if (distanceToPacket > otherDistanceToPacket)
+		{
+			agentMemory.HidingSpots.RemoveDetected(target);
+			ExitAction(actionFailed);
+		}
+	}
 }

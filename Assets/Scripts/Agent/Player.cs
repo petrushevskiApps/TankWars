@@ -4,30 +4,29 @@ using UnityEngine.Events;
 
 public class Player : MonoBehaviour, ICollector, IDestroyable
 {
-	private string name = "tankName";
-
-	[SerializeField] private UIHealthBar healthBar;
-	[SerializeField] private GameObject deathParticles;
-	[SerializeField] private RenderController renderController;
+	//Events
+	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
 	[SerializeField] private int teamID = 0;
 
+	[Header("Player Controllers")]
+	[SerializeField] private UIController uiController; 
+	[SerializeField] private RenderController renderController;
+	
 
-	private GameObject particles;
-	private bool isDead;
-
-
+	[Header("Player Systems")]
 	[SerializeField] private Inventory inventory = new Inventory();
+	[SerializeField] private WeaponSystem weapon;
 
 
-
-	public PlayerDeath OnAgentDeath = new PlayerDeath();
-
+	private string name = "tankName";
+	private bool isDead;
 
 	protected void Awake()
 	{
-		SetParticles();
-		SetHealthBar();
+		weapon.Initialize(this);
+
+		uiController.SetHealthBar(inventory);
 	}
 
 	public void Initialize(int teamID, string name, Material teamColor)
@@ -36,17 +35,6 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 		this.name = name;
 		gameObject.name = name;
 		renderController.SetTeamColor(teamColor);
-	}
-
-	private void SetParticles()
-	{
-		particles = Instantiate(deathParticles);
-		particles.SetActive(false);
-	}
-
-    private void SetHealthBar()
-	{
-		healthBar.Initialize(inventory.GetHealth(), inventory.OnHealthChange);
 	}
 
 	public void TakeDamage(float amount)
@@ -67,9 +55,7 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 		// Set the flag so that this function is only called once.
 		isDead = true;
 
-		particles.transform.position = transform.position;
-
-		particles.SetActive(true);
+		renderController.ShowParticles();
 
 		OnAgentDeath.Invoke(gameObject);
 		// Turn the tank off.
@@ -85,7 +71,10 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 	{
 		return inventory;
 	}
-
+	public WeaponSystem GetWeapon()
+	{
+		return weapon;
+	}
 	public void PickableCollected(AmmoPack collected)
 	{
 		inventory.AddAmmo(10);

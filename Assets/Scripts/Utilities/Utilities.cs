@@ -27,9 +27,13 @@ namespace GOAP
 
 		public static Vector3 GetDirection(GameObject caller, GameObject target)
 		{
-			Vector3 heading = (target.transform.position - caller.transform.position);
-			float distance = heading.magnitude;
-			return heading / distance;
+			if(target != null)
+			{
+				Vector3 heading = (target.transform.position - caller.transform.position);
+				float distance = heading.magnitude;
+				return heading / distance;
+			}
+			return Vector3.forward;
 		}
 
 		public static void PrintGOAPPlan(string agentName, List<Node> leaves)
