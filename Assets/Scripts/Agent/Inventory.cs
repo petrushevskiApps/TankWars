@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,8 +17,8 @@ public class Inventory
     public InventoryStatus HealthStatus { get; private set; }
 
     public HealthChangeEvent OnHealthChange = new HealthChangeEvent();
-    
-    public Inventory()
+
+    public void Initialize()
     {
         SetAmmoStatus();
         SetHealthStatus();
@@ -28,6 +29,8 @@ public class Inventory
         ammoAmount = Mathf.Clamp(ammoAmount + ammo, 0, ammoCapacity);
         SetAmmoStatus();
     }
+
+    
 
     public void DecreaseAmmo()
     {

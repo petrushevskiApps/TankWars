@@ -5,11 +5,14 @@ using UnityEngine.Events;
 
 public class Pickable : MonoBehaviour, IDestroyable
 {
-    public OnCollectedEvent OnCollected = new OnCollectedEvent();
+    [SerializeField] private float timeToCollect = 2f;
+    
 
+    public OnCollectedEvent OnCollected = new OnCollectedEvent();
+     
     private float timeIn = 0;
-    private float timeToCollect = 2f;
-    public bool isCollected = false;
+
+    private bool isCollected = false;
 
     private void OnEnable()
     {

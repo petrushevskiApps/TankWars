@@ -46,7 +46,7 @@ public class Patrol : MoveAction
 		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
 		agent.GetPerceptor().OnAmmoPackDetected.AddListener(OnAmmoDetected);
 		agent.GetPerceptor().OnHealthPackDetected.AddListener(OnHealthDetected);
-		agent.GetPerceptor().OnHiddingSpotDetected.AddListener(OnHidingSpotDetected);
+		agent.GetPerceptor().OnHidingSpotDetected.AddListener(OnHidingSpotDetected);
 
 	}
 
@@ -55,7 +55,7 @@ public class Patrol : MoveAction
 		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
 		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(OnAmmoDetected);
 		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(OnHealthDetected);
-		agent.GetPerceptor().OnHiddingSpotDetected.RemoveListener(OnHidingSpotDetected);
+		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(OnHidingSpotDetected);
 	}
 
 	private void OnEnemyDetected(GameObject enemy)

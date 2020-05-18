@@ -76,17 +76,16 @@ public class CollectHealth : GoapAction
 	IEnumerator WaitAction()
 	{
 		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
-		agentMemory.HealthPacks.RemoveDetected(target);
 		ExitAction(actionCompleted);
 	}
 
-	protected override void ExitAction(Action exitAction)
+	protected override void ExitAction(Action ExitAction)
 	{
 		IsActionDone = true;
 		target = null;
 		agentNavigation.InvalidateTarget();
 		RemoveListeners();
-		exitAction?.Invoke();
+		ExitAction?.Invoke();
 	}
 
 
@@ -126,7 +125,7 @@ public class CollectHealth : GoapAction
 		{
 			GoapAgent friendly = friend.GetComponent<GoapAgent>();
 
-			if (friendly != null && friendly.GetCurrentAction().Equals("CollectHealth"))
+			if (friendly != null && friendly.GetCurrentAction().Equals(actionName))
 			{
 				CompareDistanceToPacket(friend);
 			}

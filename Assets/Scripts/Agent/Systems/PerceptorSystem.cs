@@ -17,7 +17,8 @@ public class PerceptorSystem : MonoBehaviour
     public PackageEvent OnHealthPackDetected = new PackageEvent();
     public PackageEvent OnHealthPackLost = new PackageEvent();
 
-    public HiddingSpot OnHiddingSpotDetected = new HiddingSpot();
+    public HiddingSpot OnHidingSpotDetected = new HiddingSpot();
+    public HiddingSpot OnHidingSpotLost = new HiddingSpot();
 
     private void Awake()
     {
@@ -61,13 +62,9 @@ public class PerceptorSystem : MonoBehaviour
                 OnFriendlyDetected.Invoke(target);
             }
         }
-        else if (target.CompareTag("AmmoPack"))
+        else if (target.CompareTag("HidingSpot"))
         {
-            OnAmmoPackLost.Invoke(target);
-        }
-        else if (target.CompareTag("HealthPack"))
-        {
-            OnHealthPackLost.Invoke(target);
+            OnHidingSpotLost.Invoke(target);
         }
     }
 
@@ -108,7 +105,7 @@ public class PerceptorSystem : MonoBehaviour
         {
             Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.magenta);
 
-            OnHiddingSpotDetected.Invoke(detected);
+            OnHidingSpotDetected.Invoke(detected);
         }
     }
 

@@ -77,6 +77,7 @@ public abstract class Detected
         if(IsAnyValidDetected())
         {
             detectables.Sort();
+
             Detectable detected = detectables[0];
 
             if(detected.detected != null)

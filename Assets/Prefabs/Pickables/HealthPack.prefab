@@ -78,7 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa16dc5d4ee8e9847b2cd1486a67fd19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCollected: 0
+  timeToCollect: 2
+  amountToCollect: 100
 --- !u!1 &6592404020754708247
 GameObject:
   m_ObjectHideFlags: 0

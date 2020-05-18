@@ -6,12 +6,9 @@ using UnityEngine.AI;
 
 public class CollectAmmo : GoapAction 
 {
-
 	private IGoap agent;
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
-
-	private Coroutine Update;
 
 	public CollectAmmo() 
 	{
@@ -77,7 +74,6 @@ public class CollectAmmo : GoapAction
 	IEnumerator WaitAction()
 	{
 		yield return new WaitUntil(() => agentMemory.IsAmmoAvailable());
-		agentMemory.AmmoPacks.RemoveDetected(target);
 		ExitAction(actionCompleted);
 	}
 
@@ -97,8 +93,6 @@ public class CollectAmmo : GoapAction
 		agent.GetPerceptor().OnAmmoPackLost.AddListener(AmmoPackLost);
 		agent.GetPerceptor().OnFriendlyDetected.AddListener(FriendlyUnityDetected);
 	}
-
-	
 
 	private void RemoveListeners()
 	{
@@ -130,7 +124,7 @@ public class CollectAmmo : GoapAction
 		{
 			GoapAgent friendly = friend.GetComponent<GoapAgent>();
 			
-			if (friendly != null && friendly.GetCurrentAction().Equals("CollectAmmo"))
+			if (friendly != null && friendly.GetCurrentAction().Equals(actionName))
 			{
 				CompareDistanceToPacket(friend);
 			}

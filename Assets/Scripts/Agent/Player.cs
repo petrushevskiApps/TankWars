@@ -12,7 +12,7 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 	[Header("Player Controllers")]
 	[SerializeField] private UIController uiController; 
 	[SerializeField] private RenderController renderController;
-	
+
 
 	[Header("Player Systems")]
 	[SerializeField] private Inventory inventory = new Inventory();
@@ -28,7 +28,10 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 
 		uiController.SetHealthBar(inventory);
 	}
-
+	private void Start()
+	{
+		inventory.Initialize();
+	}
 	public void Initialize(int teamID, string name, Material teamColor)
 	{
 		this.teamID = teamID;
@@ -77,12 +80,12 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 	}
 	public void PickableCollected(AmmoPack collected)
 	{
-		inventory.IncreaseAmmo(10);
+		inventory.IncreaseAmmo(collected.amountToCollect);
 	}
 
 	public void PickableCollected(HealthPack collected)
 	{
-		inventory.IncreaseHealth(100);
+		inventory.IncreaseHealth(collected.amountToCollect);
 	}
 
 	public int GetTeamID()

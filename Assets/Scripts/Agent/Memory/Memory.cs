@@ -79,8 +79,8 @@ public class MemorySystem
         perceptor.OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
         perceptor.OnHealthPackLost.AddListener(HealthPacks.RemoveDetected);
         
-        perceptor.OnHiddingSpotDetected.AddListener(HidingSpots.AddDetected);
-
+        perceptor.OnHidingSpotDetected.AddListener(HidingSpots.AddDetected);
+        perceptor.OnHidingSpotLost.AddListener(HidingSpots.RemoveDetected);
     }
 
     public void RemoveEvents(PerceptorSystem perceptor)
@@ -94,7 +94,8 @@ public class MemorySystem
         perceptor.OnHealthPackDetected.RemoveListener(HealthPacks.AddDetected);
         perceptor.OnHealthPackLost.RemoveListener(HealthPacks.RemoveDetected);
         
-        perceptor.OnHiddingSpotDetected.RemoveListener(HidingSpots.AddDetected);
+        perceptor.OnHidingSpotDetected.RemoveListener(HidingSpots.AddDetected);
+        perceptor.OnHidingSpotLost.RemoveListener(HidingSpots.RemoveDetected);
     }
 
     public Dictionary<string, bool> GetWorldState()

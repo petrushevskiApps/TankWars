@@ -5331,7 +5331,7 @@ MonoBehaviour:
   inventory:
     healthAmount: 100
     healthCapacity: 100
-    ammoAmount: 20
+    ammoAmount: 10
     ammoCapacity: 10
   weapon: {fileID: 3659655715927590510}
   memory:
