@@ -53,7 +53,21 @@ public abstract class Detected
             detectables[detectables.IndexOf(detectable)].status = false;
         }
     }
+    public void ValidateDetected(GameObject detected)
+    {
+        Detectable detectable = new Detectable(detected, detected.name, parent);
 
+        if (detectables.Contains(detectable))
+        {
+            Detectable detectableRef = detectables[detectables.IndexOf(detectable)];
+            parent.GetComponent<Player>().StartCoroutine(RevalidationTimer(detectableRef));
+        }
+    }
+    IEnumerator RevalidationTimer(Detectable detectable)
+    {
+        yield return new WaitForSeconds(5f);
+        detectable.status = true;
+    }
     public void RemoveDetected(GameObject detected) 
     {
         if(detected != null)

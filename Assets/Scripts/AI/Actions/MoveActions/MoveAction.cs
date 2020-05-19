@@ -22,7 +22,10 @@ public abstract class MoveAction : GoapAction
 	{
 		base.ResetAction();
 	}
-
+	public override bool CheckPreconditions(GameObject agentGO)
+	{
+		return true;
+	}
 	public override void EnterAction(Action success, Action fail)
 	{
 		actionCompleted = success;

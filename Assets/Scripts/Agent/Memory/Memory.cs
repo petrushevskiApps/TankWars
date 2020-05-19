@@ -24,6 +24,8 @@ public class MemorySystem
 
     private Player parent;
 
+    public bool IsUnderAttack { get; private set; }
+
     public void Initialize(Player parent)
     {
         this.parent = parent;
@@ -74,13 +76,16 @@ public class MemorySystem
         perceptor.OnEnemyLost.AddListener(Enemies.RemoveDetected);
         
         perceptor.OnAmmoPackDetected.AddListener(AmmoPacks.AddDetected);
-        perceptor.OnAmmoPackLost.AddListener(AmmoPacks.RemoveDetected);
-        
+        perceptor.OnAmmoPackLost.AddListener(AmmoPacks.ValidateDetected);
+
         perceptor.OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
-        perceptor.OnHealthPackLost.AddListener(HealthPacks.RemoveDetected);
+        perceptor.OnHealthPackLost.AddListener(HealthPacks.ValidateDetected);
         
         perceptor.OnHidingSpotDetected.AddListener(HidingSpots.AddDetected);
         perceptor.OnHidingSpotLost.AddListener(HidingSpots.RemoveDetected);
+
+        perceptor.OnUnderAttack.AddListener(SetIsUnderAttack);
+
     }
 
     public void RemoveEvents(PerceptorSystem perceptor)
@@ -96,6 +101,28 @@ public class MemorySystem
         
         perceptor.OnHidingSpotDetected.RemoveListener(HidingSpots.AddDetected);
         perceptor.OnHidingSpotLost.RemoveListener(HidingSpots.RemoveDetected);
+
+        perceptor.OnUnderAttack.RemoveListener(SetIsUnderAttack);
+    }
+    private Coroutine UnderAttackTimer;
+
+    private void SetIsUnderAttack(GameObject enemy)
+    {
+        IsUnderAttack = true;
+
+        if (UnderAttackTimer != null)
+        {
+            parent.StopCoroutine(UnderAttackTimer);
+        }
+
+        UnderAttackTimer = parent.StartCoroutine(UnderAttack());
+    }
+
+    IEnumerator UnderAttack()
+    {
+        yield return new WaitForSeconds(5f);
+        UnderAttackTimer = null;
+        IsUnderAttack = false;
     }
 
     public Dictionary<string, bool> GetWorldState()

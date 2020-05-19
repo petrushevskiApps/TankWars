@@ -1997,7 +1997,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1941082720409345a4559b8cb1d5fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelConfig: {fileID: 11400000, guid: c8a11b30ed503244fa059f93eea651a5, type: 2}
+  levelConfig: {fileID: 11400000, guid: 4b474affaa183004b951c5740755d4a6, type: 2}
   spawnLocations: {fileID: 1925608929}
   teamColors: {fileID: 11400000, guid: 1377291382ea0d84b9a929f5bb66907d, type: 2}
   npcNames: {fileID: 11400000, guid: f2c3b38a19a4ad34aa4a4e4e13b69d87, type: 2}

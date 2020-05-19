@@ -23,7 +23,7 @@ public class CollectHealth : Collect
 		detectedMemory = agentMemory.HealthPacks;
 	}
 
-	protected override IEnumerator Collecting()
+	protected override IEnumerator ActionUpdate()
 	{
 		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
 		ExitAction(actionCompleted);

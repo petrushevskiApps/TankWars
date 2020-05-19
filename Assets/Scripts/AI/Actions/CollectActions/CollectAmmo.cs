@@ -22,7 +22,7 @@ public class CollectAmmo : Collect
 		detectedMemory = agentMemory.AmmoPacks;
 	}
 
-	protected override IEnumerator Collecting()
+	protected override IEnumerator ActionUpdate()
 	{
 		yield return new WaitUntil(() => agentMemory.IsAmmoAvailable());
 		ExitAction(actionCompleted);

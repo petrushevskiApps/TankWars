@@ -10,7 +10,7 @@ public abstract class Collect : GoapAction
     protected NavigationSystem agentNavigation;
     protected Detected detectedMemory;
 
-    protected Coroutine UpdateAction;
+    protected Coroutine UpdateCoroutine;
 
     protected void Start()
     {
@@ -59,7 +59,7 @@ public abstract class Collect : GoapAction
 
         if (IsTargetValid())
         {
-            UpdateAction = StartCoroutine(Collecting());
+            UpdateCoroutine = StartCoroutine(ActionUpdate());
         }
         else
         {
@@ -67,16 +67,18 @@ public abstract class Collect : GoapAction
         }
     }
 
-    protected abstract IEnumerator Collecting();
+    protected abstract IEnumerator ActionUpdate();
 
     protected override void ExitAction(Action ExitAction)
     {
-        if (UpdateAction != null)
-        {
-            StopCoroutine(UpdateAction);
-            UpdateAction = null;
-        }
         RemoveListeners();
+
+        if (UpdateCoroutine != null)
+        {
+            StopCoroutine(UpdateCoroutine);
+            UpdateCoroutine = null;
+        }
+        
         IsActionDone = true;
         target = null;
         agentNavigation.InvalidateTarget();
@@ -101,7 +103,7 @@ public abstract class Collect : GoapAction
 
     private void OnUnderAttack(GameObject arg0)
     {
-        detectedMemory.InvalidateDetected(target);
+        Invalidate();
         ExitAction(actionFailed);
     }
 
@@ -121,14 +123,35 @@ public abstract class Collect : GoapAction
 
     private void CompareDistanceToPacket(GameObject otherPlayer)
     {
-        float otherDistanceToPacket = Vector3.Distance(otherPlayer.transform.position, target.transform.position);
-        float distanceToPacket = Vector3.Distance(transform.position, target.transform.position);
+        float otherDistanceToPacket = GetDistanceToCollectible(otherPlayer);
+        float distanceToPacket = GetDistanceToCollectible(gameObject);
 
         if (distanceToPacket > otherDistanceToPacket)
         {
-            //agentMemory.AmmoPacks.RemoveDetected(target);
-            detectedMemory.InvalidateDetected(target);
+            Invalidate();
             ExitAction(actionFailed);
+        }
+    }
+
+    public float GetDistanceToCollectible(GameObject player)
+    {
+        if(player != null && target != null)
+        {
+            return Vector3.Distance(player.transform.position, target.transform.position);
+        }
+        else
+        {
+            return Mathf.Infinity;
+        }
+    }
+
+    private void Invalidate()
+    {
+        float distance = GetDistanceToCollectible(gameObject);
+        
+        if (distance <= 15)
+        {
+            detectedMemory.InvalidateDetected(target);
         }
     }
 }

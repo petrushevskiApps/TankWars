@@ -8,6 +8,5 @@ public class AmmoPack : Pickable
     {
         collector.PickableCollected(this);
         base.Collected(collector);
-        
     }
 }

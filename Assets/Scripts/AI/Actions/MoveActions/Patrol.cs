@@ -21,20 +21,13 @@ public class Patrol : MoveAction
 		agentNavigation.SetTarget();
 		target = agentNavigation.GetNavigationTarget();
 	}
-
-
-	public override bool CheckPreconditions (GameObject agentGO)
-	{
-		return true;
-	}
-
 	public override void EnterAction(Action success, Action fail)
 	{
 		base.EnterAction(success, fail);
-		
 		AddListeners();
 	}
 	
+
 	protected override void ExitAction(Action ExitAction)
 	{
 		RemoveListeners();
