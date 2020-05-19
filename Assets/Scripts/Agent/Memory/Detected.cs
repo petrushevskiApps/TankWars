@@ -44,6 +44,16 @@ public abstract class Detected
         }
     }
 
+    public void InvalidateDetected(GameObject detected)
+    {
+        Detectable detectable = new Detectable(detected, detected.name, parent);
+
+        if(detectables.Contains(detectable))
+        {
+            detectables[detectables.IndexOf(detectable)].status = false;
+        }
+    }
+
     public void RemoveDetected(GameObject detected) 
     {
         if(detected != null)
@@ -88,22 +98,25 @@ public abstract class Detected
         return null;
     }
 
+    
     public class Detectable : IEquatable<Detectable>, IComparable<Detectable>
     {
         public GameObject agent;
         public GameObject detected;
         public string detectedName;
+        public bool status;
 
         public Detectable(GameObject detected,string detectedName, GameObject agent)
         {
             this.detected = detected;
             this.agent = agent;
             this.detectedName = detectedName;
+            status = true;
         }
 
         public bool IsValid()
         {
-            return detected != null && detected.activeSelf;
+            return detected != null && detected.activeSelf && status;
         }
 
         public float GetDistance()
@@ -113,23 +126,22 @@ public abstract class Detected
         public int CompareTo(Detectable other)
         {
             
-            if (detected != null && other.detected != null)
+            if (IsValid() && other.IsValid())
             {
                 if (GetDistance() > other.GetDistance()) return 1;
                 else if (GetDistance() < other.GetDistance()) return -1;
                 else return 0;
             }
+            else if (IsValid() && !other.IsValid())
+            {
+                return -1;
+            }
+            else if (!IsValid() && other.IsValid())
+            {
+                return 1;
+            }
             else
             {
-                if (IsValid())
-                {
-                    return -1;
-                }
-                else if (other.IsValid())
-                {
-                    return 1;
-                }
-
                 return 0;
             }
         }
