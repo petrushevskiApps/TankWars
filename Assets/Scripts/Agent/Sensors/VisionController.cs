@@ -15,15 +15,7 @@ public class VisionController : Sensor
 
         if(IsInFront(angle))
         {
-            if(IsVisible(other.gameObject))
-            {
-                OnVisibleDetected.Invoke(other.gameObject);
-            }
-            else
-            {
-                OnInisibleDetected.Invoke(other.gameObject);
-                
-            }
+            OnDetected.Invoke(other.gameObject, IsVisible(other.gameObject));
         }
     }
 
@@ -31,7 +23,7 @@ public class VisionController : Sensor
     // object is lost of sight.
     private void OnTriggerExit(Collider other)
     {
-        OnLost.Invoke(other.gameObject);
+        OnLost.Invoke(other.gameObject, true);
     }
 
     // Check if the target object is

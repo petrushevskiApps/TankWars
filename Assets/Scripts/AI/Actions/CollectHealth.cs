@@ -41,13 +41,15 @@ public class CollectHealth : GoapAction
 			agentNavigation.SetTarget(target);
 		}
 	}
-	
+	private bool IsTargetValid()
+	{
+		return target != null && target.activeSelf;
+	}
 
 	public override bool CheckPreconditions (GameObject agentGo)
 	{
-		return true;
+		return IsTargetValid();
 	}
-
 
 	public override void EnterAction(Action success, Action fail)
 	{
@@ -63,9 +65,9 @@ public class CollectHealth : GoapAction
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-		if (target != null && target.activeSelf)
+		if (IsTargetValid())
 		{
-			StartCoroutine(WaitAction());
+			StartCoroutine(Collecting());
 		}
 		else
 		{
@@ -73,7 +75,7 @@ public class CollectHealth : GoapAction
 		}
 	}
 
-	IEnumerator WaitAction()
+	IEnumerator Collecting()
 	{
 		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
 		ExitAction(actionCompleted);
@@ -92,22 +94,12 @@ public class CollectHealth : GoapAction
 	private void AddListeners()
 	{
 		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
-		agent.GetPerceptor().OnHealthPackLost.AddListener(HealthPackLost);
 		agent.GetPerceptor().OnFriendlyDetected.AddListener(FriendlyUnityDetected);
 	}
 	private void RemoveListeners()
 	{
 		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
-		agent.GetPerceptor().OnHealthPackLost.RemoveListener(HealthPackLost);
 		agent.GetPerceptor().OnFriendlyDetected.RemoveListener(FriendlyUnityDetected);
-	}
-
-	private void HealthPackLost(GameObject healthPack)
-	{
-		if (healthPack.Equals(target))
-		{
-			ExitAction(actionFailed);
-		}
 	}
 
 
@@ -139,7 +131,7 @@ public class CollectHealth : GoapAction
 
 		if (distanceToPacket > otherDistanceToPacket)
 		{
-			agentMemory.AmmoPacks.RemoveDetected(target);
+			agentMemory.HealthPacks.RemoveDetected(target);
 			ExitAction(actionFailed);
 		}
 	}

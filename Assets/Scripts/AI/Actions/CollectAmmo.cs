@@ -41,11 +41,15 @@ public class CollectAmmo : GoapAction
 			agentNavigation.SetTarget(target);
 		}
 	}
-	
+
+	private bool IsTargetValid()
+	{
+		return target != null && target.activeSelf;
+	}
 
 	public override bool CheckPreconditions (GameObject agentGo)
 	{
-		return true;
+		return IsTargetValid();
 	}
 
 	public override void EnterAction(Action success, Action fail)
@@ -62,16 +66,16 @@ public class CollectAmmo : GoapAction
 	{
 		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-		if(target != null && target.activeSelf)
+		if(IsTargetValid())
 		{
-			StartCoroutine(WaitAction());
+			StartCoroutine(Collecting());
 		}
 		else
 		{
 			ExitAction(actionFailed);
 		}
 	}
-	IEnumerator WaitAction()
+	IEnumerator Collecting()
 	{
 		yield return new WaitUntil(() => agentMemory.IsAmmoAvailable());
 		ExitAction(actionCompleted);
@@ -90,25 +94,14 @@ public class CollectAmmo : GoapAction
 	private void AddListeners()
 	{
 		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
-		agent.GetPerceptor().OnAmmoPackLost.AddListener(AmmoPackLost);
 		agent.GetPerceptor().OnFriendlyDetected.AddListener(FriendlyUnityDetected);
 	}
 
 	private void RemoveListeners()
 	{
 		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
-		agent.GetPerceptor().OnAmmoPackLost.RemoveListener(AmmoPackLost);
 		agent.GetPerceptor().OnFriendlyDetected.RemoveListener(FriendlyUnityDetected);
 	}
-
-	private void AmmoPackLost(GameObject ammoPack)
-	{
-		if(ammoPack.Equals(target))
-		{
-			ExitAction(actionFailed);
-		}
-	}
-
 
 	private void OnEnemyDetected(GameObject enemy)
 	{

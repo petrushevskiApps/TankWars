@@ -9,11 +9,13 @@ public class PerceptorSystem : MonoBehaviour
     [SerializeField] private List<Sensor> sensors = new List<Sensor>();
 
     public PlayerEvent OnFriendlyDetected = new PlayerEvent();
+
     public PlayerEvent OnEnemyDetected = new PlayerEvent();
     public PlayerEvent OnEnemyLost = new PlayerEvent();
 
     public PackageEvent OnAmmoPackDetected = new PackageEvent();
     public PackageEvent OnAmmoPackLost = new PackageEvent();
+
     public PackageEvent OnHealthPackDetected = new PackageEvent();
     public PackageEvent OnHealthPackLost = new PackageEvent();
 
@@ -33,8 +35,7 @@ public class PerceptorSystem : MonoBehaviour
     {
         foreach(Sensor sensor in sensors)
         {
-            sensor.OnVisibleDetected.AddListener(CheckVisibleDetected);
-            sensor.OnInisibleDetected.AddListener(CheckInvisibleDetected);
+            sensor.OnDetected.AddListener(CheckVisibleDetected);
             sensor.OnLost.AddListener(CheckLost);
         }
     }
@@ -43,13 +44,12 @@ public class PerceptorSystem : MonoBehaviour
     {
         foreach (Sensor sensor in sensors)
         {
-            sensor.OnVisibleDetected.RemoveListener(CheckVisibleDetected);
-            sensor.OnInisibleDetected.RemoveListener(CheckInvisibleDetected);
+            sensor.OnDetected.RemoveListener(CheckVisibleDetected);
             sensor.OnLost.RemoveListener(CheckLost);
         }
     }
 
-    private void CheckLost(GameObject target)
+    private void CheckLost(GameObject target, bool isVisible)
     {
         if (target.CompareTag("Tank"))
         {
@@ -69,43 +69,40 @@ public class PerceptorSystem : MonoBehaviour
     }
 
     // Check the type of object which was detected
-    private void CheckVisibleDetected(GameObject target)
+    private void CheckVisibleDetected(GameObject detected, bool isVisible)
     {
-        if (target.CompareTag("Tank"))
+        if (detected.CompareTag("Tank") && isVisible)
         {
-            Player targetTank = target.GetComponent<Player>();
+            Player targetTank = detected.GetComponent<Player>();
 
             if (IsEnemy(targetTank))
             {
-                Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.red);
-                OnEnemyDetected.Invoke(target);
+                Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
+                OnEnemyDetected.Invoke(detected);
             }
             else
             {
-                Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.blue);
-                OnFriendlyDetected.Invoke(target);
+                Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.blue);
+                OnFriendlyDetected.Invoke(detected);
             }
         }
-        else if (target.CompareTag("AmmoPack"))
-        {
-            Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
-
-            OnAmmoPackDetected.Invoke(target);
-        }
-        else if (target.CompareTag("HealthPack"))
-        {
-            Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.green);
-
-            OnHealthPackDetected.Invoke(target);
-        }
-    }
-    private void CheckInvisibleDetected(GameObject detected)
-    {
-        if (detected.CompareTag("HidingSpot"))
+        else if(detected.CompareTag("HidingSpot"))
         {
             Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.magenta);
 
             OnHidingSpotDetected.Invoke(detected);
+        }
+        else if (detected.CompareTag("AmmoPack") && isVisible)
+        {
+            Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.green);
+
+            OnAmmoPackDetected.Invoke(detected);
+        }
+        else if (detected.CompareTag("HealthPack") && isVisible)
+        {
+            Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.green);
+
+            OnHealthPackDetected.Invoke(detected);
         }
     }
 

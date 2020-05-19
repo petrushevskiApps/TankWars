@@ -56,6 +56,7 @@ public class Hide : GoapAction
 	{
 		actionCompleted = success;
 		actionFailed = fail;
+
 		SetActionTarget();
 		AddListeners();
 	}
