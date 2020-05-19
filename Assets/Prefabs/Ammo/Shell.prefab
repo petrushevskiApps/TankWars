@@ -14466,9 +14466,9 @@ GameObject:
   - component: {fileID: 5409530}
   - component: {fileID: 10833074}
   - component: {fileID: 11426614}
-  m_Layer: 0
-  m_Name: CompleteShell
-  m_TagString: Untagged
+  m_Layer: 12
+  m_Name: Shell
+  m_TagString: Missile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14640,11 +14640,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TankMask:
     serializedVersion: 2
-    m_Bits: 1792
+    m_Bits: 1536
   m_ExplosionParticles: {fileID: 19870274}
   m_ExplosionAudio: {fileID: 8204558}
   m_MaxDamage: 20
   m_ExplosionForce: 1000
   m_MaxLifeTime: 2
   m_ExplosionRadius: 5
-  firedFrom: {fileID: 0}
+  agentName: 
+  teamID: 0

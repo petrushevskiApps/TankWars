@@ -17,6 +17,7 @@ public class Inventory
     public InventoryStatus HealthStatus { get; private set; }
 
     public HealthChangeEvent OnHealthChange = new HealthChangeEvent();
+    public UnityEvent UnderAttack = new UnityEvent();
 
     public void Initialize()
     {

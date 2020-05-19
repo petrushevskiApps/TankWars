@@ -1284,9 +1284,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 126dbcddb53386c4f969fdf0c555e822, type: 3}
 --- !u!1 &114262
 GameObject:
@@ -9130,7 +9130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 488946}
   m_Layer: 0
-  m_Name: CompleteLevelArt
+  m_Name: LevelArt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

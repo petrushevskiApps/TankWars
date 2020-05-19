@@ -1,5 +1,62 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &944309580841078569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5957165068766796039}
+  - component: {fileID: 833316747520274934}
+  - component: {fileID: 259670973896824266}
+  m_Layer: 13
+  m_Name: MissileSensors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5957165068766796039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944309580841078569}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2551475806745616521}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &833316747520274934
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944309580841078569}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &259670973896824266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944309580841078569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e9af438d45157646a2ee03e030a8279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4802280623178038713
 GameObject:
   m_ObjectHideFlags: 0
@@ -29,6 +86,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6882259522157597377}
+  - {fileID: 5957165068766796039}
   m_Father: {fileID: 6882259522592773317}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -46,6 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensors:
   - {fileID: 6882259522157597376}
+  - {fileID: 259670973896824266}
 --- !u!1 &6882259520838691897
 GameObject:
   m_ObjectHideFlags: 0
@@ -5333,6 +5392,9 @@ MonoBehaviour:
     healthCapacity: 100
     ammoAmount: 10
     ammoCapacity: 10
+    UnderAttack:
+      m_PersistentCalls:
+        m_Calls: []
   weapon: {fileID: 3659655715927590510}
   memory:
     shootingRange: 10

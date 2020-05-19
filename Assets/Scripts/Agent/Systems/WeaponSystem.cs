@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Complete;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ public class WeaponSystem : MonoBehaviour
 	{
 		// Create an instance of the shell
 		GameObject shell = Instantiate(ammoPrefab, transform.position, transform.rotation);
+		shell.GetComponent<Shell>().SetOwner(player.name, player.GetTeamID());
 
 		Rigidbody shellBody = shell.GetComponent<Rigidbody>();
 

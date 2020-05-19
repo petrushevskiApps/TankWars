@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class VisionController : Sensor
+public class VisionSensor : Sensor
 {
 
     // On Trigger is called when detectable object
@@ -15,7 +15,14 @@ public class VisionController : Sensor
 
         if(IsInFront(angle))
         {
-            OnDetected.Invoke(other.gameObject, IsVisible(other.gameObject));
+            if(IsVisible(other.gameObject))
+            {
+                OnVisibleDetected.Invoke(other.gameObject);
+            }
+            else
+            {
+                OnDetected.Invoke(other.gameObject);
+            }
         }
     }
 
@@ -23,7 +30,7 @@ public class VisionController : Sensor
     // object is lost of sight.
     private void OnTriggerExit(Collider other)
     {
-        OnLost.Invoke(other.gameObject, true);
+        OnLost.Invoke(other.gameObject);
     }
 
     // Check if the target object is

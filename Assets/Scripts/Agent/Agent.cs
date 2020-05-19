@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 
 public class Agent : Player, IGoap
@@ -13,7 +16,9 @@ public class Agent : Player, IGoap
 
 	[SerializeField] private PerceptorSystem perceptor;
 
-	
+	public bool IsUnderAttack { get; private set; }
+	private Coroutine UnderAttackCoroutine;
+
 	protected void Awake()
 	{
 		base.Awake();
@@ -24,7 +29,28 @@ public class Agent : Player, IGoap
 
 		memory.RegisterEvents(perceptor);
 
+		inventory.UnderAttack.AddListener(OnUnderAttack);
+
 	}
+
+	private void OnUnderAttack()
+	{
+		IsUnderAttack = true;
+
+		if(UnderAttackCoroutine != null)
+		{
+			// Restart coroutine each attack
+			StopCoroutine(UnderAttackCoroutine);
+		}
+		UnderAttackCoroutine = StartCoroutine(UnderAttackTimer());
+	}
+	IEnumerator UnderAttackTimer()
+	{
+		yield return new WaitForSecondsRealtime(2f);
+		UnderAttackCoroutine = null;
+		IsUnderAttack = false;
+	}
+
 	private void OnDestroy()
 	{
 		memory.RemoveEvents(perceptor);

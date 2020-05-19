@@ -15,7 +15,7 @@ public class Player : MonoBehaviour, ICollector, IDestroyable
 
 
 	[Header("Player Systems")]
-	[SerializeField] private Inventory inventory = new Inventory();
+	[SerializeField] protected Inventory inventory = new Inventory();
 	[SerializeField] private WeaponSystem weapon;
 
 

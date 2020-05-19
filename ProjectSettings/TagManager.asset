@@ -9,6 +9,7 @@ TagManager:
   - AmmoPack
   - HealthPack
   - HidingSpot
+  - Missile
   layers:
   - Default
   - TransparentFX
@@ -22,8 +23,8 @@ TagManager:
   - Detectable
   - Tank
   - Pickable
-  - 
-  - 
+  - Missile
+  - MissileSensor
   - 
   - 
   - 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Complete;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,9 @@ public class PerceptorSystem : MonoBehaviour
     public HiddingSpot OnHidingSpotDetected = new HiddingSpot();
     public HiddingSpot OnHidingSpotLost = new HiddingSpot();
 
+    public MissileEvent OnUnderAttack = new MissileEvent();
+    public MissileEvent OnFriendlyFire = new MissileEvent();
+
     private void Awake()
     {
         RegisterToSensors();
@@ -35,7 +39,8 @@ public class PerceptorSystem : MonoBehaviour
     {
         foreach(Sensor sensor in sensors)
         {
-            sensor.OnDetected.AddListener(CheckVisibleDetected);
+            sensor.OnVisibleDetected.AddListener(CheckVisibleDetected);
+            sensor.OnDetected.AddListener(CheckDetected);
             sensor.OnLost.AddListener(CheckLost);
         }
     }
@@ -44,38 +49,37 @@ public class PerceptorSystem : MonoBehaviour
     {
         foreach (Sensor sensor in sensors)
         {
-            sensor.OnDetected.RemoveListener(CheckVisibleDetected);
+            sensor.OnVisibleDetected.RemoveListener(CheckVisibleDetected);
+            sensor.OnDetected.RemoveListener(CheckDetected);
             sensor.OnLost.RemoveListener(CheckLost);
         }
     }
 
-    private void CheckLost(GameObject target, bool isVisible)
+    private void CheckLost(GameObject detected)
     {
-        if (target.CompareTag("Tank"))
+        if (detected.CompareTag("Tank"))
         {
-            if (IsEnemy(target.GetComponent<Player>()))
+            Player targetTank = detected.GetComponent<Player>();
+
+            if (IsEnemy(targetTank.GetTeamID()))
             {
-                OnEnemyLost.Invoke(target);
-            }
-            else
-            {
-                OnFriendlyDetected.Invoke(target);
+                OnEnemyLost.Invoke(detected);
             }
         }
-        else if (target.CompareTag("HidingSpot"))
+        else if (detected.CompareTag("HidingSpot"))
         {
-            OnHidingSpotLost.Invoke(target);
+            OnHidingSpotLost.Invoke(detected);
         }
     }
 
     // Check the type of object which was detected
-    private void CheckVisibleDetected(GameObject detected, bool isVisible)
+    private void CheckVisibleDetected(GameObject detected)
     {
-        if (detected.CompareTag("Tank") && isVisible)
+        if (detected.CompareTag("Tank"))
         {
             Player targetTank = detected.GetComponent<Player>();
 
-            if (IsEnemy(targetTank))
+            if (IsEnemy(targetTank.GetTeamID()))
             {
                 Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
                 OnEnemyDetected.Invoke(detected);
@@ -86,33 +90,56 @@ public class PerceptorSystem : MonoBehaviour
                 OnFriendlyDetected.Invoke(detected);
             }
         }
-        else if(detected.CompareTag("HidingSpot"))
-        {
-            Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.magenta);
-
-            OnHidingSpotDetected.Invoke(detected);
-        }
-        else if (detected.CompareTag("AmmoPack") && isVisible)
+        
+        else if (detected.CompareTag("AmmoPack"))
         {
             Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.green);
 
             OnAmmoPackDetected.Invoke(detected);
         }
-        else if (detected.CompareTag("HealthPack") && isVisible)
+        else if (detected.CompareTag("HealthPack"))
         {
             Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.green);
 
             OnHealthPackDetected.Invoke(detected);
         }
     }
-
-    private bool IsEnemy(Player targetTank)
+    private void CheckDetected(GameObject detected)
     {
-        int targetID = targetTank.GetTeamID();
-        int ID = transform.parent.GetComponent<Player>().GetTeamID();
-        return ID != targetID;
-    }
+        if (detected.CompareTag("HidingSpot"))
+        {
+            Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.magenta);
 
+            OnHidingSpotDetected.Invoke(detected);
+        }
+        else if (detected.CompareTag("Missile"))
+        {
+            Shell missile = detected.GetComponent<Shell>();
+
+            if(missile != null)
+            {
+                if (IsEnemy(missile.GetOwnerTeam()))
+                {
+                    OnUnderAttack.Invoke(detected);
+                }
+                else if(!IsOwner(missile.GetOwnerName()))
+                {
+                    OnFriendlyDetected.Invoke(detected);
+                }
+            }
+            
+        }
+
+    }
+    private bool IsEnemy(int targetTeamID)
+    {
+        int ID = transform.parent.GetComponent<Player>().GetTeamID();
+        return ID != targetTeamID;
+    }
+    private bool IsOwner(string targetName)
+    {
+        return transform.parent.name.Equals(targetName);
+    }
     public class PlayerEvent : UnityEvent<GameObject>
     {
 
@@ -123,6 +150,11 @@ public class PerceptorSystem : MonoBehaviour
 
     }
     public class HiddingSpot : UnityEvent<GameObject>
+    {
+
+    }
+
+    public class MissileEvent : UnityEvent<GameObject>
     {
 
     }

@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Complete
 {
-    public class ShellExplosion : MonoBehaviour
+    public class Shell : MonoBehaviour
     {
         public LayerMask m_TankMask;                        // Used to filter what the explosion affects, this should be set to "Players".
         public ParticleSystem m_ExplosionParticles;         // Reference to the particles that will play on explosion.
@@ -12,7 +13,9 @@ namespace Complete
         public float m_MaxLifeTime = 2f;                    // The time in seconds before the shell is removed.
         public float m_ExplosionRadius = 5f;                // The maximum distance away from the explosion tanks can be and are still affected.
 
-        [SerializeField] private GameObject firedFrom;
+        [SerializeField] private string agentName;
+        [SerializeField] private int teamID;
+
 
         private void Start ()
         {
@@ -20,15 +23,24 @@ namespace Complete
             Destroy (gameObject, m_MaxLifeTime);
         }
 
-        public void SetOwner(GameObject firedFrom)
+        public void SetOwner(string agentName, int teamID)
         {
-            this.firedFrom = firedFrom;
+            this.agentName = agentName;
+            this.teamID = teamID;
+        }
+        public string GetOwnerName()
+        {
+            return agentName;
+        }
+        public int GetOwnerTeam()
+        {
+            return teamID;
         }
         private void OnTriggerEnter (Collider other)
         {
-            // If tigger detects object fired from exit
+            // If tigger detects its owner or missile sensor - Abort trigger
+            if (IsOwner(other) || other.gameObject.layer == LayerMask.NameToLayer("MissileSensor")) return;
             
-
 			// Collect all the colliders in a sphere from the shell's current position to a radius of the explosion radius.
             Collider[] colliders = Physics.OverlapSphere (transform.position, m_ExplosionRadius, m_TankMask);
 
@@ -76,6 +88,20 @@ namespace Complete
             Destroy (gameObject);
         }
 
+        private bool IsOwner(Collider other)
+        {
+            Rigidbody body = other.attachedRigidbody;
+            
+            if(body!=null)
+            {
+                string ownerName = body.gameObject.name;
+                return agentName.Equals(ownerName);
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         private float CalculateDamage (Vector3 targetPosition)
         {
