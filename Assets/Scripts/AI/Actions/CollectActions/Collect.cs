@@ -38,7 +38,12 @@ public abstract class Collect : GoapAction
         return target != null && target.activeSelf;
     }
 
-    public override bool CheckPreconditions(GameObject agentGo)
+    public override bool TestProceduralPreconditions()
+    {
+        return true;
+    }
+
+    public bool CheckActionConditions()
     {
         return IsTargetValid();
     }

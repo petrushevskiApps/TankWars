@@ -147,15 +147,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 		breadCrumbs.Append("MoveTo State: Action:" + action.actionName + "\n");
 
-		bool conditionsMeet = action.CheckPreconditions(gameObject);
-
-		if (!conditionsMeet)
-		{
-			breadCrumbs.Append("MoveTo State: Conditions Failed, Go to IDLE State!!\n");
-			// Plan Failed - RePlan
-			ChangeState(FSMKeys.IDLE_STATE);
-		}
-		else if(currentAction.IsInRange)
+		if(currentAction.IsInRange)
 		{
 			breadCrumbs.Append("MoveTo State: Action in range, Go to PERFORM State!!\n");
 			// Destination Reached - Change State

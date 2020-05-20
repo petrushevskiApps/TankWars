@@ -11,7 +11,6 @@ public class RunAway : MoveAction
 		actionName = "RunAway";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
-		AddPrecondition(StateKeys.AMMO_AMOUNT, false);
 
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
@@ -26,6 +25,11 @@ public class RunAway : MoveAction
 			target = agentNavigation.GetNavigationTarget();
 		}
 	}
+	public override bool TestProceduralPreconditions()
+	{
+		return !agentMemory.IsAmmoAvailable() || !agentMemory.IsHealthAvailable();
+	}
+
 	public override void EnterAction(Action success, Action fail)
 	{
 		base.EnterAction(success, fail);

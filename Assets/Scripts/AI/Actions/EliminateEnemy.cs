@@ -10,13 +10,17 @@ public class EliminateEnemy : GoapAction
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
-	
+	private Coroutine LookAtCoroutine;
+	private Coroutine FireAtCoroutine;
+
+
 	public EliminateEnemy()
 	{
 		actionName = "EliminateEnemy";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 		AddPrecondition(StateKeys.IN_SHOOTING_RANGE, true);
+
 		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
@@ -44,9 +48,15 @@ public class EliminateEnemy : GoapAction
 		} 
 	}
 
-	public override bool CheckPreconditions(GameObject agentGO)
+	public override bool TestProceduralPreconditions()
 	{
-		return agentMemory.Enemies.IsAnyValidDetected() && agentMemory.IsAmmoAvailable();
+		return true;
+	}
+
+	public bool CheckActionConditions()
+	{
+		return agentMemory.IsAmmoAvailable()
+			&& agentMemory.IsHealthAvailable();
 	}
 
 	public override void EnterAction(Action success, Action fail)
@@ -54,31 +64,36 @@ public class EliminateEnemy : GoapAction
 		actionCompleted = success;
 		actionFailed = fail;
 		SetActionTarget();
+		AddListeners();
 	}
 
 	public override void ExecuteAction(GameObject agent)
 	{
-		StartCoroutine(agentNavigation.LookAtTarget(target));
-		StartCoroutine(Fire(agent));
+		LookAtCoroutine = StartCoroutine(agentNavigation.LookAtTarget(target));
+		FireAtCoroutine = StartCoroutine(Fire());
 	}
 
-	protected override void ExitAction(Action exitAction)
+	protected override void ExitAction(Action ExitAction)
 	{
+		RemoveListeners();
+		CancelCoroutines();
+
 		IsActionDone = true;
 		target = null;
 		agentNavigation.InvalidateTarget();
-		exitAction?.Invoke();
+		ExitAction?.Invoke();
 	}
 
-	IEnumerator Fire(GameObject agent)
+	
+	IEnumerator Fire()
 	{
 		while (true)
 		{ 
-			if (CheckPreconditions(agent))
+			if (CheckActionConditions())
 			{
 				if (target != null)
 				{
-					this.agent.GetWeapon().FireBullet(target);
+					agent.GetWeapon().FireBullet(target);
 					yield return new WaitForSeconds(0.5f);
 				}
 				else
@@ -94,9 +109,53 @@ public class EliminateEnemy : GoapAction
 				break;
 			}
 		}
+
+		
 	}
 
-	
+	private void AddListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.AddListener(EnemyDetected);
+		agent.GetPerceptor().OnEnemyLost.AddListener(EnemyLost);
+	}
+	private void RemoveListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.RemoveListener(EnemyDetected);
+		agent.GetPerceptor().OnEnemyLost.RemoveListener(EnemyLost);
+	}
 
-	
+	private void EnemyLost(GameObject enemy)
+	{
+		if(agentMemory.Enemies.IsAnyValidDetected())
+		{
+			SetActionTarget();
+		}
+		else
+		{
+			ExitAction(actionFailed);
+		}
+	}
+
+	private void EnemyDetected(GameObject enemy)
+	{
+		SetActionTarget();
+	}
+
+
+	private void CancelCoroutines()
+	{
+		if (LookAtCoroutine != null)
+		{
+			StopCoroutine(LookAtCoroutine);
+			LookAtCoroutine = null;
+		}
+
+		if (FireAtCoroutine != null)
+		{
+			StopCoroutine(FireAtCoroutine);
+			FireAtCoroutine = null;
+		}
+	}
+
+
 }

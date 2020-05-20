@@ -143,14 +143,19 @@ namespace GOAP
 				// action's preconditions, we can use it here
 				if (InState(action.Preconditions, parent.state))
 				{
-					// apply the action's effects to the parent state
-					Dictionary<string, bool> state = UpdatedState(parent.state, action.Effects);
+					// Check if the Procedural Preconditions
+					// are also matched ( These are usually OR conditions )
+					if(action.TestProceduralPreconditions())
+					{
+						// apply the action's effects to the parent state
+						Dictionary<string, bool> state = UpdatedState(parent.state, action.Effects);
 
-					// Create new Node State
-					Node node = new Node(parent, parent.runningCost + action.GetCost(), state, action, goal);
+						// Create new Node State
+						Node node = new Node(parent, parent.runningCost + action.GetCost(), state, action, goal);
 
-					// Add the new state to adjacent states
-					AddToListAndSort(adjacent, node);
+						// Add the new state to adjacent states
+						AddToListAndSort(adjacent, node);
+					}
 				}
 			}
 

@@ -63,7 +63,7 @@ public abstract class GoapAction : MonoBehaviour
 	}
 
 	/* Action Lifecycle */
-	public abstract bool CheckPreconditions(GameObject agent);
+	public abstract bool TestProceduralPreconditions();
 
 	public abstract void EnterAction(Action success, Action fail);
 
