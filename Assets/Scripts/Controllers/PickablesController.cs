@@ -8,6 +8,7 @@ public class PickablesController : MonoBehaviour
 {
     [SerializeField] GameObject healthPackPrefab;
     [SerializeField] GameObject ammoPackPrefab;
+    [SerializeField] private NavMeshAgent navMeshTest;
 
     [SerializeField] private int hpMapLimit = 3;
     [SerializeField] private int ammoMapLimit = 3;
@@ -22,16 +23,15 @@ public class PickablesController : MonoBehaviour
 
     [SerializeField] private List<GameObject> hidingSpots;
 
-    
 
-    private NavMeshAgent navMeshTest;
+
+    
     private NavMeshPath path;
 
     private List<List<GameObject>> proximityCheckList = new List<List<GameObject>>();
 
     private void Awake()
     {
-        navMeshTest = GetComponent<NavMeshAgent>();
         path = new NavMeshPath();
 
         healthPacks = new List<GameObject>();

@@ -181,7 +181,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 47088475}
-  - component: {fileID: 47088477}
   - component: {fileID: 47088476}
   m_Layer: 0
   m_Name: Pickables
@@ -200,7 +199,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 64427507}
   m_Father: {fileID: 179189151}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -220,6 +220,7 @@ MonoBehaviour:
     type: 3}
   ammoPackPrefab: {fileID: 6606727550952868652, guid: f05115efc3b7be04d96f2b77cfc2aa75,
     type: 3}
+  navMeshTest: {fileID: 64427508}
   hpMapLimit: 3
   ammoMapLimit: 3
   minProximity: 10
@@ -239,13 +240,44 @@ MonoBehaviour:
   - {fileID: 1457171354}
   - {fileID: 1537060075}
   - {fileID: 162213053}
---- !u!195 &47088477
+--- !u!1 &64427506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 64427507}
+  - component: {fileID: 64427508}
+  m_Layer: 0
+  m_Name: TestAgent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &64427507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 64427506}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 47088475}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &64427508
 NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 47088474}
+  m_GameObject: {fileID: 64427506}
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 3

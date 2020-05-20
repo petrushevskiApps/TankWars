@@ -89,7 +89,7 @@ namespace GOAP
 				openListStates.Remove(currentState);
 
 				// if we added the destination to the closed list, we've found a path
-				if (CheckState(goal, closedListStates))
+				if (InState(goal, currentState.state))
 				{
 					break;
 				}
@@ -115,9 +115,15 @@ namespace GOAP
 					{
 						// test if using the current G score make the aSquare F score lower,
 						// if yes update the parent because it means its a better path
-						Node updatedState = openListStates[openListStates.IndexOf(state)];
-						updatedState.runningCost = state.runningCost;
+						int index = openListStates.IndexOf(state);
+						Node oldState = openListStates[index];
 
+						if(state.StateCost < oldState.StateCost)
+						{
+							openListStates.RemoveAt(index);
+							AddToListAndSort(openListStates, state);
+						}
+						
 					}
 				}
 
@@ -180,18 +186,18 @@ namespace GOAP
 		 * If just one does not match or is not there
 		 * then this returns false.
 		 */
-		private bool InState(Dictionary<string, bool> test, Dictionary<string, bool> states)
+		private bool InState(Dictionary<string, bool> test, Dictionary<string, bool> state)
 		{
 			foreach (KeyValuePair<string, bool> testState in test) 
 			{
 
-				if(!states.ContainsKey(testState.Key))
+				if(!state.ContainsKey(testState.Key))
 				{
 					return false;
 				}
 				else
 				{
-					if(states[testState.Key] != testState.Value)
+					if(state[testState.Key] != testState.Value)
 					{
 						return false;
 					}
