@@ -13,13 +13,16 @@ public class RenderController : MonoBehaviour
     }
     private void SetParticles()
     {
-        particles = Instantiate(deathParticles);
+        particles = Instantiate(deathParticles, World.Instance.agentsExplosions);
         particles.SetActive(false);
     }
     public void ShowParticles()
     {
         particles.transform.position = transform.position;
         particles.SetActive(true);
+
+        ParticleSystem.MainModule mainModule = particles.GetComponent<ParticleSystem>().main;
+        Destroy(particles, mainModule.duration);
     }
     public void SetTeamColor(Material color)
     {

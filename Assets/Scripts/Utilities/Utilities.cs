@@ -35,7 +35,15 @@ namespace GOAP
 			}
 			return Vector3.forward;
 		}
+		public static int CompareDistances(Vector3 position, Vector3 targetPostion1, Vector3 targetPostion2)
+		{
+			float d1 = Vector3.Distance(position, targetPostion1);
+			float d2 = Vector3.Distance(position, targetPostion2);
 
+			if (d1 < d2) return -1;
+			else if (d1 > d2) return 1;
+			else return 0;
+		}
 		public static void PrintGOAPPlan(string agentName, List<Node> leaves)
 		{
 			StringBuilder sb = new StringBuilder();

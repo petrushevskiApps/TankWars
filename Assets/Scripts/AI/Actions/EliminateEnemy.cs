@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class EliminateEnemy : GoapAction
 {
-	private Agent agent;
+	private AI agent;
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
@@ -19,9 +19,8 @@ public class EliminateEnemy : GoapAction
 		actionName = "EliminateEnemy";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
-		AddPrecondition(StateKeys.IN_SHOOTING_RANGE, true);
 
-		AddPrecondition(StateKeys.AMMO_AMOUNT, true);
+		AddPrecondition(StateKeys.AMMO_AVAILABLE, true);
 		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
 
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
@@ -29,7 +28,7 @@ public class EliminateEnemy : GoapAction
 	}
 	private void Start()
 	{
-		agent = GetComponent<Agent>();
+		agent = GetComponent<AI>();
 		agentMemory = agent.GetMemory();
 		agentNavigation = agent.GetNavigation();
 	}
@@ -45,7 +44,15 @@ public class EliminateEnemy : GoapAction
 		{
 			target = agentMemory.Enemies.GetDetected();
 			agentNavigation.SetTarget(target);
-		} 
+		}
+		else
+		{
+			ExitAction(actionCompleted);
+		}
+	}
+	public override void InvalidTargetLocation()
+	{
+		SetActionTarget();
 	}
 
 	public override bool TestProceduralPreconditions()
@@ -59,17 +66,19 @@ public class EliminateEnemy : GoapAction
 			&& agentMemory.IsHealthAvailable();
 	}
 
-	public override void EnterAction(Action success, Action fail)
+	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
-		actionCompleted = success;
-		actionFailed = fail;
+		actionCompleted = Success;
+		actionFailed = Fail;
+		actionReset = Reset;
+
 		SetActionTarget();
 		AddListeners();
 	}
 
 	public override void ExecuteAction(GameObject agent)
 	{
-		LookAtCoroutine = StartCoroutine(agentNavigation.LookAtTarget(target));
+		LookAtCoroutine = StartCoroutine(agentNavigation.LookAtTarget());
 		FireAtCoroutine = StartCoroutine(Fire());
 	}
 
@@ -77,11 +86,11 @@ public class EliminateEnemy : GoapAction
 	{
 		RemoveListeners();
 		CancelCoroutines();
-
+		ExitAction?.Invoke();
 		IsActionDone = true;
 		target = null;
 		agentNavigation.InvalidateTarget();
-		ExitAction?.Invoke();
+		
 	}
 
 	
@@ -132,7 +141,7 @@ public class EliminateEnemy : GoapAction
 		}
 		else
 		{
-			ExitAction(actionFailed);
+			ExitAction(actionCompleted);
 		}
 	}
 

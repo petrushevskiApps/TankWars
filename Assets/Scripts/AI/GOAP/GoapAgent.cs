@@ -72,8 +72,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 	public void IdleState()
 	{
-		breadCrumbs.Clear();
-		breadCrumbs.Append("Idle State: Enter\n");
+		currentPlan = "No Plan";
 
 		State = AgentState.Planning;
 		// GOAP Planning State
@@ -85,15 +84,12 @@ public sealed class GoapAgent : MonoBehaviour
 
 		agentImplementation.ShowMessage("Planning...");
 
-		breadCrumbs.Append("Idle State: Before Plan: " + currentActions.Count + "\n");
 		// Plan
 		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
 
-		breadCrumbs.Append("Idle State: After Plan: " + currentActions.Count + "\n");
 
 		if (plan.Count > 0)
 		{
-			breadCrumbs.Append("Idle State: Plan Found: " + plan.Count + "\n");
 
 			currentPlan = Utilities.GetCollectionString(plan.ToList());
 			// we have a plan, hooray!
@@ -101,13 +97,11 @@ public sealed class GoapAgent : MonoBehaviour
 			agentImplementation.PlanFound(goal, plan);
 			goalIndex = 0;
 
-			breadCrumbs.Append("Idle State: Go To Perform State: " + currentActions.Count + "\n");
 			// Plan Available - Change State
 			ChangeState(FSMKeys.PERFORM_STATE);
 		}
 		else
 		{
-			breadCrumbs.Append("Idle State: Plan not found!! \n");
 			// ugh, we couldn't get a plan
 			Debug.Log("Failed Plan: " + goal);
 			agentImplementation.PlanFailed(goal);
@@ -121,12 +115,10 @@ public sealed class GoapAgent : MonoBehaviour
 				goalIndex = 0;
 			}
 
-			breadCrumbs.Append("Idle State: Loop to IDLE State!! Goal Index: " + goalIndex +" \n");
 			// Plan Not Available - Loop State
 			ChangeState(FSMKeys.IDLE_STATE);
 		}
 
-		breadCrumbs.Append("Idle State: Exit\n");
 	}
 
 	public void MoveToState()
@@ -194,7 +186,7 @@ public sealed class GoapAgent : MonoBehaviour
 			// perform the next action
 			currentAction = currentActions.Peek();
 			breadCrumbs.Append("Perform State: Enter Action\n");
-			currentAction.EnterAction(OnActionSuccess, OnActionFail);
+			currentAction.EnterAction(OnActionSuccess, OnActionFail, OnActionReset);
 			
 			if (currentAction.IsInRange)
 			{
@@ -249,7 +241,10 @@ public sealed class GoapAgent : MonoBehaviour
 		ChangeState(FSMKeys.IDLE_STATE);
 		agentImplementation.PlanAborted(currentAction);
 	}
-
+	private void OnActionReset()
+	{
+		ChangeState(FSMKeys.PERFORM_STATE);
+	}
 	private void ChangeState(string stateKey)
 	{
 		breadCrumbs.Append("ChangeState: State Key:: " + stateKey + "\n");

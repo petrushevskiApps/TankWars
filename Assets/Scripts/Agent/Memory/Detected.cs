@@ -60,7 +60,7 @@ public abstract class Detected
         if (detectables.Contains(detectable))
         {
             Detectable detectableRef = detectables[detectables.IndexOf(detectable)];
-            parent.GetComponent<Player>().StartCoroutine(RevalidationTimer(detectableRef));
+            parent.GetComponent<Agent>().StartCoroutine(RevalidationTimer(detectableRef));
         }
     }
     IEnumerator RevalidationTimer(Detectable detectable)

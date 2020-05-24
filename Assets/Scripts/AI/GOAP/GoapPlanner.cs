@@ -162,14 +162,6 @@ namespace GOAP
 			return adjacent;
 		}
 
-		private bool CheckState(Dictionary<string, bool> goal, List<Node> states)
-		{
-			foreach(Node n in states)
-			{
-				if (InState(goal, n.state)) return true;
-			}
-			return false;
-		}
 
 		private void AddToListAndSort(List<Node> list, Node element)
 		{
@@ -195,7 +187,6 @@ namespace GOAP
 		{
 			foreach (KeyValuePair<string, bool> testState in test) 
 			{
-
 				if(!state.ContainsKey(testState.Key))
 				{
 					return false;

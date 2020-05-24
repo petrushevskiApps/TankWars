@@ -33,14 +33,14 @@ public class AIDebuggerWindow : EditorWindow
 
         selectedObjects = Selection.gameObjects.ToList();
 
-        List<List<Player>> teams = LevelController.GetTeamsList();
+        List<List<Agent>> teams = LevelController.GetTeamsList();
 
         if (teams != null && teams.Count > 0)
         {
             EditorGUILayout.BeginVertical();
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-            foreach (List<Player> team in teams)
+            foreach (List<Agent> team in teams)
             {
                 PrintTeam(team);
             }
@@ -56,12 +56,12 @@ public class AIDebuggerWindow : EditorWindow
     }
     Vector2 scrollPos;
 
-    private void PrintTeam(List<Player> team)
+    private void PrintTeam(List<Agent> team)
     {
         if (team.Count > 0)
         {
             
-            foreach(Agent tank in team)
+            foreach(AI tank in team)
             {
                 if(tank != null)
                 {

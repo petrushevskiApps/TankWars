@@ -509,6 +509,36 @@ Transform:
   m_Father: {fileID: 671857411}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &133099737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 133099738}
+  m_Layer: 0
+  m_Name: ShellsParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &133099738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133099737}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 179189151}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &162213053
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,6 +618,8 @@ MonoBehaviour:
   - {fileID: 343692251}
   - {fileID: 375393497}
   worldLocations: {fileID: 1587118051}
+  shellsParent: {fileID: 133099738}
+  agentsExplosions: {fileID: 1362242242}
 --- !u!4 &179189151
 Transform:
   m_ObjectHideFlags: 0
@@ -602,6 +634,8 @@ Transform:
   - {fileID: 22564066}
   - {fileID: 47088475}
   - {fileID: 1587118051}
+  - {fileID: 133099738}
+  - {fileID: 1362242242}
   - {fileID: 1066865281}
   - {fileID: 671857411}
   - {fileID: 1925608928}
@@ -1096,7 +1130,7 @@ Transform:
   - {fileID: 1537060076}
   - {fileID: 162213054}
   m_Father: {fileID: 179189151}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &775858065
 GameObject:
@@ -1308,7 +1342,7 @@ Transform:
   - {fileID: 343692251}
   - {fileID: 375393497}
   m_Father: {fileID: 179189151}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1158996493
 PrefabInstance:
@@ -1496,6 +1530,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1362242241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1362242242}
+  m_Layer: 0
+  m_Name: AgentsExplosions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1362242242
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362242241}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 179189151}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1391056259
 GameObject:
@@ -1802,21 +1866,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TankAI (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 6882259522593062807, guid: 65a7078da27e9d84388691ca8ba8ab4e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6882259522612705911, guid: 65a7078da27e9d84388691ca8ba8ab4e,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6882259522612705911, guid: 65a7078da27e9d84388691ca8ba8ab4e,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65a7078da27e9d84388691ca8ba8ab4e, type: 3}
 --- !u!1 &1587118050
@@ -1843,7 +1892,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1587118050}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.365783, y: 9.601517, z: -11.127081}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 179189151}
@@ -1947,7 +1996,7 @@ Transform:
   - {fileID: 1793140896}
   - {fileID: 1021585486}
   m_Father: {fileID: 179189151}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1925608929
 MonoBehaviour:

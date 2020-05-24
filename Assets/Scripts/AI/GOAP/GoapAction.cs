@@ -17,8 +17,11 @@ public abstract class GoapAction : MonoBehaviour
 	public Dictionary<string, bool> Effects { get; }
 
 	[SerializeField] protected float cost = 1f;
+	
 	protected Action actionCompleted;
 	protected Action actionFailed;
+	protected Action actionReset;
+
 	protected GameObject target;
 
 	private bool inRange = false;
@@ -46,11 +49,11 @@ public abstract class GoapAction : MonoBehaviour
 		target = null;
 		IsInRange = false;
 		IsActionDone = false;
-		actionCompleted = null;
-		actionFailed = null;
 	}
 
 	public abstract void SetActionTarget();
+
+	public abstract void InvalidTargetLocation();
 
 	public bool IsTargetAcquired()
 	{
@@ -65,7 +68,7 @@ public abstract class GoapAction : MonoBehaviour
 	/* Action Lifecycle */
 	public abstract bool TestProceduralPreconditions();
 
-	public abstract void EnterAction(Action success, Action fail);
+	public abstract void EnterAction(Action Success, Action Fail, Action Reset);
 
 	public abstract void ExecuteAction(GameObject agent);
 
@@ -105,7 +108,6 @@ public abstract class GoapAction : MonoBehaviour
 			Debug.LogError($"Key: {key} not found in Effects dictionary");
 		}
 	}
-
 
 	
 }

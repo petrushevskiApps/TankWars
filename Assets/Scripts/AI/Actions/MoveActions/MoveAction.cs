@@ -10,6 +10,7 @@ public abstract class MoveAction : GoapAction
 	protected IGoap agent;
 	protected MemorySystem agentMemory;
 	protected NavigationSystem agentNavigation;
+	protected bool isActionExited = false;
 
 	private void Start()
 	{
@@ -23,23 +24,41 @@ public abstract class MoveAction : GoapAction
 		base.ResetAction();
 	}
 	
-	public override void EnterAction(Action success, Action fail)
+	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
-		actionCompleted = success;
-		actionFailed = fail;
+		isActionExited = false;
+		actionCompleted = Success;
+		actionFailed = Fail;
+		actionReset = Reset;
 		SetActionTarget();
+		AddListeners();
 
 	}
 	public override void ExecuteAction(GameObject agent)
 	{
 		ExitAction(actionCompleted);
 	}
+	public void RestartAction()
+	{
+		ResetAction();
+		agentNavigation.InvalidateTarget();
+		actionReset.Invoke();
+	}
 
 	protected override void ExitAction(Action ExitAction)
 	{
-		IsActionDone = true;
-		target = null;
-		agentNavigation.InvalidateTarget();
-		ExitAction?.Invoke();
+		if(!isActionExited)
+		{
+			isActionExited = true;
+			RemoveListeners();
+			ExitAction?.Invoke();
+			IsActionDone = true;
+			target = null;
+			agentNavigation.InvalidateTarget();
+		}
+		
 	}
+
+	protected abstract void AddListeners();
+	protected abstract void RemoveListeners();
 }

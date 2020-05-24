@@ -11,6 +11,7 @@ public abstract class Collect : GoapAction
     protected Detected detectedMemory;
 
     protected Coroutine UpdateCoroutine;
+    protected bool isReady = false;
 
     protected void Start()
     {
@@ -31,6 +32,15 @@ public abstract class Collect : GoapAction
             target = detectedMemory.GetDetected();
             agentNavigation.SetTarget(target);
         }
+        else
+        {
+            ExitAction(actionFailed);
+        }
+    }
+    public override void InvalidTargetLocation()
+    {
+        detectedMemory.InvalidateDetected(target);
+        SetActionTarget();
     }
 
     protected bool IsTargetValid()
@@ -48,10 +58,11 @@ public abstract class Collect : GoapAction
         return IsTargetValid();
     }
 
-    public override void EnterAction(Action success, Action fail)
+    public override void EnterAction(Action Success, Action Fail, Action Reset)
     {
-        actionCompleted = success;
-        actionFailed = fail;
+        actionCompleted = Success;
+        actionFailed = Fail;
+        actionReset = Reset;
 
         SetActionTarget();
 
@@ -74,6 +85,14 @@ public abstract class Collect : GoapAction
 
     protected abstract IEnumerator ActionUpdate();
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.Equals(target))
+        {
+            isReady = true;
+        }
+    }
+
     protected override void ExitAction(Action ExitAction)
     {
         RemoveListeners();
@@ -83,27 +102,27 @@ public abstract class Collect : GoapAction
             StopCoroutine(UpdateCoroutine);
             UpdateCoroutine = null;
         }
-        
+
+        ExitAction?.Invoke();
+        isReady = false;
         IsActionDone = true;
         target = null;
         agentNavigation.InvalidateTarget();
-        ExitAction?.Invoke();
+        
     }
 
-    private void AddListeners()
+    protected virtual void AddListeners()
     {
         agent.GetPerceptor().OnEnemyDetected.AddListener(OnOtherDetected);
         agent.GetPerceptor().OnFriendlyDetected.AddListener(OnOtherDetected);
         agent.GetPerceptor().OnUnderAttack.AddListener(OnUnderAttack);
-        agent.GetPerceptor().OnFriendlyFire.AddListener(OnUnderAttack);
     }
 
-    private void RemoveListeners()
+    protected virtual void RemoveListeners()
     {
         agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnOtherDetected);
         agent.GetPerceptor().OnFriendlyDetected.RemoveListener(OnOtherDetected);
         agent.GetPerceptor().OnUnderAttack.RemoveListener(OnUnderAttack);
-        agent.GetPerceptor().OnFriendlyFire.AddListener(OnUnderAttack);
     }
 
     private void OnUnderAttack(GameObject arg0)
@@ -150,7 +169,7 @@ public abstract class Collect : GoapAction
         }
     }
 
-    private void Invalidate()
+    protected void Invalidate()
     {
         float distance = GetDistanceToCollectible(gameObject);
         

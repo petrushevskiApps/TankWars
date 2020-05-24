@@ -13,13 +13,13 @@ public class NavigationSystem
 	private NavMeshPath path;
 
 	private GameObject navigationTarget;
-	private GameObject internalCachedTarget;
+	private GameObject locationPointer;
 
-	private Vector3 previousDestination = Vector3.zero;
+	private Vector3 previousDestination = Vector3.positiveInfinity;
 	
-	private bool abortMovement = false;
 	private bool isLookAtActive = false;
-	
+
+	[SerializeField] private float rotationSpeed = 5f;
 
 	public NavigationSystem(GameObject agent)
 	{
@@ -34,27 +34,32 @@ public class NavigationSystem
 		return CheckAngle(navigationTarget);
 	}
 
-	public IEnumerator LookAtTarget(GameObject lookAtTarget)
+	public IEnumerator LookAtTarget()
 	{
 		isLookAtActive = true;
 
-		while (isLookAtActive && lookAtTarget != null)
+		while (isLookAtActive && navigationTarget != null)
 		{
-			while (!CheckAngle(lookAtTarget))
+			while (!CheckAngle(navigationTarget))
 			{
-				Vector3 dir = lookAtTarget.transform.position - agent.transform.position;
+				Vector3 dir = navigationTarget.transform.position - agent.transform.position;
 				dir.y = 0;//This allows the object to only rotate on its y axis
 
 				if (!dir.Equals(Vector3.zero))
 				{
 					Quaternion rot = Quaternion.LookRotation(dir);
-					agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, rot, 10f * Time.deltaTime);
+					agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, rot, rotationSpeed * Time.deltaTime);
 				}
 
 				yield return null;
 			}
 			yield return null;
 		}
+	}
+
+	public void OnDestroy()
+	{
+		UnityEngine.Object.Destroy(navigationTarget);
 	}
 
 	private bool CheckAngle(GameObject target)
@@ -69,6 +74,8 @@ public class NavigationSystem
 
 	public void Move(GoapAction action)
 	{
+		if (navigationTarget == null) return;
+
 		Vector3 destination = navigationTarget.transform.position;
 
 		// Target is moving - Recalculate path
@@ -76,11 +83,11 @@ public class NavigationSystem
 		{
 			previousDestination = destination;
 			SetNavMeshAgent(destination, action.maxRequiredRange);
+			navMeshAgent.SetPath(path);
 		}
 		
 		if (path != null && path.status == NavMeshPathStatus.PathComplete)
 		{
-			navMeshAgent.SetPath(path);
 			bool inRange = navMeshAgent.remainingDistance <= action.maxRequiredRange;
 
 			if (inRange)
@@ -91,7 +98,7 @@ public class NavigationSystem
 		else
 		{
 			InvalidateTarget();
-			SetTarget();
+			action.InvalidTargetLocation();
 		}
 	}
 	private void SetNavMeshAgent(Vector3 destination, float stoppingDistance)
@@ -104,21 +111,38 @@ public class NavigationSystem
 
 	public void InvalidateTarget()
 	{
-		isLookAtActive = false;
+		if(navigationTarget != null)
+		{
+			if (navigationTarget.Equals(locationPointer))
+			{
+				navigationTarget.SetActive(false);
+			}
+			navigationTarget = null;
+		}
 		path = null;
-
-		navigationTarget = internalCachedTarget;
-		navigationTarget.SetActive(false);
+		previousDestination = Vector3.positiveInfinity;
+		isLookAtActive = false;
 	}
 
-	public bool IsTargetSet()
+	public bool IsTargetValid()
 	{
-		return navigationTarget != null && navigationTarget.activeSelf;
+		return navigationTarget != null 
+			&& navigationTarget.activeSelf
+			&& path != null
+			&& path.status == NavMeshPathStatus.PathComplete;
 	}
 
 	public GameObject GetNavigationTarget()
 	{
 		return navigationTarget;
+	}
+
+	public void SetTarget()
+	{
+		if (!IsTargetValid())
+		{
+			SetTargetLocation(World.Instance.GetRandomLocation());
+		}
 	}
 
 	public void SetTarget(GameObject actionTarget)
@@ -129,16 +153,9 @@ public class NavigationSystem
 		}
 	}
 
-	public void SetTarget()
-	{
-		if (!IsTargetSet())
-		{
-			SetTargetLocation(World.Instance.GetRandomLocation());
-		}
-	}
 	public void SetTarget(Vector3 targetLocation)
 	{
-		if (!IsTargetSet())
+		if (!IsTargetValid())
 		{
 			SetTargetLocation(targetLocation);
 		}
@@ -147,7 +164,7 @@ public class NavigationSystem
 	// Runaway Navigation Target
 	public void SetRunFromTarget(GameObject runFrom)
 	{
-		if(!IsTargetSet() && runFrom != null)
+		if(!IsTargetValid() && runFrom != null)
 		{
 			CreateRunawayLocation(runFrom);
 		}
@@ -165,11 +182,7 @@ public class NavigationSystem
 
 	private GameObject SetTargetLocation(Vector3 targetPosition)
 	{
-		if(navigationTarget == null)
-		{
-			navigationTarget = internalCachedTarget;
-		}
-
+		navigationTarget = locationPointer;
 		navigationTarget.transform.position = targetPosition;
 		navigationTarget.transform.rotation = Quaternion.identity;
 		navigationTarget.SetActive(true);
@@ -183,6 +196,6 @@ public class NavigationSystem
 		navigationTarget.transform.parent = World.Instance.worldLocations;
 		navigationTarget.SetActive(false);
 
-		internalCachedTarget = navigationTarget;
+		locationPointer = navigationTarget;
 	}
 }

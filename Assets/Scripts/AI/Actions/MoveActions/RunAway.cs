@@ -10,9 +10,14 @@ public class RunAway : MoveAction
 	{
 		actionName = "RunAway";
 
-		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
+		AddPrecondition(StateKeys.UNDER_ATTACK, true);
 
-		AddEffect(StateKeys.ENEMY_DETECTED, false);
+		AddEffect(StateKeys.UNDER_ATTACK, false);
+
+	}
+	public override bool TestProceduralPreconditions()
+	{
+		return !agentMemory.IsAmmoAvailable() || !agentMemory.IsHealthAvailable();
 	}
 
 	public override void SetActionTarget()
@@ -24,72 +29,55 @@ public class RunAway : MoveAction
 			agentNavigation.SetRunFromTarget(enemy);
 			target = agentNavigation.GetNavigationTarget();
 		}
-	}
-	public override bool TestProceduralPreconditions()
-	{
-		return !agentMemory.IsAmmoAvailable() || !agentMemory.IsHealthAvailable();
-	}
-
-	public override void EnterAction(Action success, Action fail)
-	{
-		base.EnterAction(success, fail);
-		AddListeners();
-	}
-
-	protected override void ExitAction(Action ExitAction)
-	{
-		RemoveListeners();
-		base.ExitAction(ExitAction);
-	}
-
-	private void AddListeners()
-	{
-		agent.GetPerceptor().OnEnemyLost.AddListener(EnemyLost);
-		agent.GetPerceptor().OnAmmoPackDetected.AddListener(OnAmmoDetected);
-		agent.GetPerceptor().OnHealthPackDetected.AddListener(OnHealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(OnHidingSpotDetected);
-
-	}
-
-	private void OnAmmoDetected(GameObject ammo)
-	{
-		if (!agentMemory.IsAmmoAvailable() && !agentMemory.IsUnderAttack)
+		else
 		{
 			ExitAction(actionCompleted);
 		}
 	}
-	private void OnHealthDetected(GameObject health)
+	public override void InvalidTargetLocation()
 	{
-		if (!agentMemory.IsHealthAvailable() && !agentMemory.IsUnderAttack)
+		SetActionTarget();
+	}
+
+	/*
+	 * If the agent arrives at the target location and isn't
+	 * under attack action is completed. 
+	 * If the agent is still under attack get new
+	 * target location to run away.
+	 */
+	public override void ExecuteAction(GameObject agent)
+	{
+		if(agentMemory.IsUnderAttack)
+		{
+			RestartAction();
+		}
+		else
 		{
 			ExitAction(actionCompleted);
 		}
 	}
-	private void OnHidingSpotDetected(GameObject hiddingSpot)
+
+	protected override void AddListeners()
 	{
-		if (!agentMemory.IsHealthAvailable() && !agentMemory.IsAmmoAvailable())
+		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
+
+	}
+	protected override void RemoveListeners()
+	{
+		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+	}
+
+	
+	private void HidingSpotDetected(GameObject hiddingSpot)
+	{
+		if (!agentMemory.IsUnderAttack)
 		{
-			if(!agentMemory.IsUnderAttack)
+			if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
 			{
 				ExitAction(actionCompleted);
 			}
-			
 		}
-	}
-	private void EnemyLost(GameObject enemy) 
-	{
-		if(!agentMemory.Enemies.IsAnyValidDetected())
-		{
-			ExitAction(actionCompleted);
-		}
-	}
-
-	private void RemoveListeners()
-	{
-		agent.GetPerceptor().OnEnemyLost.RemoveListener(EnemyLost);
-		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(OnAmmoDetected);
-		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(OnHealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(OnHidingSpotDetected);
+		
 	}
 
 }

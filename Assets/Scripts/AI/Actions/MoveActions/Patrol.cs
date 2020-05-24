@@ -11,7 +11,7 @@ public class Patrol : MoveAction
 	{
 		actionName = "Patrol";
 
-		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
+		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
 		AddEffect(StateKeys.PATROL, true);
 	}
@@ -22,68 +22,71 @@ public class Patrol : MoveAction
 		target = agentNavigation.GetNavigationTarget();
 	}
 
+	public override void InvalidTargetLocation()
+	{
+		SetActionTarget();
+	}
+
 	public override bool TestProceduralPreconditions()
 	{
 		return true;
 	}
 
-	public override void EnterAction(Action success, Action fail)
+	public override void ExecuteAction(GameObject agent)
 	{
-		base.EnterAction(success, fail);
-		AddListeners();
+		RestartAction();
+	}
+
+
+	protected override void AddListeners()
+	{
+		agent.GetPerceptor().OnEnemyDetected.AddListener(EnemyDetected);
+		agent.GetPerceptor().OnAmmoPackDetected.AddListener(AmmoDetected);
+		agent.GetPerceptor().OnHealthPackDetected.AddListener(HealthDetected);
+		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.GetPerceptor().OnUnderAttack.AddListener(UnderAttack);
 	}
 	
-
-	protected override void ExitAction(Action ExitAction)
+	protected override void RemoveListeners()
 	{
-		RemoveListeners();
-		base.ExitAction(ExitAction);
+		agent.GetPerceptor().OnEnemyDetected.RemoveListener(EnemyDetected);
+		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(AmmoDetected);
+		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(HealthDetected);
+		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.GetPerceptor().OnUnderAttack.RemoveListener(UnderAttack);
 	}
 
-	private void AddListeners()
+	private void EnemyDetected(GameObject enemy)
 	{
-		agent.GetPerceptor().OnEnemyDetected.AddListener(OnEnemyDetected);
-		agent.GetPerceptor().OnAmmoPackDetected.AddListener(OnAmmoDetected);
-		agent.GetPerceptor().OnHealthPackDetected.AddListener(OnHealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(OnHidingSpotDetected);
-
+		ExitAction(actionCompleted);
+	}
+	private void UnderAttack(GameObject arg0)
+	{
+		ExitAction(actionFailed);
 	}
 
-	private void RemoveListeners()
+	private void HealthDetected(GameObject health)
 	{
-		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnEnemyDetected);
-		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(OnAmmoDetected);
-		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(OnHealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(OnHidingSpotDetected);
-	}
-
-	private void OnEnemyDetected(GameObject enemy)
-	{
-		if (agentMemory.Enemies.IsAnyValidDetected())
+		if (!agentMemory.IsHealthAvailable())
 		{
-			ExitAction(actionFailed);
+			ExitAction(actionCompleted);
 		}
 	}
-
-	private void OnAmmoDetected(GameObject ammo)
+	private void AmmoDetected(GameObject ammo)
 	{
 		if (!agentMemory.IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
 	}
-	private void OnHealthDetected(GameObject health)
+	
+	private void HidingSpotDetected(GameObject hiddingSpot)
 	{
-		if (!agentMemory.IsHealthAvailable())
-		{
-			ExitAction(actionCompleted); 
-		}
-	}
-	private void OnHidingSpotDetected(GameObject hiddingSpot)
-	{
-		if (!agentMemory.IsHealthAvailable() && !agentMemory.IsAmmoAvailable())
+		if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
 	}
+
+	
 }

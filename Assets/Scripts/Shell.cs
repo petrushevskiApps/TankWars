@@ -51,28 +51,23 @@ namespace Complete
                 Rigidbody targetRigidbody = colliders[i].GetComponent<Rigidbody> ();
 
                 // If they don't have a rigidbody, go on to the next collider.
-                if (!targetRigidbody)
-                    continue;
-
-                // Add an explosion force.
-                //targetRigidbody.AddExplosionForce (m_ExplosionForce, transform.position, m_ExplosionRadius);
+                if (!targetRigidbody) continue;
 
                 // Find the TankHealth script associated with the rigidbody.
-                Player targetHealth = targetRigidbody.GetComponent<Player>();
+                Agent agent = targetRigidbody.GetComponent<Agent>();
 
-                // If there is no TankHealth script attached to the gameobject, go on to the next collider.
-                if (!targetHealth)
-                    continue;
+                if(agent.GetTeamID() != GetOwnerTeam())
+                {
+                    // Calculate the amount of damage the target should take based on it's distance from the shell.
+                    float damage = CalculateDamage(targetRigidbody.position);
 
-                // Calculate the amount of damage the target should take based on it's distance from the shell.
-                float damage = CalculateDamage (targetRigidbody.position);
-
-                // Deal this damage to the tank.
-                targetHealth.TakeDamage (damage);
+                    // Deal this damage to the tank.
+                    agent.TakeDamage(damage);
+                }
             }
 
             // Unparent the particles from the shell.
-            m_ExplosionParticles.transform.parent = null;
+            m_ExplosionParticles.transform.parent = World.Instance.shellsParent;
 
             // Play the particle system.
             m_ExplosionParticles.Play();

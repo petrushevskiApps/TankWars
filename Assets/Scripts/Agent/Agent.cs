@@ -1,97 +1,103 @@
-﻿using System;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Dynamic;
-using UnityEngine;
+using UnityEngine.Events;
 
-public class Agent : Player, IGoap
+public class Agent : MonoBehaviour, ICollector, IDestroyable
 {
-	[Header("Agent Systems")]
+	//Events
+	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
-	[SerializeField] private MemorySystem memory = new MemorySystem();
+	[SerializeField] private int teamID = 0;
 
-	[SerializeField] private NavigationSystem Navigation { get; set; }
+	[Header("Player Controllers")]
+	[SerializeField] private UIController uiController; 
+	[SerializeField] private RenderController renderController;
 
-	[SerializeField] private CommunicationSystem communication;
 
-	[SerializeField] private PerceptorSystem perceptor;
+	[Header("Player Systems")]
+	[SerializeField] protected Inventory inventory = new Inventory();
+	[SerializeField] private WeaponSystem weapon;
+
+
+	protected string name = "tankName";
+
+	private bool isDead;
 
 	protected void Awake()
 	{
-		base.Awake();
+		weapon.Initialize(this);
 
-		Navigation = new NavigationSystem(gameObject);
-
-		memory.Initialize(this);
-
-		memory.RegisterEvents(perceptor);
-
+		uiController.SetHealthBar(inventory);
 	}
 
-
-	private void OnDestroy()
+	private void Start()
 	{
-		memory.RemoveEvents(perceptor);
+		inventory.Initialize();
 	}
 
-	public void MoveAgent(GoapAction nextAction)
+	public virtual void Initialize(int teamID, string name, Material teamColor)
 	{
-		Navigation.Move(nextAction);
+		this.teamID = teamID;
+		this.name = name;
+		gameObject.name = name;
+		renderController.SetTeamColor(teamColor);
 	}
 
-	public MemorySystem GetMemory()
+	public void TakeDamage(float amount)
 	{
-		return memory;
+		// Reduce current health by the amount of damage done.
+		
+		inventory.DecreaseHealth(amount);
+
+		// If the current health is at or below zero and it has not yet been registered, call OnDeath.
+		if (!isDead && inventory.GetHealth() <= 0f)
+		{
+			OnDeath();
+		}
 	}
-	public NavigationSystem GetNavigation()
+
+	private void OnDeath()
 	{
-		return Navigation;
+		// Set the flag so that this function is only called once.
+		isDead = true;
+
+		renderController.ShowParticles();
+
+		OnAgentDeath.Invoke(gameObject);
+		// Turn the tank off.
+		Destroy(gameObject);
 	}
-	
-	public PerceptorSystem GetPerceptor()
+
+	public void RegisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
 	{
-		return perceptor;
+		OnAgentDeath.AddListener(OnDestroyAction);
 	}
 
-	public Dictionary<string, bool> GetWorldState()
+	public Inventory GetInventory()
 	{
-		return memory.GetWorldState();
+		return inventory;
 	}
-
-	public Dictionary<string, bool> GetGoalState(int index)
+	public WeaponSystem GetWeapon()
 	{
-		return memory.GetGoals()[index];
+		return weapon;
 	}
-
-	public int GetGoalsCount()
+	public void PickableCollected(AmmoPack collected)
 	{
-		return memory.GetGoals().Count;
+		inventory.IncreaseAmmo(collected.amountToCollect);
 	}
 
-	public void ShowMessage(string text)
+	public void PickableCollected(HealthPack collected)
 	{
-		communication.UpdateMessage(text);
+		inventory.IncreaseHealth(collected.amountToCollect);
 	}
 
-
-	public void PlanFailed(Dictionary<string, bool> failedGoal)
+	public int GetTeamID()
 	{
-
+		return teamID;
 	}
 
-	public void PlanFound(Dictionary<string, bool> goal, Queue<GoapAction> actions)
-	{
-
-	}
-
-	public void ActionsFinished()
-	{
-
-	}
-
-	public void PlanAborted(GoapAction aborter)
+	public class PlayerDeath : UnityEvent<GameObject>
 	{
 
 	}
-
 }

@@ -22,11 +22,11 @@ public class MemorySystem
 
     private List<Dictionary<string, bool>> goals = new List<Dictionary<string, bool>>();
 
-    private Player parent;
+    private Agent parent;
 
     public bool IsUnderAttack { get; private set; }
 
-    public void Initialize(Player parent)
+    public void Initialize(Agent parent)
     {
         this.parent = parent;
 
@@ -42,12 +42,12 @@ public class MemorySystem
     private void SetStates()
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
-        worldState.Add(StateKeys.IN_SHOOTING_RANGE, () => Enemies.InShootingRange(shootingRange));
+        worldState.Add(StateKeys.UNDER_ATTACK, () => IsUnderAttack);
 
         worldState.Add(StateKeys.HEALTH_AMOUNT, IsHealthAvailable);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.AMMO_AMOUNT, IsAmmoAvailable);
+        worldState.Add(StateKeys.AMMO_AVAILABLE, IsAmmoAvailable);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
@@ -59,7 +59,7 @@ public class MemorySystem
         goals.Add(new Dictionary<string, bool>() 
         {
             { StateKeys.ENEMY_DETECTED, false },
-            { StateKeys.AMMO_AMOUNT, true },
+            { StateKeys.AMMO_AVAILABLE, true },
             { StateKeys.HEALTH_AMOUNT, true }, 
         });
 

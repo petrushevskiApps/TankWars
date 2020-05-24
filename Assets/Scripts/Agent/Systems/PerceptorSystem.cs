@@ -59,7 +59,7 @@ public class PerceptorSystem : MonoBehaviour
     {
         if (detected.CompareTag("Tank"))
         {
-            Player targetTank = detected.GetComponent<Player>();
+            Agent targetTank = detected.GetComponent<Agent>();
 
             if (IsEnemy(targetTank.GetTeamID()))
             {
@@ -77,7 +77,7 @@ public class PerceptorSystem : MonoBehaviour
     {
         if (detected.CompareTag("Tank"))
         {
-            Player targetTank = detected.GetComponent<Player>();
+            Agent targetTank = detected.GetComponent<Agent>();
 
             if (IsEnemy(targetTank.GetTeamID()))
             {
@@ -133,7 +133,7 @@ public class PerceptorSystem : MonoBehaviour
     }
     private bool IsEnemy(int targetTeamID)
     {
-        int ID = transform.parent.GetComponent<Player>().GetTeamID();
+        int ID = transform.parent.GetComponent<Agent>().GetTeamID();
         return ID != targetTeamID;
     }
     private bool IsOwner(string targetName)

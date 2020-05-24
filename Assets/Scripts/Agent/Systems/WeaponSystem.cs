@@ -17,9 +17,9 @@ public class WeaponSystem : MonoBehaviour
 
 	[SerializeField] private float fireAngle = 40f;
 
-	private Player player;
+	private Agent player;
 
-	public void Initialize(Player player)
+	public void Initialize(Agent player)
 	{
 		this.player = player;
 	}
@@ -27,7 +27,7 @@ public class WeaponSystem : MonoBehaviour
 	public void FireBullet(GameObject enemyTarget)
 	{
 		// Create an instance of the shell
-		GameObject shell = Instantiate(ammoPrefab, transform.position, transform.rotation);
+		GameObject shell = Instantiate(ammoPrefab, transform.position, transform.rotation, World.Instance.shellsParent);
 		shell.GetComponent<Shell>().SetOwner(player.name, player.GetTeamID());
 
 		Rigidbody shellBody = shell.GetComponent<Rigidbody>();

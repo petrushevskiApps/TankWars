@@ -73,8 +73,30 @@ namespace GOAP
 
         public bool Equals(Node other)
         {
-            if (state.Equals(other.state)) return true;
-            else return false;
+			if((state != null && other.state == null) || (state == null && other.state != null))
+			{
+				return false;
+			}
+			else if(other.state.Count != state.Count)
+			{
+				return false;
+			}
+			else
+			{
+				foreach(KeyValuePair<string, bool> kvp in state)
+				{
+					if (other.state.ContainsKey(kvp.Key))
+					{
+						bool otherValue = other.state[kvp.Key];
+						if (otherValue != kvp.Value)
+						{
+							return false;
+						}
+					}
+					else return false;
+				}
+				return true;
+			}
         }
 
         public override string ToString()

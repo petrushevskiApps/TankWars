@@ -12,6 +12,9 @@ public class World : MonoBehaviour
     private float maxZ = 0;
 
     public Transform worldLocations;
+    public Transform shellsParent;
+    public Transform agentsExplosions;
+
     public static World Instance;
     
     private void Awake()
