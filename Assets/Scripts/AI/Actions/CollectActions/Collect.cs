@@ -89,7 +89,6 @@ public abstract class Collect : GoapAction
         }
         else
         {
-            Invalidate();
             ExitAction(actionFailed);
         }
 
@@ -128,7 +127,10 @@ public abstract class Collect : GoapAction
 
     private void OnUnderAttack(GameObject arg0)
     {
-        Invalidate();
+        if (target != null)
+        {
+            detectedMemory.InvalidateDetected(target);
+        }
         ExitAction(actionFailed);
     }
 
@@ -153,8 +155,11 @@ public abstract class Collect : GoapAction
 
         if (distanceToPacket > otherDistanceToPacket)
         {
-            Invalidate();
-            ExitAction(actionFailed);
+            if (distanceToPacket < 21)
+            {
+                detectedMemory.InvalidateDetected(target);
+                ExitAction(actionFailed);
+            }
         }
     }
 
@@ -170,14 +175,5 @@ public abstract class Collect : GoapAction
         }
     }
 
-    protected void Invalidate()
-    {
-        float distance = GetDistanceToCollectible(gameObject);
-        
-        if (distance <= 15)
-        {
-            detectedMemory.InvalidateDetected(target);
-        }
-    }
 
 }

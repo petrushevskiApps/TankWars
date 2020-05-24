@@ -27,7 +27,7 @@ public class Detected : IEquatable<Detected>, IComparable<Detected>
     {
         return Vector3.Distance(agent.transform.position, detected.transform.position);
     }
-    public int CompareTo(Detected other)
+    public virtual int CompareTo(Detected other)
     {
         if (IsValid() && other.IsValid())
         {

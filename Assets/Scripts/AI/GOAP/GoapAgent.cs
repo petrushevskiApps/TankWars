@@ -259,7 +259,7 @@ public sealed class GoapAgent : MonoBehaviour
 	{
 		if(currentAction != null)
 		{
-			return currentAction.GetType().ToString();
+			return currentAction.actionName;
 		}
 		return "No Action Selected";
 	}

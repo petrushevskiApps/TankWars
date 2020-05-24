@@ -55,7 +55,7 @@ public class CollectHealth : Collect
 		{
 			if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
 			{
-				Invalidate();
+				detectedMemory.InvalidateDetected(target);
 				ExitAction(actionFailed);
 			}
 		}

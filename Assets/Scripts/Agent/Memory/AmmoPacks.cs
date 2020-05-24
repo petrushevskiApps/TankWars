@@ -9,6 +9,11 @@ public class AmmoPacks : Detectable
 {
     public AmmoPacks(GameObject agent)
     {
-        this.parent = agent;
+        parent = agent;
     }
+    public override Detected CreateDetected(GameObject detected, string detectedName, GameObject agent)
+    {
+        return new Detected(detected, detectedName, agent);
+    }
+
 }

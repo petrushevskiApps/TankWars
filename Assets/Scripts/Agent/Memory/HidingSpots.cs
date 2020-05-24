@@ -7,8 +7,13 @@ using UnityEngine;
 
 public class HidingSpots : Detectable
 {
-    public HidingSpots(GameObject parent)
+    public HidingSpots(GameObject agent)
     {
-        this.parent = parent;
+        parent = agent;
+    }
+
+    public override Detected CreateDetected(GameObject detected, string detectedName, GameObject agent)
+    {
+        return new Detected(detected, detectedName, agent);
     }
 }

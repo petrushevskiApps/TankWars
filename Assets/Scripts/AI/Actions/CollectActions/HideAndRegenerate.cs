@@ -79,7 +79,6 @@ public class HideAndRegenerate : GoapAction
 
 		if (!detectedMemory.IsDetectedValid(target))
 		{
-			Invalidate();
 			ExitAction(actionFailed);
 		}
 		else
@@ -140,9 +139,13 @@ public class HideAndRegenerate : GoapAction
 		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(AmmoDetected);
 		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
 	}
+
 	private void OnUnderAttack(GameObject arg0)
 	{
-		Invalidate();
+		if(target != null)
+		{
+			detectedMemory.InvalidateDetected(target);
+		}
 		ExitAction(actionFailed);
 	}
 
@@ -165,8 +168,11 @@ public class HideAndRegenerate : GoapAction
 
 		if (distanceToPacket > otherDistanceToPacket)
 		{
-			Invalidate();
-			ExitAction(actionFailed);
+			if (distanceToPacket < 21)
+			{
+				detectedMemory.InvalidateDetected(target);
+				ExitAction(actionFailed);
+			}
 		}
 	}
 
@@ -182,15 +188,7 @@ public class HideAndRegenerate : GoapAction
 		}
 	}
 
-	protected void Invalidate()
-	{
-		float distance = GetDistanceToCollectible(gameObject);
-
-		if (distance <= 15)
-		{
-			detectedMemory.InvalidateDetected(target);
-		}
-	}
+	
 
 	private void HidingSpotDetected(GameObject detected)
 	{
@@ -215,7 +213,7 @@ public class HideAndRegenerate : GoapAction
 			{
 				if (Utilities.CompareDistances(transform.position, target.transform.position, detected.transform.position) == 1)
 				{
-					Invalidate();
+					detectedMemory.InvalidateDetected(target);
 					ExitAction(actionFailed);
 				}
 			}
@@ -231,7 +229,7 @@ public class HideAndRegenerate : GoapAction
 			{
 				if (Utilities.CompareDistances(transform.position, target.transform.position, detected.transform.position) == 1)
 				{
-					Invalidate();
+					detectedMemory.InvalidateDetected(target);
 					ExitAction(actionFailed);
 				}
 			}

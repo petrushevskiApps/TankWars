@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class Enemies : Detectable
 {
-
     public Enemies(GameObject agent)
     {
-        this.parent = agent;
+        parent = agent;
     }
 
-    public bool InShootingRange(float range)
+    public override Detected CreateDetected(GameObject detected, string detectedName, GameObject agent)
     {
-        if(IsAnyValidDetected())
-        {
-            GameObject enemy = GetDetected();
-            return Vector3.Distance(parent.transform.position, enemy.transform.position) >= range;
-        }
-        return false;
+        return new DetectedEnemy(detected, detectedName, agent);
     }
 }

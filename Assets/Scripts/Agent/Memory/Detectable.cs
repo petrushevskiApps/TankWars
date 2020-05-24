@@ -12,29 +12,11 @@ public abstract class Detectable
 
     public List<Detected> detectables = new List<Detected>();
 
-    public bool IsAnyValidDetected()
-    {
-        int count = 0;
+    public abstract Detected CreateDetected(GameObject detected, string detectedName, GameObject agent);
 
-        if(detectables.Count == 0)
-        {
-            return false;
-        }
-
-        foreach(Detected detectable in detectables)
-        {
-            if (detectable.IsValid())
-            {
-                count++;
-            }
-        }
-
-        return count > 0;
-    }
-    
     public void AddDetected(GameObject detected)
     {
-        Detected detectable = new Detected(detected, detected.name, parent);
+        Detected detectable = CreateDetected(detected, detected.name, parent);
 
         if(!detectables.Contains(detectable))
         {
@@ -44,35 +26,11 @@ public abstract class Detectable
         }
     }
 
-    public void InvalidateDetected(GameObject detected)
+    public void RemoveDetected(GameObject detected)
     {
-        Detected detectable = new Detected(detected, detected.name, parent);
-
-        if(detectables.Contains(detectable))
+        if (detected != null)
         {
-            detectables[detectables.IndexOf(detectable)].status = false;
-        }
-    }
-    public void ValidateDetected(GameObject detected)
-    {
-        Detected detectable = new Detected(detected, detected.name, parent);
-
-        if (detectables.Contains(detectable))
-        {
-            Detected detectableRef = detectables[detectables.IndexOf(detectable)];
-            parent.GetComponent<Agent>().StartCoroutine(RevalidationTimer(detectableRef));
-        }
-    }
-    IEnumerator RevalidationTimer(Detected detectable)
-    {
-        yield return new WaitForSeconds(5f);
-        detectable.status = true;
-    }
-    public void RemoveDetected(GameObject detected) 
-    {
-        if(detected != null)
-        {
-            Detected detectable = new Detected(detected, detected.name, parent);
+            Detected detectable = CreateDetected(detected, detected.name, parent);
             detectables.Remove(detectable);
         }
         else
@@ -92,8 +50,35 @@ public abstract class Detectable
                 detectables.Remove(detectable);
             }
         }
-        
+
     }
+
+    public void InvalidateDetected(GameObject detected)
+    {
+        Detected detectable = CreateDetected(detected, detected.name, parent);
+
+        if(detectables.Contains(detectable))
+        {
+            detectables[detectables.IndexOf(detectable)].status = false;
+        }
+    }
+    public void ValidateDetected(GameObject detected)
+    {
+        Detected detectable = CreateDetected(detected, detected.name, parent);
+
+        if (detectables.Contains(detectable))
+        {
+            Detected detectableRef = detectables[detectables.IndexOf(detectable)];
+            parent.GetComponent<Agent>().StartCoroutine(RevalidationTimer(detectableRef));
+        }
+    }
+    IEnumerator RevalidationTimer(Detected detectable)
+    {
+        yield return new WaitForSeconds(5f);
+        detectable.status = true;
+    }
+
+    
 
     // Return closes detected with valid status
     public GameObject GetDetected()
@@ -112,9 +97,29 @@ public abstract class Detectable
         return null;
     }
 
+    public bool IsAnyValidDetected()
+    {
+        int count = 0;
+
+        if (detectables.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (Detected detectable in detectables)
+        {
+            if (detectable.IsValid())
+            {
+                count++;
+            }
+        }
+
+        return count > 0;
+    }
+
     public bool IsDetectedValid(GameObject detected)
     {
-        Detected detectable = new Detected(detected, detected.name, parent);
+        Detected detectable = CreateDetected(detected, detected.name, parent);
 
         if (detectables.Contains(detectable))
         {
