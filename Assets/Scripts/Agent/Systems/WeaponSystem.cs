@@ -49,7 +49,7 @@ public class WeaponSystem : MonoBehaviour
 		Vector3 direction = target - source;
 		float h = direction.y;
 		direction.y = 0;
-		float distance = direction.magnitude;
+		float distance = direction.magnitude + 2f;
 		float a = angle * Mathf.Deg2Rad;
 		direction.y = distance * Mathf.Tan(a);
 		distance += h / Mathf.Tan(a);

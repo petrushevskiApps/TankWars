@@ -51,6 +51,7 @@ public class MemorySystem
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
+
     }
 
     private void SetGoals()

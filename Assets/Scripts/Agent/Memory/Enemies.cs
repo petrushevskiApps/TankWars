@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [System.Serializable]
-public class Enemies : Detected
+public class Enemies : Detectable
 {
 
     public Enemies(GameObject agent)

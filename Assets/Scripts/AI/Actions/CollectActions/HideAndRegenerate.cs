@@ -10,7 +10,7 @@ public class HideAndRegenerate : GoapAction
 	protected IGoap agent;
 	protected MemorySystem agentMemory;
 	protected NavigationSystem agentNavigation;
-	protected Detected detectedMemory;
+	protected Detectable detectedMemory;
 
 	protected Coroutine UpdateCoroutine;
 

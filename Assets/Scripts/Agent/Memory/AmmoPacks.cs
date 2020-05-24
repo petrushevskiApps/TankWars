@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class AmmoPacks : Detected
+public class AmmoPacks : Detectable
 {
     public AmmoPacks(GameObject agent)
     {

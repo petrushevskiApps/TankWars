@@ -12,7 +12,6 @@ public class Patrol : MoveAction
 		actionName = "Patrol";
 
 		AddPrecondition(StateKeys.UNDER_ATTACK, false);
-		AddPrecondition(StateKeys.PATROL, false);
 
 		AddEffect(StateKeys.PATROL, true);
 	}

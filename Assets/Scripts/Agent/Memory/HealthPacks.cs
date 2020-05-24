@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class HealthPacks : Detected
+public class HealthPacks : Detectable
 {
     public HealthPacks(GameObject agent)
     {

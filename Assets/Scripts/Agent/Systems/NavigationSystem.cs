@@ -71,7 +71,47 @@ public class NavigationSystem
 		}
 		return true;
 	}
+	private Vector3 previousPosition = Vector3.positiveInfinity;
+	private Vector3 moveToPosition = Vector3.positiveInfinity;
 
+	private float followDifference = 0.5f;
+	private bool isFollowActive = false;
+	private bool isFollowPaused = false;
+
+
+	public IEnumerator Follow(float maxRange)
+	{
+		isFollowActive = true;
+
+		while (isFollowActive && navigationTarget != null)
+		{
+			while(!isFollowPaused && navigationTarget != null)
+			{
+				Vector3 position = navigationTarget.transform.position;
+
+				if (Vector3.Distance(position, previousPosition) > followDifference)
+				{
+					previousPosition = position;
+					SetNavMeshAgent(position, maxRange - 2);
+					navMeshAgent.SetPath(path);
+				}
+
+				yield return null;
+			}
+
+			yield return null;
+		}
+	}
+
+	public void MoveTo(Vector3 position, float stoppingDistance = 1f)
+	{
+		SetNavMeshAgent(position, stoppingDistance);
+		navMeshAgent.SetPath(path);
+	}
+	public void PauseFollowing(bool status)
+	{
+		isFollowPaused = status;
+	}
 	public void Move(GoapAction action)
 	{
 		if (navigationTarget == null) return;
@@ -120,6 +160,7 @@ public class NavigationSystem
 		path = null;
 		previousDestination = Vector3.positiveInfinity;
 		isLookAtActive = false;
+		isFollowActive = false;
 	}
 
 	public bool IsTargetValid()
