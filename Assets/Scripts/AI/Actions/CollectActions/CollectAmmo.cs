@@ -26,13 +26,7 @@ public class CollectAmmo : Collect
 		detectedMemory = agentMemory.AmmoPacks;
 	}
 
-	protected override IEnumerator ActionUpdate()
-	{
-		if(!isReady) ExitAction(actionFailed);
-
-		yield return new WaitUntil(agentMemory.IsAmmoAvailable);
-		ExitAction(actionCompleted);
-	}
+	
 
 	protected override void AddListeners()
 	{
@@ -51,19 +45,26 @@ public class CollectAmmo : Collect
 	{
 		if(!ammoPack.Equals(target))
 		{
-			if(Utilities.CompareDistances(transform.position, target.transform.position, ammoPack.transform.position) == 1)
+			if (ammoPack != null && target != null)
 			{
-				SetActionTarget();
+				if (Utilities.CompareDistances(transform.position, target.transform.position, ammoPack.transform.position) == 1)
+				{
+					SetActionTarget();
+				}
 			}
+			
 		}
 		
 	}
 	private void HidingSpotDetected(GameObject hidingSpot)
 	{
-		if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
+		if(hidingSpot != null && target != null)
 		{
-			Invalidate();
-			ExitAction(actionFailed);
+			if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
+			{
+				Invalidate();
+				ExitAction(actionFailed);
+			}
 		}
 	}
 

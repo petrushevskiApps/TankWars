@@ -6,45 +6,16 @@ using UnityEngine.Events;
 public class Pickable : MonoBehaviour, IDestroyable
 {
     [SerializeField] private float timeToCollect = 2f;
-    
 
     public OnCollectedEvent OnCollected = new OnCollectedEvent();
-     
-    private float timeIn = 0;
 
-    private bool isCollected = false;
-
-    private void OnEnable()
+  
+    public float GetTimeToCollect()
     {
-        isCollected = false;
-        timeIn = 0;
-    }
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Tank"))
-        {
-            if (timeIn >= timeToCollect)
-            {
-                if(!isCollected)
-                {
-                    ICollector agent = other.gameObject.transform.parent.GetComponent<ICollector>();
-                    Collected(agent);
-                    isCollected = true;
-                }
-                
-            }
-            else
-            {
-                timeIn += Time.deltaTime;
-            }
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        timeIn = 0;
+        return timeToCollect;
     }
 
-    protected virtual void Collected(ICollector collector)
+    public virtual void Collect(ICollector collector)
     {
         OnCollected.Invoke(transform.gameObject);
         transform.gameObject.SetActive(false);

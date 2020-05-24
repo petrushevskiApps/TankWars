@@ -25,16 +25,6 @@ public class CollectHealth : Collect
 		detectedMemory = agentMemory.HealthPacks;
 	}
 
-	protected override IEnumerator ActionUpdate()
-	{
-		if (!isReady) ExitAction(actionFailed);
-
-		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
-		ExitAction(actionCompleted);
-	}
-
-	
-
 	protected override void AddListeners()
 	{
 		base.AddListeners();
@@ -61,10 +51,13 @@ public class CollectHealth : Collect
 	}
 	private void HidingSpotDetected(GameObject hidingSpot)
 	{
-		if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
+		if(target != null && hidingSpot != null)
 		{
-			Invalidate();
-			ExitAction(actionFailed);
+			if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
+			{
+				Invalidate();
+				ExitAction(actionFailed);
+			}
 		}
 	}
 }

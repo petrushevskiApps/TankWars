@@ -12,6 +12,7 @@ public class Patrol : MoveAction
 		actionName = "Patrol";
 
 		AddPrecondition(StateKeys.UNDER_ATTACK, false);
+		AddPrecondition(StateKeys.PATROL, false);
 
 		AddEffect(StateKeys.PATROL, true);
 	}
@@ -58,7 +59,10 @@ public class Patrol : MoveAction
 
 	private void EnemyDetected(GameObject enemy)
 	{
-		ExitAction(actionCompleted);
+		if(agentMemory.IsAmmoAvailable())
+		{
+			ExitAction(actionCompleted);
+		}
 	}
 	private void UnderAttack(GameObject arg0)
 	{
@@ -82,9 +86,12 @@ public class Patrol : MoveAction
 	
 	private void HidingSpotDetected(GameObject hiddingSpot)
 	{
-		if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
+		if(agentMemory.HidingSpots.IsAnyValidDetected())
 		{
-			ExitAction(actionCompleted);
+			if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
+			{
+				ExitAction(actionCompleted);
+			}
 		}
 	}
 

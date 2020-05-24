@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using UnityEngine;
 
-public class AI : Agent, IGoap
+public class AiAgent : Agent, IGoap
 {
 	[Header("Agent Systems")]
 

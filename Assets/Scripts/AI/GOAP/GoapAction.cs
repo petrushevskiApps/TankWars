@@ -64,7 +64,10 @@ public abstract class GoapAction : MonoBehaviour
 	{
 		return cost;
 	}
-
+	public GameObject GetTarget()
+	{
+		return target;
+	}
 	/* Action Lifecycle */
 	public abstract bool TestProceduralPreconditions();
 

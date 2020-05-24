@@ -5397,6 +5397,7 @@ MonoBehaviour:
   weapon: {fileID: 3659655715927590510}
   memory:
     shootingRange: 10
+    missileDirection: {x: 0, y: 0, z: 0}
   perceptor: {fileID: 4081871276758882543}
 --- !u!114 &6882259522593062806
 MonoBehaviour:
@@ -5445,8 +5446,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: CollectAmmo
-  minRequiredRange: 0
-  maxRequiredRange: 0
+  minRequiredRange: 1
+  maxRequiredRange: 1
   requiresRange: 1
   cost: 1
 --- !u!114 &6882259522593062893
@@ -5479,8 +5480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: CollectHealth
-  minRequiredRange: 0
-  maxRequiredRange: 0
+  minRequiredRange: 1
+  maxRequiredRange: 1
   requiresRange: 1
   cost: 1
 --- !u!114 &6882259522593062880

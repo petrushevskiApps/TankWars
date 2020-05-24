@@ -124,7 +124,7 @@ public class PerceptorSystem : MonoBehaviour
                 }
                 else if(!IsOwner(missile.GetOwnerName()))
                 {
-                    OnFriendlyDetected.Invoke(detected);
+                    OnFriendlyFire.Invoke(detected);
                 }
             }
             

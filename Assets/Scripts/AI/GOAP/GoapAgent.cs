@@ -72,6 +72,8 @@ public sealed class GoapAgent : MonoBehaviour
 
 	public void IdleState()
 	{
+		breadCrumbs.Clear();
+		breadCrumbs.Append("IdleState: Enter:: Agent:: " + gameObject.name + "\n");
 		currentPlan = "No Plan";
 
 		State = AgentState.Planning;
@@ -90,7 +92,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 		if (plan.Count > 0)
 		{
-
+			breadCrumbs.Append("IdleState: Action Plan Found :" + Utilities.GetCollectionString(plan.ToList<GoapAction>()) + "\n");;
 			currentPlan = Utilities.GetCollectionString(plan.ToList());
 			// we have a plan, hooray!
 			currentActions = plan;
@@ -104,6 +106,7 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			// ugh, we couldn't get a plan
 			Debug.Log("Failed Plan: " + goal);
+			breadCrumbs.Append("IdleState: Failed Plan | Goal Index:: " + goalIndex +"\n");
 			agentImplementation.PlanFailed(goal);
 			
 			if (goalIndex < agentImplementation.GetGoalsCount() - 1)
@@ -118,7 +121,7 @@ public sealed class GoapAgent : MonoBehaviour
 			// Plan Not Available - Loop State
 			ChangeState(FSMKeys.IDLE_STATE);
 		}
-
+		breadCrumbs.Append("IdleState: Exit\n");
 	}
 
 	public void MoveToState()
@@ -130,7 +133,7 @@ public sealed class GoapAgent : MonoBehaviour
 		if (currentActions.Count <= 0)
 		{
 			breadCrumbs.Append("MoveTo State: Error:\n");
-			Debug.LogError(breadCrumbs.ToString());
+			
 
 			return;
 		}
@@ -151,8 +154,9 @@ public sealed class GoapAgent : MonoBehaviour
 
 			if (!action.IsTargetAcquired())
 			{
-				Debug.LogError($"Fatal error:{gameObject.name} | {action.name} target missing!");
+				breadCrumbs.Append($"Fatal error:{gameObject.name} | {action.name} target missing!\n");
 				breadCrumbs.Append("MoveTo State: Target not Acquired, Go to IDLE State!!\n");
+				Debug.LogError(breadCrumbs.ToString());
 				ChangeState(FSMKeys.IDLE_STATE);
 			}
 			else

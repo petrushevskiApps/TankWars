@@ -112,6 +112,16 @@ public abstract class Detected
         return null;
     }
 
+    public bool IsDetectedValid(GameObject detected)
+    {
+        Detectable detectable = new Detectable(detected, detected.name, parent);
+
+        if (detectables.Contains(detectable))
+        {
+            return detectable.IsValid();
+        }
+        return false;
+    }
     
     public class Detectable : IEquatable<Detectable>, IComparable<Detectable>
     {

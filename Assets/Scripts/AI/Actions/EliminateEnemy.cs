@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class EliminateEnemy : GoapAction
 {
-	private AI agent;
+	private AiAgent agent;
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
@@ -28,7 +28,7 @@ public class EliminateEnemy : GoapAction
 	}
 	private void Start()
 	{
-		agent = GetComponent<AI>();
+		agent = GetComponent<AiAgent>();
 		agentMemory = agent.GetMemory();
 		agentNavigation = agent.GetNavigation();
 	}

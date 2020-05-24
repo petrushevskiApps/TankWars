@@ -5,17 +5,16 @@ using UnityEngine;
 
 public abstract class Collect : GoapAction
 {
-    protected IGoap agent;
+    protected AiAgent agent;
     protected MemorySystem agentMemory;
     protected NavigationSystem agentNavigation;
     protected Detected detectedMemory;
 
     protected Coroutine UpdateCoroutine;
-    protected bool isReady = false;
 
     protected void Start()
     {
-        agent = GetComponent<IGoap>();
+        agent = GetComponent<AiAgent>();
         agentMemory = agent.GetMemory();
         agentNavigation = agent.GetNavigation();
     }
@@ -73,29 +72,33 @@ public abstract class Collect : GoapAction
     {
         Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-        if (IsTargetValid())
+        UpdateCoroutine = StartCoroutine(CollectPickable());
+    }
+
+    private IEnumerator CollectPickable()
+    {
+        if (detectedMemory.IsDetectedValid(target))
         {
-            UpdateCoroutine = StartCoroutine(ActionUpdate());
+            Pickable pickable = target.GetComponent<Pickable>();
+
+            yield return new WaitForSeconds(pickable.GetTimeToCollect());
+
+            pickable.Collect(agent.GetComponent<ICollector>());
+
+            ExitAction(actionCompleted);
         }
         else
         {
+            Invalidate();
             ExitAction(actionFailed);
         }
-    }
 
-    protected abstract IEnumerator ActionUpdate();
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.Equals(target))
-        {
-            isReady = true;
-        }
     }
 
     protected override void ExitAction(Action ExitAction)
     {
         RemoveListeners();
+        IsActionDone = true;
 
         if (UpdateCoroutine != null)
         {
@@ -103,12 +106,10 @@ public abstract class Collect : GoapAction
             UpdateCoroutine = null;
         }
 
-        ExitAction?.Invoke();
-        isReady = false;
-        IsActionDone = true;
         target = null;
         agentNavigation.InvalidateTarget();
-        
+
+        ExitAction?.Invoke();
     }
 
     protected virtual void AddListeners()
@@ -178,4 +179,5 @@ public abstract class Collect : GoapAction
             detectedMemory.InvalidateDetected(target);
         }
     }
+
 }

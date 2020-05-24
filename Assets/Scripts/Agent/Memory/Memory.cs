@@ -105,10 +105,12 @@ public class MemorySystem
         perceptor.OnUnderAttack.RemoveListener(SetIsUnderAttack);
     }
     private Coroutine UnderAttackTimer;
+    public Vector3 missileDirection;
 
-    private void SetIsUnderAttack(GameObject enemy)
+    private void SetIsUnderAttack(GameObject missile)
     {
         IsUnderAttack = true;
+        missileDirection = missile.gameObject.transform.forward;
 
         if (UnderAttackTimer != null)
         {
@@ -120,9 +122,10 @@ public class MemorySystem
 
     IEnumerator UnderAttack()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
         UnderAttackTimer = null;
         IsUnderAttack = false;
+        missileDirection = Vector3.zero;
     }
 
     public Dictionary<string, bool> GetWorldState()

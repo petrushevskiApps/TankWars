@@ -51,10 +51,12 @@ public abstract class MoveAction : GoapAction
 		{
 			isActionExited = true;
 			RemoveListeners();
-			ExitAction?.Invoke();
 			IsActionDone = true;
+
+			ExitAction?.Invoke();
 			target = null;
 			agentNavigation.InvalidateTarget();
+			
 		}
 		
 	}

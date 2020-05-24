@@ -88,9 +88,7 @@ public class NavigationSystem
 		
 		if (path != null && path.status == NavMeshPathStatus.PathComplete)
 		{
-			bool inRange = navMeshAgent.remainingDistance <= action.maxRequiredRange;
-
-			if (inRange)
+			if (navMeshAgent.remainingDistance <= action.maxRequiredRange)
 			{
 				action.IsInRange = true;
 			}
@@ -162,17 +160,17 @@ public class NavigationSystem
 	}
 
 	// Runaway Navigation Target
-	public void SetRunFromTarget(GameObject runFrom)
+	public void SetRunFromTarget(Vector3 runDirection)
 	{
-		if(!IsTargetValid() && runFrom != null)
+		if(!IsTargetValid())
 		{
-			CreateRunawayLocation(runFrom);
+			CreateRunawayLocation(runDirection);
 		}
 	}
 	
-	private GameObject CreateRunawayLocation(GameObject otherTarget)
+	private GameObject CreateRunawayLocation(Vector3 direction)
 	{
-		Vector3 runTo = agent.transform.forward * (-1);
+		Vector3 runTo = direction;
 
 		runTo.x *= UnityEngine.Random.Range(-30, 30);
 		runTo.z *= UnityEngine.Random.Range(10, 30);

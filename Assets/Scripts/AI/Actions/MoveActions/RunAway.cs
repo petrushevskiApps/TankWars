@@ -22,11 +22,11 @@ public class RunAway : MoveAction
 
 	public override void SetActionTarget()
 	{
-		GameObject enemy = agentMemory.Enemies.GetDetected();
+		Vector3 missileDirection = agentMemory.missileDirection;
 		
-		if(enemy != null)
+		if(missileDirection != Vector3.zero)
 		{
-			agentNavigation.SetRunFromTarget(enemy);
+			agentNavigation.SetRunFromTarget(missileDirection);
 			target = agentNavigation.GetNavigationTarget();
 		}
 		else
