@@ -70,6 +70,8 @@ public interface IGoap
 
 	PerceptorSystem GetPerceptor();
 
+	CommunicationSystem GetCommunication();
+
 	void ShowMessage(string text);
 }
 

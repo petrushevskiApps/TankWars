@@ -27,23 +27,30 @@ public class LevelController : MonoBehaviour
 
             for(int i=0; i<team.npcCount; i++)
             {
-                InstantiateNPC(team.teamID, currentTeam);
+                InstantiateNPC(currentTeam);
             }
 
             teamsList.Add(currentTeam);
+            
+            InitializeAgents(team.teamID, currentTeam);
         }
     }
 
-    private void InstantiateNPC(int teamID, List<Agent> teamList)
+    private void InstantiateNPC(List<Agent> teamList)
     {
-        GameObject npc = Instantiate(npcPrefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
-        Agent tankNpc = npc.GetComponent<Agent>();
+        GameObject agentObject = Instantiate(npcPrefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
         
-        tankNpc.Initialize(teamID, npcNames.GetRandomName(), teamColors.GetTeamColor(teamID));
-        
-        teamList.Add(tankNpc);
+        teamList.Add(agentObject.GetComponent<Agent>());
 
-        npc.SetActive(true);
+    }
+
+    private void InitializeAgents(int teamID, List<Agent> teamList)
+    {
+        foreach(Agent agent in teamList)
+        {
+            agent.Initialize(teamID, npcNames.GetRandomName(), teamColors.GetTeamColor(teamID), teamList);
+            agent.gameObject.SetActive(true);
+        }
     }
 
     public static List<List<Agent>> GetTeamsList()

@@ -17,18 +17,18 @@ public class WeaponSystem : MonoBehaviour
 
 	[SerializeField] private float fireAngle = 40f;
 
-	private Agent player;
+	private Agent agent;
 
 	public void Initialize(Agent player)
 	{
-		this.player = player;
+		this.agent = player;
 	}
 
 	public void FireBullet(GameObject enemyTarget)
 	{
 		// Create an instance of the shell
 		GameObject shell = Instantiate(ammoPrefab, transform.position, transform.rotation, World.Instance.shellsParent);
-		shell.GetComponent<Shell>().SetOwner(player.name, player.GetTeamID());
+		shell.GetComponent<Shell>().SetOwner(agent);
 
 		Rigidbody shellBody = shell.GetComponent<Rigidbody>();
 
@@ -40,7 +40,7 @@ public class WeaponSystem : MonoBehaviour
 		//shootingAudioSource.clip = fireAudioClip;
 		//shootingAudioSource.Play();
 
-		player.GetInventory().DecreaseAmmo();
+		agent.GetInventory().DecreaseAmmo();
 
 	}
 	

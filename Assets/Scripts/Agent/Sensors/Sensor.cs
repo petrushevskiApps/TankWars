@@ -5,11 +5,11 @@ using UnityEngine.Events;
 
 public abstract class Sensor : MonoBehaviour
 {
-    public Detected OnVisibleDetected = new Detected();
-    public Detected OnDetected = new Detected();
-    public Detected OnLost = new Detected();
+    public SensorEvent OnVisibleDetected = new SensorEvent();
+    public SensorEvent OnDetected = new SensorEvent();
+    public SensorEvent OnLost = new SensorEvent();
 
-    public class Detected : UnityEvent<GameObject>
+    public class SensorEvent : UnityEvent<GameObject, bool>
     {
 
     }

@@ -32,12 +32,27 @@ public class Patrol : MoveAction
 		return true;
 	}
 
+	public override void EnterAction(Action Success, Action Fail, Action Reset)
+	{
+		base.EnterAction(Success, Fail, Reset);
+	}
 	public override void ExecuteAction(GameObject agent)
 	{
+		CallForHelp();
 		RestartAction();
 	}
 
-
+	private void CallForHelp()
+	{
+		if (!agentMemory.IsHealthAvailable())
+		{
+			agent.GetCommunication().BroadcastNeedHealth();
+		}
+		else if (!agentMemory.IsAmmoAvailable())
+		{
+			agent.GetCommunication().BroadcastNeedAmmo();
+		}
+	}
 	protected override void AddListeners()
 	{
 		agent.GetPerceptor().OnEnemyDetected.AddListener(EnemyDetected);

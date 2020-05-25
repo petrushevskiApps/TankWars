@@ -17,11 +17,11 @@ public class VisionSensor : Sensor
         {
             if(IsVisible(other.gameObject))
             {
-                OnVisibleDetected.Invoke(other.gameObject);
+                OnVisibleDetected.Invoke(other.gameObject, true);
             }
             else
             {
-                OnDetected.Invoke(other.gameObject);
+                OnDetected.Invoke(other.gameObject, true);
             }
         }
     }
@@ -30,7 +30,7 @@ public class VisionSensor : Sensor
     // object is lost of sight.
     private void OnTriggerExit(Collider other)
     {
-        OnLost.Invoke(other.gameObject);
+        OnLost.Invoke(other.gameObject, true);
     }
 
     // Check if the target object is

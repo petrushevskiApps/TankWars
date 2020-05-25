@@ -9,15 +9,16 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 
 	[SerializeField] private int teamID = 0;
 
-	[Header("Player Controllers")]
+	[Header("Agent Controllers")]
 	[SerializeField] private UIController uiController; 
 	[SerializeField] private RenderController renderController;
 
 
-	[Header("Player Systems")]
+	[Header("Agent Systems")]
 	[SerializeField] protected Inventory inventory = new Inventory();
 	[SerializeField] private WeaponSystem weapon;
 
+	protected List<Agent> team = new List<Agent>();
 
 	protected string name = "tankName";
 
@@ -35,9 +36,10 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		inventory.Initialize();
 	}
 
-	public virtual void Initialize(int teamID, string name, Material teamColor)
+	public virtual void Initialize(int teamID, string name, Material teamColor, List<Agent> team)
 	{
 		this.teamID = teamID;
+		this.team = team;
 		this.name = name;
 		gameObject.name = name;
 		renderController.SetTeamColor(teamColor);

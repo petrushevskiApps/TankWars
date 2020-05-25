@@ -14,6 +14,19 @@ public abstract class Detectable
 
     public abstract Detected CreateDetected(GameObject detected, string detectedName, GameObject agent);
 
+    public List<GameObject> GetDetectedList()
+    {
+        List<GameObject> detectedList = new List<GameObject>();
+
+        foreach(Detected detected in detectables)
+        {
+            if(detected.IsValid())
+            {
+                detectedList.Add(detected.detected);
+            }
+        }
+        return detectedList;
+    }
     public void AddDetected(GameObject detected)
     {
         Detected detectable = CreateDetected(detected, detected.name, parent);

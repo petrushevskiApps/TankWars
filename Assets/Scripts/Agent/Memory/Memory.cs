@@ -89,7 +89,7 @@ public class MemorySystem
 
     }
 
-    public void RemoveEvents(PerceptorSystem perceptor)
+    public void UnregisterEvents(PerceptorSystem perceptor)
     {
         perceptor.OnEnemyDetected.RemoveListener(Enemies.AddDetected);
         perceptor.OnEnemyLost.RemoveListener(Enemies.RemoveDetected);

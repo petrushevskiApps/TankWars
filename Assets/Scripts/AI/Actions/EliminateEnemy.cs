@@ -12,7 +12,7 @@ public class EliminateEnemy : GoapAction
 		Follow,
 		ToClose
 	}
-	private AiAgent agent;
+	private AIAgent agent;
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
@@ -35,7 +35,7 @@ public class EliminateEnemy : GoapAction
 	}
 	private void Start()
 	{
-		agent = GetComponent<AiAgent>();
+		agent = GetComponent<AIAgent>();
 		agentMemory = agent.GetMemory();
 		agentNavigation = agent.GetNavigation();
 	}

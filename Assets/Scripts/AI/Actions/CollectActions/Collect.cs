@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class Collect : GoapAction
 {
-    protected AiAgent agent;
+    protected AIAgent agent;
     protected MemorySystem agentMemory;
     protected NavigationSystem agentNavigation;
     protected Detectable detectedMemory;
@@ -14,7 +14,7 @@ public abstract class Collect : GoapAction
 
     protected void Start()
     {
-        agent = GetComponent<AiAgent>();
+        agent = GetComponent<AIAgent>();
         agentMemory = agent.GetMemory();
         agentNavigation = agent.GetNavigation();
     }

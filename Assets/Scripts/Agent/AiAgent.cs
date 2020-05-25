@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Dynamic;
 using UnityEngine;
 
-public class AiAgent : Agent, IGoap
+public class AIAgent : Agent, IGoap
 {
-	[Header("Agent Systems")]
+	[Header("AI Systems")]
 
 	[SerializeField] private MemorySystem memory = new MemorySystem();
 
@@ -22,20 +22,27 @@ public class AiAgent : Agent, IGoap
 
 	}
 
-	public override void Initialize(int teamID, string name, Material teamColor)
+	public override void Initialize(int teamID, string name, Material teamColor, List<Agent> team)
 	{
-		base.Initialize(teamID, name, teamColor);
+		base.Initialize(teamID, name, teamColor, team);
 
 		Navigation = new NavigationSystem(gameObject);
 
 		memory.Initialize(this);
 
 		memory.RegisterEvents(perceptor);
+
+		communication.Initialize(this);
+	}
+
+	public List<Agent> GetTeamMembers()
+	{
+		return team;
 	}
 
 	private void OnDestroy()
 	{
-		memory.RemoveEvents(perceptor);
+		memory.UnregisterEvents(perceptor);
 		Navigation.OnDestroy();
 		
 	}
@@ -58,7 +65,10 @@ public class AiAgent : Agent, IGoap
 	{
 		return perceptor;
 	}
-
+	public CommunicationSystem GetCommunication()
+	{
+		return communication;
+	}
 	public Dictionary<string, bool> GetWorldState()
 	{
 		return memory.GetWorldState();
@@ -76,7 +86,7 @@ public class AiAgent : Agent, IGoap
 
 	public void ShowMessage(string text)
 	{
-		communication.UpdateMessage(text);
+		
 	}
 
 

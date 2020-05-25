@@ -55,7 +55,7 @@ public class PerceptorSystem : MonoBehaviour
         }
     }
 
-    private void CheckLost(GameObject detected)
+    private void CheckLost(GameObject detected, bool drawDebug = true)
     {
         if (detected.CompareTag("Tank"))
         {
@@ -73,7 +73,7 @@ public class PerceptorSystem : MonoBehaviour
     }
 
     // Check the type of object which was detected
-    private void CheckVisibleDetected(GameObject detected)
+    private void CheckVisibleDetected(GameObject detected, bool drawDebug = true)
     {
         if (detected.CompareTag("Tank"))
         {
@@ -81,12 +81,12 @@ public class PerceptorSystem : MonoBehaviour
 
             if (IsEnemy(targetTank.GetTeamID()))
             {
-                Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
+                if(drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
                 OnEnemyDetected.Invoke(detected);
             }
             else
             {
-                Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.blue);
+                if (drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.blue);
                 OnFriendlyDetected.Invoke(detected);
             }
         }
@@ -97,6 +97,7 @@ public class PerceptorSystem : MonoBehaviour
 
             OnAmmoPackDetected.Invoke(detected);
         }
+
         else if (detected.CompareTag("HealthPack"))
         {
             Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.green);
@@ -104,7 +105,7 @@ public class PerceptorSystem : MonoBehaviour
             OnHealthPackDetected.Invoke(detected);
         }
     }
-    private void CheckDetected(GameObject detected)
+    private void CheckDetected(GameObject detected, bool drawDebug = true)
     {
         if (detected.CompareTag("HidingSpot"))
         {

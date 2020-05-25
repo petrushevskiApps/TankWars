@@ -6,6 +6,6 @@ public class MissileSensor : Sensor
 {
     private void OnTriggerEnter(Collider other)
     {
-        OnDetected.Invoke(other.gameObject);
+        OnDetected.Invoke(other.gameObject, true);
     }
 }

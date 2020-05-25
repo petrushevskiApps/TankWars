@@ -57,6 +57,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e9af438d45157646a2ee03e030a8279, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &3443261313552715659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 296409467059678114}
+  - component: {fileID: 805429187262829989}
+  m_Layer: 9
+  m_Name: CommunicationSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &296409467059678114
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3443261313552715659}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6882259522592773317}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &805429187262829989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3443261313552715659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2047517f49c3c6b488670cec0f761a1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSensor: {fileID: 5472347677469355672}
 --- !u!1 &4802280623178038713
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,8 +131,9 @@ Transform:
   m_Children:
   - {fileID: 6882259522157597377}
   - {fileID: 5957165068766796039}
+  - {fileID: 8766893217303963943}
   m_Father: {fileID: 6882259522592773317}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4081871276758882543
 MonoBehaviour:
@@ -105,6 +150,7 @@ MonoBehaviour:
   sensors:
   - {fileID: 6882259522157597376}
   - {fileID: 259670973896824266}
+  - {fileID: 5472347677469355672}
 --- !u!1 &6882259520838691897
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +181,7 @@ Transform:
   - {fileID: 6882259522592747353}
   - {fileID: 6882259522592809049}
   m_Father: {fileID: 6882259522592773317}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6882259522157597390
 GameObject:
@@ -223,7 +269,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6882259522592773317}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3659655715927590510
 MonoBehaviour:
@@ -4984,7 +5030,7 @@ RectTransform:
   m_Children:
   - {fileID: 6882259522612772361}
   m_Father: {fileID: 6882259522592773317}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5105,6 +5151,7 @@ Transform:
   m_LocalPosition: {x: 26.3, y: 0, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 296409467059678114}
   - {fileID: 2551475806745616521}
   - {fileID: 6882259522592739357}
   - {fileID: 6882259522592799845}
@@ -5398,6 +5445,7 @@ MonoBehaviour:
   memory:
     shootingRange: 10
     missileDirection: {x: 0, y: 0, z: 0}
+  communication: {fileID: 805429187262829989}
   perceptor: {fileID: 4081871276758882543}
 --- !u!114 &6882259522593062806
 MonoBehaviour:
@@ -5554,7 +5602,7 @@ Transform:
   - {fileID: 6882259522592796371}
   - {fileID: 6882259522592724613}
   m_Father: {fileID: 6882259522592773317}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &6882259522593068460
 BoxCollider:
@@ -10918,3 +10966,46 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &8696550908635399584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8766893217303963943}
+  - component: {fileID: 5472347677469355672}
+  m_Layer: 0
+  m_Name: AudioSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8766893217303963943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8696550908635399584}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2551475806745616521}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5472347677469355672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8696550908635399584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb96822ca5b17fb439a3398ae996a2bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

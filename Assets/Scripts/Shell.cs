@@ -13,6 +13,7 @@ namespace Complete
         public float m_MaxLifeTime = 2f;                    // The time in seconds before the shell is removed.
         public float m_ExplosionRadius = 5f;                // The maximum distance away from the explosion tanks can be and are still affected.
 
+        private Agent owner;
         [SerializeField] private string agentName;
         [SerializeField] private int teamID;
 
@@ -23,10 +24,15 @@ namespace Complete
             Destroy (gameObject, m_MaxLifeTime);
         }
 
-        public void SetOwner(string agentName, int teamID)
+        public void SetOwner(Agent owner)
         {
-            this.agentName = agentName;
-            this.teamID = teamID;
+            this.owner = owner;
+            agentName = owner.name;
+            teamID = owner.GetTeamID();
+        }
+        public GameObject GetOwner()
+        {
+            return owner.gameObject;
         }
         public string GetOwnerName()
         {
