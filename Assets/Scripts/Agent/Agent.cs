@@ -8,6 +8,7 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
 	[SerializeField] private int teamID = 0;
+	public GameObject cameraTracker;
 
 	[Header("Agent Controllers")]
 	[SerializeField] private UIController uiController; 
@@ -16,7 +17,7 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 
 	[Header("Agent Systems")]
 	[SerializeField] protected Inventory inventory = new Inventory();
-	[SerializeField] private WeaponSystem weapon;
+	[SerializeField] protected WeaponSystem weapon;
 
 	protected List<Agent> team = new List<Agent>();
 

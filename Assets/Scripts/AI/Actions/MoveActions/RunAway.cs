@@ -3,9 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class RunAway : MoveAction 
-{	
+{
+	public UnityEvent OnRunAwayEntered = new UnityEvent();
+	public UnityEvent OnRunAwayExecuted = new UnityEvent();
+
 	public RunAway() 
 	{
 		actionName = "RunAway";
@@ -39,6 +43,11 @@ public class RunAway : MoveAction
 		SetActionTarget();
 	}
 
+	public override void EnterAction(Action Success, Action Fail, Action Reset)
+	{
+		base.EnterAction(Success, Fail, Reset);
+		OnRunAwayEntered.Invoke();
+	}
 	/*
 	 * If the agent arrives at the target location and isn't
 	 * under attack action is completed. 
@@ -53,6 +62,7 @@ public class RunAway : MoveAction
 		}
 		else
 		{
+			OnRunAwayExecuted.Invoke();
 			ExitAction(actionCompleted);
 		}
 	}

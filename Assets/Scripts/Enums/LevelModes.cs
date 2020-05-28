@@ -5,5 +5,5 @@ using UnityEngine;
 public enum LevelModes
 {
     Simulation,
-    SinglePlayer
+    Player
 }

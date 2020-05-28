@@ -16,8 +16,11 @@ public class Inventory
     public InventoryStatus AmmoStatus { get; private set; }
     public InventoryStatus HealthStatus { get; private set; }
 
+    [HideInInspector]
     public HealthChangeEvent OnHealthChange = new HealthChangeEvent();
-    public UnityEvent UnderAttack = new UnityEvent();
+
+    [HideInInspector]
+    public UnityEvent HealthLow = new UnityEvent();
 
     public void Initialize()
     {
@@ -80,10 +83,15 @@ public class Inventory
     }
 
     
+
     public void SetHealthStatus()
     {
         if (healthAmount < 50)
         {
+            if(HealthStatus != InventoryStatus.Low)
+            {
+                HealthLow.Invoke();
+            }
             HealthStatus = InventoryStatus.Low;
         }
         else if (healthAmount >= 50 && healthAmount < healthCapacity)

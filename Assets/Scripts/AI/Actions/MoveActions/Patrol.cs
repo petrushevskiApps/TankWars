@@ -4,9 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class Patrol : MoveAction 
 {
+	public UnityEvent OnPatrolExecuted = new UnityEvent();
+
 	public Patrol() 
 	{
 		actionName = "Patrol";
@@ -51,6 +54,11 @@ public class Patrol : MoveAction
 		else if (!agentMemory.IsAmmoAvailable())
 		{
 			agent.GetCommunication().BroadcastNeedAmmo();
+		}
+		else
+		{
+			// Health and Ammo Full and No Enemies found
+			OnPatrolExecuted.Invoke();
 		}
 	}
 	protected override void AddListeners()

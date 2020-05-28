@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 [Serializable]
 public class MemorySystem
@@ -107,9 +108,14 @@ public class MemorySystem
     }
     private Coroutine UnderAttackTimer;
     public Vector3 missileDirection;
+    public UnityEvent OnUnderFire = new UnityEvent();
 
     private void SetIsUnderAttack(GameObject missile)
     {
+        if(!IsUnderAttack)
+        {
+            OnUnderFire.Invoke();
+        }
         IsUnderAttack = true;
         missileDirection = missile.gameObject.transform.forward;
 

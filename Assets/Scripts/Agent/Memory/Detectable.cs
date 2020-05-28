@@ -8,6 +8,9 @@ using UnityEngine.Events;
 [System.Serializable]
 public abstract class Detectable
 {
+    public UnityEvent OnDetected = new UnityEvent();
+    public UnityEvent OnRemoved = new UnityEvent();
+
     protected GameObject parent;
 
     public List<Detected> detectables = new List<Detected>();
@@ -27,12 +30,14 @@ public abstract class Detectable
         }
         return detectedList;
     }
+
     public void AddDetected(GameObject detected)
     {
         Detected detectable = CreateDetected(detected, detected.name, parent);
 
         if(!detectables.Contains(detectable))
         {
+            OnDetected.Invoke();
             detected.GetComponent<IDestroyable>()?.RegisterOnDestroy(RemoveDetected);
             detectables.Add(detectable);
             Debug.Log($"<color=green>InternalState::{this.GetType()} Added</color>");
@@ -43,6 +48,7 @@ public abstract class Detectable
     {
         if (detected != null)
         {
+            OnRemoved.Invoke();
             Detected detectable = CreateDetected(detected, detected.name, parent);
             detectables.Remove(detectable);
         }
@@ -112,12 +118,17 @@ public abstract class Detectable
 
     public bool IsAnyValidDetected()
     {
-        int count = 0;
-
         if (detectables.Count == 0)
         {
             return false;
         }
+
+        return GetValidDetectedCount() > 0;
+    }
+
+    public int GetValidDetectedCount()
+    {
+        int count = 0;
 
         foreach (Detected detectable in detectables)
         {
@@ -127,17 +138,20 @@ public abstract class Detectable
             }
         }
 
-        return count > 0;
+        return count;
     }
-
     public bool IsDetectedValid(GameObject detected)
     {
-        Detected detectable = CreateDetected(detected, detected.name, parent);
-
-        if (detectables.Contains(detectable))
+        if(detected != null)
         {
-            return detectable.IsValid();
+            Detected detectable = CreateDetected(detected, detected.name, parent);
+
+            if (detectables.Contains(detectable))
+            {
+                return detectable.IsValid();
+            }
         }
+        
         return false;
     }
     

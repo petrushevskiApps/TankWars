@@ -3,9 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class EliminateEnemy : GoapAction
 {
+
 	public enum FireRangeStatus
 	{
 		InPosition,
@@ -16,8 +18,8 @@ public class EliminateEnemy : GoapAction
 	private MemorySystem agentMemory;
 	private NavigationSystem agentNavigation;
 
-	//private Coroutine LookAtCoroutine;
-	//private Coroutine FireAtCoroutine;
+	public UnityEvent OnEnemyKilled = new UnityEvent();
+	public UnityEvent OnEnemyAttacked = new UnityEvent();
 
 	private Coroutine FireCoroutine;
 
@@ -112,6 +114,7 @@ public class EliminateEnemy : GoapAction
 	
 	IEnumerator Fire()
 	{
+		OnEnemyAttacked.Invoke();
 		while (true)
 		{ 
 			if (CheckActionConditions())
@@ -134,6 +137,7 @@ public class EliminateEnemy : GoapAction
 				}
 				else
 				{
+					OnEnemyKilled.Invoke();
 					agentMemory.Enemies.RemoveDetected(target);
 					ExitAction(actionCompleted);
 					break;
@@ -147,10 +151,6 @@ public class EliminateEnemy : GoapAction
 		}
 
 		
-	}
-	private Vector3 GetFirePosition()
-	{
-		return transform.forward * (-1) * 10f;
 	}
 
 	private void AddListeners()

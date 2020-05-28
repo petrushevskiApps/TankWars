@@ -7,10 +7,12 @@ public class RenderController : MonoBehaviour
     private GameObject particles;
 
     [SerializeField] private List<Renderer> renderMaterials;
-    private void Awake()
+
+    private void Start()
     {
         SetParticles();
     }
+
     private void SetParticles()
     {
         particles = Instantiate(deathParticles, World.Instance.agentsExplosions);

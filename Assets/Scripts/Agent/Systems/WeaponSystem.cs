@@ -24,7 +24,7 @@ public class WeaponSystem : MonoBehaviour
 		this.agent = player;
 	}
 
-	public void FireBullet(GameObject enemyTarget)
+	public void FireBullet(GameObject enemyTarget = null)
 	{
 		// Create an instance of the shell
 		GameObject shell = Instantiate(ammoPrefab, transform.position, transform.rotation, World.Instance.shellsParent);
@@ -33,12 +33,14 @@ public class WeaponSystem : MonoBehaviour
 		Rigidbody shellBody = shell.GetComponent<Rigidbody>();
 
 		// Set the shell's velocity to the launch force in the fire position's forward direction.
-		shellBody.velocity = CalcBallisticVelocityVector(transform.position, enemyTarget.transform.position, fireAngle);
+		Vector3 target = transform.forward * 10f;
+		//shellBody.velocity = CalcBallisticVelocityVector(transform.position, target, fireAngle);
+		shellBody.velocity = target;
 		shell.SetActive(true);
 
 		// Change the clip to the firing clip and play it.
-		//shootingAudioSource.clip = fireAudioClip;
-		//shootingAudioSource.Play();
+		shootingAudioSource.clip = fireAudioClip;
+		shootingAudioSource.Play();
 
 		agent.GetInventory().DecreaseAmmo();
 
