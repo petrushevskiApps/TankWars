@@ -16,19 +16,18 @@ public class AgentsController : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
 
 
-    public void SpawnAgents(TeamsConfig levelConfig) 
+    public void SpawnAgents(List<Team> teamsConfig) 
     {
-        foreach(Team team in levelConfig.teamsConfig)
+        foreach(Team team in teamsConfig)
         {
             List<Agent> currentTeam = new List<Agent>();
 
-            for (int i = 0; i < team.playerCount; i++)
+            if(team.isPlayer)
             {
                 GameObject player = InstantiatePlayer(currentTeam);
                 players.Add(player.GetComponent<Agent>());
             }
-
-            for (int i=0; i<team.npcCount; i++)
+            for (int i=0; i<team.agentsCount; i++)
             {
                 InstantiateAgent(currentTeam);
             }

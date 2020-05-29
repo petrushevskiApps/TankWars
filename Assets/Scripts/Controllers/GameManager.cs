@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private LevelConfiguration levelConfig;
+    [SerializeField] private GameModes gameModes;
     [SerializeField] private CameraController CameraController;
 
     public static GameManager Instance;
@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     }
 
     public AgentsController AgentsController { get; private set; }
+    public InputController InputController { get; private set; }
 
     private void Awake()
     {
@@ -30,16 +31,34 @@ public class GameManager : MonoBehaviour
         }
 
         AgentsController = GetComponent<AgentsController>();
+        InputController = GetComponent<InputController>();
     }
 
     void Start()
     {
-        StartMatch();
+        UIController.Instance.ShowScreen<StartScreen>();
     }
 
-    private void StartMatch()
+    public void StartMatch(MatchConfiguration matchConfiguration)
     {
-        AgentsController.SpawnAgents(levelConfig.teamsConfig);
-        CameraController.Setup(levelConfig.cameraMode);
+        UIController.Instance.ShowScreen<InGameScreen>();
+        AgentsController.SpawnAgents(matchConfiguration.teamsConfig);
+        CameraController.Setup(matchConfiguration.CameraMode);
+    }
+
+    public List<MatchConfiguration> GetMatchConfigurations(GameModeTypes gameModeType)
+    {
+        if(gameModeType == GameModeTypes.Simulation)
+        {
+            return gameModes.simulationConfigs;
+        }
+        else if(gameModeType == GameModeTypes.Player)
+        {
+            return gameModes.playerConfigs;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

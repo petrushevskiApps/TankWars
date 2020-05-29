@@ -11,7 +11,7 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	public GameObject cameraTracker;
 
 	[Header("Agent Controllers")]
-	[SerializeField] private UIController uiController; 
+	[SerializeField] private AgentUIController uiController; 
 	[SerializeField] private RenderController renderController;
 
 

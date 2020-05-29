@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3c5839b396c41e46b62e1ff2fe3a07a, type: 3}
+  m_Name: GameModes
+  m_EditorClassIdentifier: 
+  simulationConfigs:
+  - {fileID: 11400000, guid: be3e9b3b287479643940caf29d33cfaa, type: 2}
+  - {fileID: 11400000, guid: d2e4bed5b97e0fe43b52cdbe1999ecb6, type: 2}
+  - {fileID: 11400000, guid: 4d978912ed854d24ab29d7114bd8cd11, type: 2}
+  playerConfigs:
+  - {fileID: 11400000, guid: 43e57217115ab4244a401f63eba2f724, type: 2}
+  - {fileID: 11400000, guid: 9d2fc97ceff555b43ad6ebc089a7d51d, type: 2}
+  - {fileID: 11400000, guid: 7ebdfe7fc9097e241adfd933963e6e05, type: 2}
