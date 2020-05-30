@@ -21,12 +21,9 @@ public class UIController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        //GameManager.Instance.InputController.OnBackPressed.AddListener(OnBack);
+        
     }
-    private void OnDestroy()
-    {
-        //GameManager.Instance.InputController.OnBackPressed.RemoveListener(OnBack);
-    }
+
     public void ShowScreen<T>() where T : UIScreen
     {
         CloseOpenedScreen();

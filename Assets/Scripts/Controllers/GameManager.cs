@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameModes gameModes;
-    [SerializeField] private CameraController CameraController;
 
     public static GameManager Instance;
+
+    private float savedTimeScale = 1;
+
+    public UnityEvent OnMatchEnd = new UnityEvent();
 
     public List<List<Agent>> Teams
     {
@@ -36,16 +40,37 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        ShowMenu();
+    }
+    
+    private void ShowMenu()
+    {
+        CameraController.Instance.ToggleUICamera(true);
         UIController.Instance.ShowScreen<StartScreen>();
+    }
+    public void PauseGame()
+    {
+        savedTimeScale = Time.timeScale;
+        Time.timeScale = 0;
+    }
+
+    public void UnpauseGame()
+    {
+        Time.timeScale = savedTimeScale;
     }
 
     public void StartMatch(MatchConfiguration matchConfiguration)
     {
-        UIController.Instance.ShowScreen<InGameScreen>();
         AgentsController.SpawnAgents(matchConfiguration.teamsConfig);
-        CameraController.Setup(matchConfiguration.CameraMode);
+        CameraController.Instance.GameCamera(matchConfiguration.CameraMode);
+        UIController.Instance.ShowScreen<HUDScreen>();
     }
-
+    public void EndMatch()
+    {
+        ShowMenu();
+        AgentsController.ClearAgents();
+        OnMatchEnd.Invoke();
+    }
     public List<MatchConfiguration> GetMatchConfigurations(GameModeTypes gameModeType)
     {
         if(gameModeType == GameModeTypes.Simulation)

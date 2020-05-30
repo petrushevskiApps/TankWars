@@ -57,6 +57,19 @@ public class AgentsController : MonoBehaviour
         teamList.Add(agentObject.GetComponent<Agent>());
     }
 
+    internal void ClearAgents()
+    {
+        foreach(List<Agent> team in teams)
+        {
+            foreach(Agent agent in team)
+            {
+                Destroy(agent.gameObject);
+            }
+        }
+        teams = new List<List<Agent>>();
+        players = new List<Agent>();
+    }
+
     private void InitializeAgents(int teamID, List<Agent> teamList)
     {
         foreach(Agent agent in teamList)

@@ -4,5 +4,9 @@ using UnityEngine;
 
 public class SimulationModeScreen : ModeScreen
 {
-    
+    private new void Awake()
+    {
+        gameMode = GameModeTypes.Simulation;
+        base.Awake();
+    }
 }

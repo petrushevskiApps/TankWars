@@ -6,13 +6,38 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private CinemachineTargetGroup overviewTargetGroup;
 
+    [SerializeField] private CinemachineVirtualCamera uiCamera;
     [SerializeField] private CinemachineVirtualCamera overviewCamera;
     [SerializeField] private CinemachineVirtualCamera followCamera;
 
+    public static CameraController Instance;
+
     private GameObject cameraTarget;
 
-    public void Setup(CameraMode cameraMode)
+    private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(Instance.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void ToggleUICamera(bool status)
+    {
+        World.Instance.ToggleUiTank(status);
+        uiCamera.gameObject.SetActive(status);
+        overviewCamera.gameObject.SetActive(false);
+        followCamera.gameObject.SetActive(false);
+    }
+    public void GameCamera(CameraMode cameraMode)
+    {
+        ToggleUICamera(false);
+
         if (cameraMode == CameraMode.Overview)
         {
             SetupOverviewCamera();
@@ -27,6 +52,7 @@ public class CameraController : MonoBehaviour
             cameraTarget = GameManager.Instance.AgentsController.GetRandomAgent().cameraTracker;
             SetupFollowCamera();
         }
+
     }
 
     private void SetupOverviewCamera()

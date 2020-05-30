@@ -6,5 +6,9 @@ using UnityEngine.UI;
 
 public class PlayerModeScreen : ModeScreen
 {
-    
+    private new void Awake()
+    {
+        gameMode = GameModeTypes.Player;
+        base.Awake();
+    }
 }

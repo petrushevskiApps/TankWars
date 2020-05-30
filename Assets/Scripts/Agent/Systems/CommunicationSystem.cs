@@ -38,28 +38,38 @@ public class CommunicationSystem : MonoBehaviour
 
     private void RegisterToBroadcasts()
     {
-        foreach(AIAgent agent in agent.GetTeamMembers())
+        foreach(Agent agent in agent.GetTeamMembers())
         {
-            // No need to listen your own broadcast
-            if(!agent.Equals(this.agent))
+            if(agent.GetType() == typeof(AIAgent))
             {
-                agent.GetCommunication().NeedHealth.AddListener(SendHealthLocations);
-                agent.GetCommunication().NeedAmmo.AddListener(SendAmmoLocations);
-                agent.GetCommunication().UnderAttack.AddListener(audioSensor.CallForHelp);
+                AIAgent aiAgent = (AIAgent)agent;
+
+                // No need to listen your own broadcast
+                if (!aiAgent.Equals(this.agent))
+                {
+                    aiAgent.GetCommunication().NeedHealth.AddListener(SendHealthLocations);
+                    aiAgent.GetCommunication().NeedAmmo.AddListener(SendAmmoLocations);
+                    aiAgent.GetCommunication().UnderAttack.AddListener(audioSensor.CallForHelp);
+                }
             }
         }
     }
 
     private void UnregisterToBroadcast()
     {
-        foreach (AIAgent agent in agent.GetTeamMembers())
+        foreach (Agent agent in agent.GetTeamMembers())
         {
-            // No need to listen your own broadcast
-            if (!agent.Equals(this.agent))
+            if (agent.GetType() == typeof(AIAgent))
             {
-                agent.GetCommunication().NeedHealth.RemoveListener(SendHealthLocations);
-                agent.GetCommunication().NeedAmmo.RemoveListener(SendAmmoLocations);
-                agent.GetCommunication().UnderAttack.AddListener(audioSensor.CallForHelp);
+                AIAgent aiAgent = (AIAgent)agent;
+
+                // No need to listen your own broadcast
+                if (!aiAgent.Equals(this.agent))
+                {
+                    aiAgent.GetCommunication().NeedHealth.RemoveListener(SendHealthLocations);
+                    aiAgent.GetCommunication().NeedAmmo.RemoveListener(SendAmmoLocations);
+                    aiAgent.GetCommunication().UnderAttack.RemoveListener(audioSensor.CallForHelp);
+                }
             }
         }
     }

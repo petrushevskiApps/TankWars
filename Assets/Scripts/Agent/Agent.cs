@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using System;
 
 public class Agent : MonoBehaviour, ICollector, IDestroyable
 {
@@ -14,10 +15,12 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	[SerializeField] private AgentUIController uiController; 
 	[SerializeField] private RenderController renderController;
 
+	
 
 	[Header("Agent Systems")]
 	[SerializeField] protected Inventory inventory = new Inventory();
 	[SerializeField] protected WeaponSystem weapon;
+	[SerializeField] protected AgentParticlesSystem particlesSystem;
 
 	protected List<Agent> team = new List<Agent>();
 
@@ -29,12 +32,20 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	{
 		weapon.Initialize(this);
 
-		uiController.SetHealthBar(inventory);
+		uiController.Setup(this);
 	}
 
 	private void Start()
 	{
 		inventory.Initialize();
+	}
+	private void OnEnable()
+	{
+		particlesSystem.PlayParticles();
+	}
+	private void OnDisable()
+	{
+		particlesSystem.StopParticles();
 	}
 
 	public virtual void Initialize(int teamID, string name, Material teamColor, List<Agent> team)
@@ -98,7 +109,10 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	{
 		return teamID;
 	}
-
+	public string GetName()
+	{
+		return name;
+	}
 	public class PlayerDeath : UnityEvent<GameObject>
 	{
 

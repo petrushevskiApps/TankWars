@@ -32,6 +32,8 @@ public class PickablesController : MonoBehaviour
 
     private void Awake()
     {
+        GameManager.Instance.OnMatchEnd.AddListener(CleanupPickables);
+
         path = new NavMeshPath();
 
         healthPacks = new List<GameObject>();
@@ -41,11 +43,31 @@ public class PickablesController : MonoBehaviour
         proximityCheckList.Add(ammoPacks);
         proximityCheckList.Add(hidingSpots);
     }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnMatchEnd.AddListener(CleanupPickables);
+    }
+
     private void Start()
     {
         InstantiatePickables(healthPackPrefab, hpMapLimit, healthPacks);
         InstantiatePickables(ammoPackPrefab, ammoMapLimit, ammoPacks);
     }
+
+    private void CleanupPickables()
+    {
+        foreach(GameObject go in healthPacks)
+        {
+            Destroy(go);
+        }
+        foreach (GameObject go in ammoPacks)
+        {
+            Destroy(go);
+        }
+    }
+
+    
 
     private void InstantiatePickables(GameObject prefab, int limit, List<GameObject> list)
     {

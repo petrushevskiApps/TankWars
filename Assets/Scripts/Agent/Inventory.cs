@@ -16,8 +16,14 @@ public class Inventory
     public InventoryStatus AmmoStatus { get; private set; }
     public InventoryStatus HealthStatus { get; private set; }
 
+    
     [HideInInspector]
-    public HealthChangeEvent OnHealthChange = new HealthChangeEvent();
+    public OnValueChange OnHealthChange = new OnValueChange();
+
+    
+
+    [HideInInspector]
+    public OnValueChange OnAmmoChange = new OnValueChange();
 
     [HideInInspector]
     public UnityEvent HealthLow = new UnityEvent();
@@ -31,14 +37,14 @@ public class Inventory
     public void IncreaseAmmo(int ammo)
     {
         ammoAmount = Mathf.Clamp(ammoAmount + ammo, 0, ammoCapacity);
+        OnAmmoChange.Invoke(ammoAmount);
         SetAmmoStatus();
     }
-
-    
 
     public void DecreaseAmmo()
     {
         ammoAmount = Mathf.Clamp(ammoAmount-1, 0, ammoCapacity);
+        OnAmmoChange.Invoke(ammoAmount);
         SetAmmoStatus();
     }
     public int GetAmmo()
@@ -64,6 +70,12 @@ public class Inventory
             AmmoStatus = InventoryStatus.Full;
         }
     }
+   
+    public float GetAmmoCapacity()
+    {
+        return ammoCapacity;
+    }
+
 
     public void IncreaseHealth(float amount)
     {
@@ -82,7 +94,10 @@ public class Inventory
         return healthAmount;
     }
 
-    
+    public float GetHealthCapacity()
+    {
+        return healthCapacity;
+    }
 
     public void SetHealthStatus()
     {
@@ -104,7 +119,7 @@ public class Inventory
         }
     }
 
-    public class HealthChangeEvent : UnityEvent<float>
+    public class OnValueChange : UnityEvent<float>
     {
 
     }

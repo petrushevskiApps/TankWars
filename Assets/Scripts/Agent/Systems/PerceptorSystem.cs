@@ -59,9 +59,9 @@ public class PerceptorSystem : MonoBehaviour
     {
         if (detected.CompareTag("Tank"))
         {
-            Agent targetTank = detected.GetComponent<Agent>();
+            Agent agent = detected.GetComponent<Agent>();
 
-            if (IsEnemy(targetTank.GetTeamID()))
+            if (agent != null && IsEnemy(agent.GetTeamID()))
             {
                 OnEnemyLost.Invoke(detected);
             }
@@ -77,18 +77,22 @@ public class PerceptorSystem : MonoBehaviour
     {
         if (detected.CompareTag("Tank"))
         {
-            Agent targetTank = detected.GetComponent<Agent>();
+            Agent agent = detected.GetComponent<Agent>();
 
-            if (IsEnemy(targetTank.GetTeamID()))
+            if(agent != null)
             {
-                if(drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
-                OnEnemyDetected.Invoke(detected);
+                if (IsEnemy(agent.GetTeamID()))
+                {
+                    if (drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
+                    OnEnemyDetected.Invoke(detected);
+                }
+                else
+                {
+                    if (drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.blue);
+                    OnFriendlyDetected.Invoke(detected);
+                }
             }
-            else
-            {
-                if (drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.blue);
-                OnFriendlyDetected.Invoke(detected);
-            }
+            
         }
         
         else if (detected.CompareTag("AmmoPack"))
