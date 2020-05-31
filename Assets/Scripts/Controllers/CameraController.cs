@@ -40,6 +40,7 @@ public class CameraController : MonoBehaviour
 
         if (cameraMode == CameraMode.Overview)
         {
+            GetComponent<AudioListener>().enabled = true;
             SetupOverviewCamera();
         }
         else if(cameraMode == CameraMode.FollowPlayer)
@@ -49,7 +50,7 @@ public class CameraController : MonoBehaviour
         }
         else if (cameraMode == CameraMode.FollowOne)
         {
-            cameraTarget = GameManager.Instance.AgentsController.GetRandomAgent().cameraTracker;
+            cameraTarget = GameManager.Instance.AgentsController.GetCameraTargetAgent().cameraTracker;
             SetupFollowCamera();
         }
 

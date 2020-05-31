@@ -5,18 +5,31 @@ using UnityEngine;
 public class AgentsController : MonoBehaviour
 {
     [SerializeField] private List<List<Agent>> teams = new List<List<Agent>>();
-    [SerializeField] private List<Agent> players = new List<Agent>();
+    [SerializeField] private Agent playerAgent = new Agent();
 
+    [Header("Configurations")]
     [SerializeField] private SpawnLocationsController spawnLocations;
-    
     [SerializeField] private TeamColors teamColors;
     [SerializeField] private NPCNames npcNames;
 
+    [Header("Prefabs")]
     [SerializeField] private GameObject aiPrefab;
     [SerializeField] private GameObject playerPrefab;
 
-
-    public void SpawnAgents(List<Team> teamsConfig) 
+    private void Awake()
+    {
+        GameManager.Instance.OnMatchEnd.AddListener(ResetController);
+    }
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnMatchEnd.RemoveListener(ResetController);
+    }
+    public void Setup(MatchConfiguration configuration)
+    {
+        SpawnAgents(configuration.teamsConfig);
+        SetAudioListener();
+    }
+    private void SpawnAgents(List<Team> teamsConfig) 
     {
         foreach(Team team in teamsConfig)
         {
@@ -25,7 +38,7 @@ public class AgentsController : MonoBehaviour
             if(team.isPlayer)
             {
                 GameObject player = InstantiatePlayer(currentTeam);
-                players.Add(player.GetComponent<Agent>());
+                playerAgent = player.GetComponent<Agent>();
             }
             for (int i=0; i<team.agentsCount; i++)
             {
@@ -57,7 +70,7 @@ public class AgentsController : MonoBehaviour
         teamList.Add(agentObject.GetComponent<Agent>());
     }
 
-    internal void ClearAgents()
+    private void ResetController()
     {
         foreach(List<Agent> team in teams)
         {
@@ -66,8 +79,9 @@ public class AgentsController : MonoBehaviour
                 Destroy(agent.gameObject);
             }
         }
+
         teams = new List<List<Agent>>();
-        players = new List<Agent>();
+        playerAgent = null;
     }
 
     private void InitializeAgents(int teamID, List<Agent> teamList)
@@ -78,24 +92,21 @@ public class AgentsController : MonoBehaviour
         }
     }
 
-    public void ActivateAgents()
+    private void ActivateAgents()
     {
         foreach (List<Agent> team in teams)
         {
             foreach(Agent agent in team)
             {
                 agent.gameObject.SetActive(true);
+                agent.gameObject.GetComponent<AudioListener>().enabled = false;
             }
         }
     }
 
-    public List<Agent> GetPlayers()
-    {
-        return players;
-    }
     public Agent GetPlayer()
     {
-        return players[0];
+        return playerAgent;
     }
 
     public List<List<Agent>> GetTeamsList()
@@ -103,10 +114,21 @@ public class AgentsController : MonoBehaviour
         return teams;
     }
 
-    
-    public Agent GetRandomAgent()
+
+    private void SetAudioListener()
+    {
+        if (playerAgent != null)
+        {
+            playerAgent.GetComponent<AudioListener>().enabled = true;
+        }
+    }
+
+    public Agent GetCameraTargetAgent()
     {
         List<Agent> team = teams[UnityEngine.Random.Range(0, teams.Count)];
-        return team[UnityEngine.Random.Range(0, team.Count)];
+        Agent agent = team[UnityEngine.Random.Range(0, team.Count)];
+        agent.GetComponent<AudioListener>().enabled = true;
+        return agent;
     }
+
 }

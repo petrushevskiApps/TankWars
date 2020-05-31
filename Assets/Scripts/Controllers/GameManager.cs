@@ -61,14 +61,13 @@ public class GameManager : MonoBehaviour
 
     public void StartMatch(MatchConfiguration matchConfiguration)
     {
-        AgentsController.SpawnAgents(matchConfiguration.teamsConfig);
+        AgentsController.Setup(matchConfiguration);
         CameraController.Instance.GameCamera(matchConfiguration.CameraMode);
         UIController.Instance.ShowScreen<HUDScreen>();
     }
     public void EndMatch()
     {
         ShowMenu();
-        AgentsController.ClearAgents();
         OnMatchEnd.Invoke();
     }
     public List<MatchConfiguration> GetMatchConfigurations(GameModeTypes gameModeType)

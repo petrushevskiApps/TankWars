@@ -70,6 +70,7 @@ public class World : MonoBehaviour
 
         }
     }
+    
     public Vector3 GetRandomLocation()
     {
         float x = UnityEngine.Random.Range(minX, maxX);
@@ -77,6 +78,7 @@ public class World : MonoBehaviour
 
         return new Vector3(x, corners[0].position.y, z);
     }
+    
     public void ToggleUiTank(bool status)
     {
         if(uiTank.activeSelf != status)

@@ -1840,6 +1840,7 @@ GameObject:
   m_Component:
   - component: {fileID: 525854090}
   - component: {fileID: 525854089}
+  - component: {fileID: 525854091}
   m_Layer: 0
   m_Name: CameraController
   m_TagString: Untagged
@@ -1881,6 +1882,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &525854091
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525854088}
+  m_Enabled: 1
 --- !u!1 &568622024
 GameObject:
   m_ObjectHideFlags: 0
@@ -4686,7 +4695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c0893a78ecc3c46b23d17146aa49b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players: []
+  playerAgent: {fileID: 0}
   spawnLocations: {fileID: 1925608929}
   teamColors: {fileID: 11400000, guid: 1377291382ea0d84b9a929f5bb66907d, type: 2}
   npcNames: {fileID: 11400000, guid: f2c3b38a19a4ad34aa4a4e4e13b69d87, type: 2}
@@ -7557,11 +7566,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 146958998523860671, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_Name
