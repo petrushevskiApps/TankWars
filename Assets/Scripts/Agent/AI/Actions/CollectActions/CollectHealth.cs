@@ -24,6 +24,11 @@ public class CollectHealth : Collect
 		base.Start();
 		detectedMemory = agentMemory.HealthPacks;
 	}
+	protected override IEnumerator CollectPickable()
+	{
+		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
+		ExitAction(actionCompleted);
+	}
 
 	protected override void AddListeners()
 	{

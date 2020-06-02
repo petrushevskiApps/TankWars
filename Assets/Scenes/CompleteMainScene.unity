@@ -8627,6 +8627,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3739692453420363656, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3739692453420363656, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4998884739790146126, guid: 066a1819dc60d0e499e1f8eb300c3365,
         type: 3}
       propertyPath: m_Name
@@ -8685,6 +8695,41 @@ PrefabInstance:
     - target: {fileID: 4998884739790430492, guid: 066a1819dc60d0e499e1f8eb300c3365,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5917039756491116582, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5917039756491116582, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

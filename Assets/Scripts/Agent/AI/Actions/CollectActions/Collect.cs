@@ -72,26 +72,39 @@ public abstract class Collect : GoapAction
     {
         Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-        UpdateCoroutine = StartCoroutine(CollectPickable());
-    }
+        CollectController collector = agent.GetComponent<Agent>().GetCollector();
 
-    private IEnumerator CollectPickable()
-    {
-        if (detectedMemory.IsDetectedValid(target))
+        if (collector!= null && collector.IsPickableReady)
         {
-            Pickable pickable = target.GetComponent<Pickable>();
-
-            yield return new WaitForSeconds(pickable.GetTimeToCollect());
-
-            pickable.Collect(agent.GetComponent<ICollector>());
-
-            ExitAction(actionCompleted);
+            collector.CollectPickable(true);
+            UpdateCoroutine = StartCoroutine(CollectPickable());
         }
         else
         {
             ExitAction(actionFailed);
         }
     }
+
+
+    protected abstract IEnumerator CollectPickable();
+
+    //private IEnumerator CollectPickable()
+    //{
+    //    if (detectedMemory.IsDetectedValid(target))
+    //    {
+    //        Pickable pickable = target.GetComponent<Pickable>();
+
+    //        yield return new WaitForSeconds(pickable.GetTimeToCollect());
+
+    //        //pickable.Collect(agent.GetComponent<ICollector>());
+
+    //        ExitAction(actionCompleted);
+    //    }
+    //    else
+    //    {
+    //        ExitAction(actionFailed);
+    //    }
+    //}
 
     protected override void ExitAction(Action ExitAction)
     {

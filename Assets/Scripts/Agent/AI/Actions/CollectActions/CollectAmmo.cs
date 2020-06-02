@@ -26,7 +26,11 @@ public class CollectAmmo : Collect
 		detectedMemory = agentMemory.AmmoPacks;
 	}
 
-	
+	protected override IEnumerator CollectPickable()
+	{
+		yield return new WaitUntil(() => agentMemory.IsAmmoAvailable());
+		ExitAction(actionCompleted);
+	}
 
 	protected override void AddListeners()
 	{

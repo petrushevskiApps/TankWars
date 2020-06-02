@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Player : Agent
 {
+    
+
     private new void Awake()
     {
         RegisterListeners();
@@ -16,13 +18,15 @@ public class Player : Agent
     }
     private void RegisterListeners()
     {
-        InputController.OnSpacePressed.AddListener(Fire);
+        InputController.OnFirePressed.AddListener(Fire);
+        InputController.OnCollecting.AddListener(collectController.CollectPickable);
     }
     private void UnregisterListeners()
     {
-        InputController.OnSpacePressed.RemoveListener(Fire);
+        InputController.OnFirePressed.RemoveListener(Fire);
+        InputController.OnCollecting.RemoveListener(collectController.CollectPickable);
     }
-
+    
     private void Fire()
     {
         weapon.FireBullet();

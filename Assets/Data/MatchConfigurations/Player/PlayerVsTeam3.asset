@@ -16,8 +16,5 @@ MonoBehaviour:
   CameraMode: 2
   teamsConfig:
   - teamID: 0
-    agentsCount: 3
-    isPlayer: 0
-  - teamID: 1
     agentsCount: 0
     isPlayer: 1
