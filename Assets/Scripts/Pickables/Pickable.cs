@@ -5,19 +5,29 @@ using UnityEngine.UI;
 
 public class Pickable : MonoBehaviour, IDestroyable
 {
+    public OnCollectedEvent OnCollected = new OnCollectedEvent();
+
+    [SerializeField] private GameObject canvas;
     [SerializeField] private Image collectingProgress;
     [SerializeField] private float timeToCollect = 2f;
-
-    public OnCollectedEvent OnCollected = new OnCollectedEvent();
 
     private ICollector collector;
     private Coroutine CollectingCo;
 
-    public float GetTimeToCollect()
+    private void OnTriggerEnter(Collider other)
     {
-        return timeToCollect;
+        if(other.gameObject.layer == LayerMask.NameToLayer("Tank"))
+        {
+            canvas.SetActive(true);
+        }
     }
-
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Tank"))
+        {
+            canvas.SetActive(false);
+        }
+    }
     public void StartCollecting(ICollector collector)
     {
         if (this.collector != null) return;

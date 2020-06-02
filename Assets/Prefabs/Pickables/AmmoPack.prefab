@@ -79,6 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34cf7b98930183f4e96fae7e0c1a55ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 2197655938696571922}
   collectingProgress: {fileID: 8565760258531554070}
   timeToCollect: 2
   amountToCollect: 10
@@ -187,6 +188,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 1714484563003446653, guid: cc87107bef32059468cb487bcebeb467,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8598625878330242185, guid: cc87107bef32059468cb487bcebeb467,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -294,6 +300,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc87107bef32059468cb487bcebeb467, type: 3}
+--- !u!1 &2197655938696571922 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1714484563003446653, guid: cc87107bef32059468cb487bcebeb467,
+    type: 3}
+  m_PrefabInstance: {fileID: 699384841958816111}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &9142520974563184102 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8598625878330242185, guid: cc87107bef32059468cb487bcebeb467,

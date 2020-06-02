@@ -14,13 +14,14 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	[Header("Agent Controllers")]
 	[SerializeField] private AgentUIController uiController; 
 	[SerializeField] private RenderController renderController;
-	[SerializeField] protected CollectController collectController;
+	
 
 
 	[Header("Agent Systems")]
 	[SerializeField] protected Inventory inventory = new Inventory();
 	[SerializeField] protected WeaponSystem weapon;
 	[SerializeField] protected AgentParticlesSystem particlesSystem;
+	[SerializeField] protected CollectorSystem collectorSystem;
 
 	protected List<Agent> team = new List<Agent>();
 
@@ -88,9 +89,9 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		OnAgentDeath.AddListener(OnDestroyAction);
 	}
 
-	public CollectController GetCollector()
+	public CollectorSystem GetCollector()
 	{
-		return collectController;
+		return collectorSystem;
 	}
 	public Inventory GetInventory()
 	{

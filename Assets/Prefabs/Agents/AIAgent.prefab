@@ -4919,7 +4919,7 @@ MonoBehaviour:
   cameraTracker: {fileID: 1676465684604973305}
   uiController: {fileID: 3468094715412927659}
   renderController: {fileID: 2970774924890141079}
-  collectController: {fileID: 7989623322379019348}
+  collectorSystem: {fileID: 7989623322379019348}
   inventory:
     healthAmount: 100
     healthCapacity: 100
@@ -10173,7 +10173,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3723875381565012540}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65b5e378abb2c1e44afed151bc86af31, type: 3}
+  m_Script: {fileID: 11500000, guid: ef46df418155df94a9297c23e5d978b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4058026810131117877

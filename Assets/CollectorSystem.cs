@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
+﻿using UnityEngine;
 
-public class CollectController : MonoBehaviour
+/*
+ * This class is used by agents
+ * for collecting pickables in world.
+ */
+public class CollectorSystem : MonoBehaviour
 {
     private Pickable pickable;
 
@@ -13,24 +14,24 @@ public class CollectController : MonoBehaviour
     {
        if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
         {
-            PickableDetected(other.gameObject.transform.parent.GetComponent<Pickable>());
+            SetPickable(other.gameObject.transform.parent.GetComponent<Pickable>());
         }
     }
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Pickable"))
         {
-            PickableLost(other.gameObject);
+            ResetPickable(other.gameObject);
         }
     }
 
-    private void PickableDetected(Pickable pickable)
+    private void SetPickable(Pickable pickable)
     {
         this.pickable = pickable;
-        this.pickable.RegisterOnDestroy(PickableLost);
+        this.pickable.RegisterOnDestroy(ResetPickable);
     }
 
-    private void PickableLost(GameObject pickableObject)
+    private void ResetPickable(GameObject pickableObject)
     {
         if(IsPickableReady)
         {

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1266401672512697664}
   - component: {fileID: 1266401672512697667}
-  - component: {fileID: 5673073590993323067}
   - component: {fileID: 3478355754811992040}
   m_Layer: 9
   m_Name: HealthPack
@@ -48,25 +47,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.5, y: 1.29, z: 2.5}
   m_Center: {x: 0, y: 0.2, z: 0}
---- !u!95 &5673073590993323067
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1266401672512697669}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 97ec418a36e92eb4fad74ad4c66fc936, type: 2}
-  m_CullingMode: 2
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &3478355754811992040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,6 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa16dc5d4ee8e9847b2cd1486a67fd19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 7636963377883733681}
   collectingProgress: {fileID: 97922806369108405}
   timeToCollect: 2
   amountToCollect: 100
@@ -185,7 +166,12 @@ PrefabInstance:
     - target: {fileID: 1714484563003446653, guid: cc87107bef32059468cb487bcebeb467,
         type: 3}
       propertyPath: m_Name
-      value: Canvas
+      value: PickableCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714484563003446653, guid: cc87107bef32059468cb487bcebeb467,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8598625878330242185, guid: cc87107bef32059468cb487bcebeb467,
         type: 3}
@@ -294,6 +280,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc87107bef32059468cb487bcebeb467, type: 3}
+--- !u!1 &7636963377883733681 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1714484563003446653, guid: cc87107bef32059468cb487bcebeb467,
+    type: 3}
+  m_PrefabInstance: {fileID: 9093017350681873356}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &676832657480466245 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8598625878330242185, guid: cc87107bef32059468cb487bcebeb467,

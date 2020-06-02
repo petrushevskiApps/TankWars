@@ -72,7 +72,7 @@ public abstract class Collect : GoapAction
     {
         Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-        CollectController collector = agent.GetComponent<Agent>().GetCollector();
+        CollectorSystem collector = agent.GetComponent<Agent>().GetCollector();
 
         if (collector!= null && collector.IsPickableReady)
         {
@@ -88,23 +88,6 @@ public abstract class Collect : GoapAction
 
     protected abstract IEnumerator CollectPickable();
 
-    //private IEnumerator CollectPickable()
-    //{
-    //    if (detectedMemory.IsDetectedValid(target))
-    //    {
-    //        Pickable pickable = target.GetComponent<Pickable>();
-
-    //        yield return new WaitForSeconds(pickable.GetTimeToCollect());
-
-    //        //pickable.Collect(agent.GetComponent<ICollector>());
-
-    //        ExitAction(actionCompleted);
-    //    }
-    //    else
-    //    {
-    //        ExitAction(actionFailed);
-    //    }
-    //}
 
     protected override void ExitAction(Action ExitAction)
     {
