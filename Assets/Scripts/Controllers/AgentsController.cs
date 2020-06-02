@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class AgentsController : MonoBehaviour
 {
     [SerializeField] private List<List<Agent>> teams = new List<List<Agent>>();
-    [SerializeField] private Agent playerAgent = new Agent();
+    [SerializeField] private Agent playerAgent;
 
     [Header("Configurations")]
     [SerializeField] private SpawnLocationsController spawnLocations;
@@ -24,15 +24,17 @@ public class AgentsController : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.OnMatchEnd.AddListener(ResetController);
+        GameManager.OnMatchSetup.AddListener(Setup);
+        GameManager.OnMatchEnded.AddListener(ResetController);
     }
     private void OnDestroy()
     {
-        GameManager.Instance.OnMatchEnd.RemoveListener(ResetController);
+        GameManager.OnMatchSetup.RemoveListener(Setup);
+        GameManager.OnMatchEnded.RemoveListener(ResetController);
     }
 
 
-    public void Setup(MatchConfiguration configuration)
+    private void Setup(MatchConfiguration configuration)
     {
         SpawnAgents(configuration.teamsConfig);
         SetAudioListener();
@@ -125,6 +127,7 @@ public class AgentsController : MonoBehaviour
     {
         return playerAgent;
     }
+
     public List<List<Agent>> GetTeamsList()
     {
         return teams;

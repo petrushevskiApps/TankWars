@@ -2,7 +2,7 @@
 using Cinemachine;
 using System.Collections.Generic;
 
-public class CameraController : MonoBehaviour
+public class CameraController : Singleton<CameraController>
 {
     [SerializeField] private CinemachineTargetGroup overviewTargetGroup;
 
@@ -10,21 +10,16 @@ public class CameraController : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera overviewCamera;
     [SerializeField] private CinemachineVirtualCamera followCamera;
 
-    public static CameraController Instance;
-
     private GameObject cameraTarget;
 
-    private void Awake()
+    private new void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(Instance.gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
+        GameManager.OnMatchStarted.AddListener(GameCamera);
+    }
+    private void OnDestroy()
+    {
+        GameManager.OnMatchStarted.RemoveListener(GameCamera);
     }
 
     public void ToggleUICamera(bool status)
@@ -34,21 +29,21 @@ public class CameraController : MonoBehaviour
         overviewCamera.gameObject.SetActive(false);
         followCamera.gameObject.SetActive(false);
     }
-    public void GameCamera(CameraMode cameraMode)
+    private void GameCamera(MatchConfiguration configuration)
     {
         ToggleUICamera(false);
 
-        if (cameraMode == CameraMode.Overview)
+        if (configuration.CameraMode == CameraMode.Overview)
         {
             GetComponent<AudioListener>().enabled = true;
             SetupOverviewCamera();
         }
-        else if(cameraMode == CameraMode.FollowPlayer)
+        else if(configuration.CameraMode == CameraMode.FollowPlayer)
         {
             cameraTarget = GameManager.Instance.AgentsController.GetPlayer().cameraTracker;
             SetupFollowCamera();
         }
-        else if (cameraMode == CameraMode.FollowOne)
+        else if (configuration.CameraMode == CameraMode.FollowOne)
         {
             cameraTarget = GameManager.Instance.AgentsController.GetCameraTargetAgent().cameraTracker;
             SetupFollowCamera();
@@ -70,7 +65,7 @@ public class CameraController : MonoBehaviour
     }
 
 
-    public void SetCameraTargets()
+    private void SetCameraTargets()
     {
         foreach (List<Agent> team in GameManager.Instance.Teams)
         {

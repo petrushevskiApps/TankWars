@@ -22,7 +22,7 @@ public class EndScreen : UIScreen
 
     private void OnPlayAgainClicked()
     {
-        GameManager.Instance.StartMatch();
+        GameManager.Instance.SetupMatch();
     }
 
     private void OnStartMenuClicked()

@@ -20,7 +20,6 @@ public class PickablesController : MonoBehaviour
 
     [SerializeField]  private List<GameObject> healthPacks;
     [SerializeField]  private List<GameObject> ammoPacks;
-
     [SerializeField] private List<GameObject> hidingSpots;
 
 
@@ -34,8 +33,9 @@ public class PickablesController : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.OnMatchEnd.AddListener(CleanupPickables);
-
+        GameManager.OnMatchSetup.AddListener(CreatePickables);
+        GameManager.OnMatchEnded.AddListener(CleanupPickables);
+        
         path = new NavMeshPath();
 
         healthPacks = new List<GameObject>();
@@ -48,10 +48,11 @@ public class PickablesController : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameManager.Instance.OnMatchEnd.AddListener(CleanupPickables);
+        GameManager.OnMatchSetup.RemoveListener(CreatePickables);
+        GameManager.OnMatchEnded.RemoveListener(CleanupPickables);
     }
 
-    private void Start()
+    private void CreatePickables(MatchConfiguration configuration)
     {
         InstantiatePickables(healthPackPrefab, hpMapLimit, healthPacks);
         InstantiatePickables(ammoPackPrefab, ammoMapLimit, ammoPacks);
@@ -89,11 +90,11 @@ public class PickablesController : MonoBehaviour
         
         GameObject pickable = Instantiate(prefab, location, Quaternion.identity, transform);
         pickable.name = pickable.name + "( " + ( list.Count + 1 ) + " )";
-        pickable.GetComponentInChildren<Pickable>().OnCollected.AddListener(ReActivatePickable);
+        pickable.GetComponentInChildren<Pickable>().OnCollected.AddListener(ReactivatePickable);
         list.Add(pickable);
     }
 
-    private void ReActivatePickable(GameObject pickable)
+    private void ReactivatePickable(GameObject pickable)
     {
         Coroutine timer = StartCoroutine(ReactivationTimer(pickable));
         Timers.Add(timer);

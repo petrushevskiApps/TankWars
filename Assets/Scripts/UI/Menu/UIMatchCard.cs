@@ -25,7 +25,7 @@ public class UIMatchCard : MonoBehaviour
     }
     private void StartMatch()
     {
-        GameManager.Instance.StartMatch(matchConfiguration);
+        GameManager.Instance.SetupMatch(matchConfiguration);
     }
 
     public void Setup(MatchConfiguration matchConfiguration)

@@ -3,15 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class World : MonoBehaviour
+public class World : Singleton<World>
 {
     
     [SerializeField] private List<Transform> corners;
 
     private float minX = Mathf.Infinity;
-
-    
-
     private float maxX = 0;
     private float minZ = Mathf.Infinity;
     private float maxZ = 0;
@@ -20,28 +17,17 @@ public class World : MonoBehaviour
     public Transform shellsParent;
     public Transform agentsExplosions;
     public GameObject uiTank;
-
-    public static World Instance;
     
-    private void Awake()
+    private new void Awake()
     {
-        if(Instance != null)
-        {
-            Destroy(this);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(Instance);
-        }
-
-        GameManager.Instance.OnMatchEnd.AddListener(CleanupWorld);
+        base.Awake();
+        GameManager.OnMatchEnded.AddListener(CleanupWorld);
 
         SetupWorldCorners();
     }
     private void OnDestroy()
     {
-        GameManager.Instance.OnMatchEnd.RemoveListener(CleanupWorld);
+        GameManager.OnMatchEnded.RemoveListener(CleanupWorld);
     }
 
     private void SetupWorldCorners()

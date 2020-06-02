@@ -5,40 +5,34 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private GameModes gameModes;
 
-    public static GameManager Instance;
+    public int WinningTeamId { get; private set; }
+    
+    public List<List<Agent>> Teams => AgentsController?.GetTeamsList();
 
     private float savedTimeScale = 1;
-    public int WinningTeamId { get; private set; }
+    private MatchConfiguration configuration;
 
-    [HideInInspector]
-    public UnityEvent OnMatchEnd = new UnityEvent();
-
-    public List<List<Agent>> Teams
-    {
-        get => AgentsController?.GetTeamsList();
-    }
+    public static MatchStartedEvent OnMatchSetup = new MatchStartedEvent();
+    public static MatchStartedEvent OnMatchStarted = new MatchStartedEvent();
+    public static MatchEvent OnMatchEnded = new MatchEvent();
 
     public AgentsController AgentsController { get; private set; }
 
-    private void Awake()
+    private new void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(Instance.gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
 
         AgentsController = GetComponent<AgentsController>();
+        AgentsController.OnMatchFinished.AddListener(MatchEnded);
     }
-
+    private void OnDestroy()
+    {
+        AgentsController.OnMatchFinished.RemoveListener(MatchEnded);
+    }
     void Start()
     {
         ShowMenu();
@@ -50,46 +44,46 @@ public class GameManager : MonoBehaviour
         UIController.Instance.ShowScreen<StartScreen>();
     }
 
-    private MatchConfiguration configuration;
-
-    public void StartMatch(MatchConfiguration matchConfiguration = null)
+    public void SetupMatch(MatchConfiguration matchConfiguration = null)
     {
-        if(matchConfiguration != null)
+        if (matchConfiguration != null)
         {
             configuration = matchConfiguration;
         }
-        
-        if(configuration != null)
+
+        if (configuration != null)
         {
-            SetupMatch();
+            OnMatchSetup.Invoke(configuration);
+            StartMatch();
         }
         else
         {
             Debug.LogError("Match Configuration is NULL!");
         }
     }
-    private void SetupMatch()
+
+    private void StartMatch()
     {
         WinningTeamId = 0;
-        AgentsController.Setup(configuration);
-        AgentsController.OnMatchFinished.AddListener(MatchEnded);
+        OnMatchStarted.Invoke(configuration);
 
-        CameraController.Instance.GameCamera(configuration.CameraMode);
         UIController.Instance.ShowScreen<HUDScreen>();
     }
+
     public void MatchEnded(int winnerId)
     {
         WinningTeamId = winnerId;
         UIController.Instance.ShowScreen<EndScreen>();
-        OnMatchEnd.Invoke();
+        OnMatchEnded.Invoke();
     }
 
     public void MatchExited()
     {
         ShowMenu();
-        OnMatchEnd.Invoke();
+        OnMatchEnded.Invoke();
     }
 
+    //TODO:: Refactor this
     public List<MatchConfiguration> GetMatchConfigurations(GameModeTypes gameModeType)
     {
         if(gameModeType == GameModeTypes.Simulation)
@@ -100,10 +94,7 @@ public class GameManager : MonoBehaviour
         {
             return gameModes.playerConfigs;
         }
-        else
-        {
-            return null;
-        }
+        else return null;
     }
 
     public void PauseGame()
@@ -116,4 +107,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = savedTimeScale;
     }
+
+    public class MatchStartedEvent : UnityEvent<MatchConfiguration> { }
+    public class MatchEvent : UnityEvent { }
 }
