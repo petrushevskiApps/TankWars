@@ -38,8 +38,8 @@ public class EliminateEnemy : GoapAction
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
-		agentMemory = agent.GetMemory();
-		agentNavigation = agent.GetNavigation();
+		agentMemory = agent.Memory;
+		agentNavigation = agent.Navigation;
 	}
 
 	public override void ResetAction()
@@ -96,6 +96,7 @@ public class EliminateEnemy : GoapAction
 	{
 		StartCoroutine(agentNavigation.LookAtTarget());
 		StartCoroutine(agentNavigation.Follow(maxRequiredRange));
+
 		FireCoroutine = StartCoroutine(Fire());
 	}
 
@@ -130,7 +131,13 @@ public class EliminateEnemy : GoapAction
 					}
 					else
 					{
-						agent.GetWeapon().FireBullet(target);
+						if(CheckActionRange() == FireRangeStatus.InPosition)
+						{
+							if(agentNavigation.CheckAngle(target))
+							{
+								agent.GetWeapon().FireBullet();
+							}
+						}
 					}
 
 					yield return new WaitForSeconds(0.5f);

@@ -41,9 +41,9 @@ GameObject:
   - component: {fileID: 4998884739790430492}
   - component: {fileID: 4998884739784993988}
   - component: {fileID: 4998884739788170066}
+  - component: {fileID: 4998884739790146124}
   - component: {fileID: 6890774860057465755}
   - component: {fileID: 4998884739790146127}
-  - component: {fileID: 4998884739790146124}
   m_Layer: 9
   m_Name: Player
   m_TagString: Tank
@@ -101,32 +101,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.5, y: 1.7, z: 2.08}
   m_Center: {x: 0, y: 0.97, z: 0}
---- !u!81 &6890774860057465755
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4998884739790146126}
-  m_Enabled: 1
---- !u!114 &4998884739790146127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4998884739790146126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e4cc0827b572b5408b2cd8eb8b456b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 4
-  turnSpeed: 50
-  movementAudio: {fileID: 5182770708140353993}
-  engineIdleAudio: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
-  engineDriving: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
-  m_PitchRange: 0.2
 --- !u!114 &4998884739790146124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +127,34 @@ MonoBehaviour:
         m_Calls: []
   weapon: {fileID: 5182770707669978617}
   particlesSystem: {fileID: 1973284081187455640}
+--- !u!81 &6890774860057465755
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4998884739790146126}
+  m_Enabled: 1
+--- !u!114 &4998884739790146127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4998884739790146126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e4cc0827b572b5408b2cd8eb8b456b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 4
+  turnSpeed: 50
+  OnAgentMoving:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAgentIdling:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4998884739790158296
 GameObject:
   m_ObjectHideFlags: 0
@@ -10171,6 +10173,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5182770707341563766}
+  - component: {fileID: 6662416908105626627}
   m_Layer: 9
   m_Name: AudioSystem
   m_TagString: Untagged
@@ -10194,6 +10197,23 @@ Transform:
   m_Father: {fileID: 4998884739790430492}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6662416908105626627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5182770707341561993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87183bc9b2cbc414a8cf03145d1b342d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  configuration: {fileID: 11400000, guid: 49996a0eed1bcfb4cb51363f120f89a0, type: 2}
+  drivingSource: {fileID: 5182770708140353993}
+  sfxSource: {fileID: 5182770706844900157}
+  voiceSource: {fileID: 0}
+  m_PitchRange: 0.2
 --- !u!1 &5182770707669978618
 GameObject:
   m_ObjectHideFlags: 0
@@ -10203,7 +10223,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5182770707669978619}
-  - component: {fileID: 5182770707669978616}
   - component: {fileID: 5182770707669978617}
   m_Layer: 9
   m_Name: WeaponSystem
@@ -10226,28 +10245,6 @@ Transform:
   m_Father: {fileID: 4998884739790430492}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -23.845001, y: -3.4850001, z: 0.791}
---- !u!114 &5182770707669978616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5182770707669978618}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 184d72ea2424d1443bca885930fe844a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PlayerNumber: 1
-  m_Shell: {fileID: 5409530, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
-  m_FireTransform: {fileID: 0}
-  m_AimSlider: {fileID: 0}
-  m_ShootingAudio: {fileID: 0}
-  m_ChargingClip: {fileID: 0}
-  m_FireClip: {fileID: 0}
-  m_MinLaunchForce: 15
-  m_MaxLaunchForce: 30
-  m_MaxChargeTime: 0.75
 --- !u!114 &5182770707669978617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10260,11 +10257,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58704736e638fb349818e9ff09fd837b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
+  bulletPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
   fireRange: 10
-  shootingAudioSource: {fileID: 0}
-  fireAudioClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
-  fireAngle: 40
+  OnShooting:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5182770707839489081
 GameObject:
   m_ObjectHideFlags: 0
@@ -10308,11 +10305,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58704736e638fb349818e9ff09fd837b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
+  bulletPrefab: {fileID: 0}
   fireRange: 10
-  shootingAudioSource: {fileID: 5182770706844900157}
-  fireAudioClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
-  fireAngle: 40
+  OnShooting:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5182770708140353995
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,16 +7,16 @@ using UnityEngine;
 
 public abstract class MoveAction : GoapAction
 {
-	protected IGoap agent;
+	protected AIAgent agent;
 	protected MemorySystem agentMemory;
 	protected NavigationSystem agentNavigation;
 	protected bool isActionExited = false;
 
 	private void Start()
 	{
-		agent = GetComponent<IGoap>();
-		agentMemory = agent.GetMemory();
-		agentNavigation = agent.GetNavigation();
+		agent = GetComponent<AIAgent>();
+		agentMemory = agent.Memory;
+		agentNavigation = agent.Navigation;
 	}
 
 	public override void ResetAction()

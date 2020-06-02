@@ -6,43 +6,37 @@ using UnityEngine;
 
 public class AIAgent : Agent, IGoap
 {
+	
+
+	public MemorySystem Memory { get; private set; }
+
+	public NavigationSystem Navigation { get; private set; }
+
 	[Header("AI Systems")]
-
-	[SerializeField] private MemorySystem memory = new MemorySystem();
-
-	[SerializeField] private NavigationSystem Navigation { get; set; }
 
 	[SerializeField] private CommunicationSystem communication;
 
 	[SerializeField] private PerceptorSystem perceptor;
 
-	protected void Awake()
-	{
-		base.Awake();
-
-	}
-
 	public override void Initialize(int teamID, string name, Material teamColor, List<Agent> team)
 	{
 		base.Initialize(teamID, name, teamColor, team);
 
+		Memory = new MemorySystem();
 		Navigation = new NavigationSystem(gameObject);
 
-		memory.Initialize(this);
+		Memory.Initialize(this);
 
-		memory.RegisterEvents(perceptor);
+		Memory.RegisterEvents(perceptor);
 
 		communication.Initialize(this);
 	}
 
-	public List<Agent> GetTeamMembers()
-	{
-		return team;
-	}
+	
 
 	private void OnDestroy()
 	{
-		memory.UnregisterEvents(perceptor);
+		Memory.UnregisterEvents(perceptor);
 		Navigation.OnDestroy();
 		
 	}
@@ -52,14 +46,11 @@ public class AIAgent : Agent, IGoap
 		Navigation.Move(nextAction);
 	}
 
-	public MemorySystem GetMemory()
-	{
-		return memory;
-	}
-	public NavigationSystem GetNavigation()
-	{
-		return Navigation;
-	}
+	//public MemorySystem GetMemory()
+	//{
+	//	return Memory;
+	//}
+
 	
 	public PerceptorSystem GetPerceptor()
 	{
@@ -71,17 +62,17 @@ public class AIAgent : Agent, IGoap
 	}
 	public Dictionary<string, bool> GetWorldState()
 	{
-		return memory.GetWorldState();
+		return Memory.GetWorldState();
 	}
 
 	public Dictionary<string, bool> GetGoalState(int index)
 	{
-		return memory.GetGoals()[index];
+		return Memory.GetGoals()[index];
 	}
 
 	public int GetGoalsCount()
 	{
-		return memory.GetGoals().Count;
+		return Memory.GetGoals().Count;
 	}
 
 	public void ShowMessage(string text)

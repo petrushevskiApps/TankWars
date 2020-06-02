@@ -22,6 +22,12 @@ public class AudioConfiguration : ScriptableObject
 
     [Header("Target")]
     public AudioData TargetInRange;
-    
+
+    [Header("Driving")]
+    public AudioClip EngineIdle;
+    public AudioClip EngineDriving;
+
+    [Header("Shooting")]
+    public AudioClip Shooting;
 
 }

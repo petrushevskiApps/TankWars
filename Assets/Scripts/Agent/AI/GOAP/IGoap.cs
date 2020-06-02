@@ -62,10 +62,6 @@ public interface IGoap
 	 */
 	void MoveAgent(GoapAction nextAction);
 
-	MemorySystem GetMemory();
-
-	NavigationSystem GetNavigation();
-
 	Inventory GetInventory();
 
 	PerceptorSystem GetPerceptor();

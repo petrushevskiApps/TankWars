@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,7 +12,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     private float savedTimeScale = 1;
+    public int WinningTeamId { get; private set; }
 
+    [HideInInspector]
     public UnityEvent OnMatchEnd = new UnityEvent();
 
     public List<List<Agent>> Teams
@@ -20,7 +23,6 @@ public class GameManager : MonoBehaviour
     }
 
     public AgentsController AgentsController { get; private set; }
-    public InputController InputController { get; private set; }
 
     private void Awake()
     {
@@ -35,7 +37,6 @@ public class GameManager : MonoBehaviour
         }
 
         AgentsController = GetComponent<AgentsController>();
-        InputController = GetComponent<InputController>();
     }
 
     void Start()
@@ -48,28 +49,47 @@ public class GameManager : MonoBehaviour
         CameraController.Instance.ToggleUICamera(true);
         UIController.Instance.ShowScreen<StartScreen>();
     }
-    public void PauseGame()
-    {
-        savedTimeScale = Time.timeScale;
-        Time.timeScale = 0;
-    }
 
-    public void UnpauseGame()
-    {
-        Time.timeScale = savedTimeScale;
-    }
+    private MatchConfiguration configuration;
 
-    public void StartMatch(MatchConfiguration matchConfiguration)
+    public void StartMatch(MatchConfiguration matchConfiguration = null)
     {
-        AgentsController.Setup(matchConfiguration);
-        CameraController.Instance.GameCamera(matchConfiguration.CameraMode);
+        if(matchConfiguration != null)
+        {
+            configuration = matchConfiguration;
+        }
+        
+        if(configuration != null)
+        {
+            SetupMatch();
+        }
+        else
+        {
+            Debug.LogError("Match Configuration is NULL!");
+        }
+    }
+    private void SetupMatch()
+    {
+        WinningTeamId = 0;
+        AgentsController.Setup(configuration);
+        AgentsController.OnMatchFinished.AddListener(MatchEnded);
+
+        CameraController.Instance.GameCamera(configuration.CameraMode);
         UIController.Instance.ShowScreen<HUDScreen>();
     }
-    public void EndMatch()
+    public void MatchEnded(int winnerId)
+    {
+        WinningTeamId = winnerId;
+        UIController.Instance.ShowScreen<EndScreen>();
+        OnMatchEnd.Invoke();
+    }
+
+    public void MatchExited()
     {
         ShowMenu();
         OnMatchEnd.Invoke();
     }
+
     public List<MatchConfiguration> GetMatchConfigurations(GameModeTypes gameModeType)
     {
         if(gameModeType == GameModeTypes.Simulation)
@@ -84,5 +104,16 @@ public class GameManager : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public void PauseGame()
+    {
+        savedTimeScale = Time.timeScale;
+        Time.timeScale = 0;
+    }
+
+    public void UnpauseGame()
+    {
+        Time.timeScale = savedTimeScale;
     }
 }

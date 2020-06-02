@@ -24,3 +24,6 @@ MonoBehaviour:
   EnemyAttack: {fileID: 11400000, guid: a3702c160af010a4c94b362db07d731d, type: 2}
   EnemyKilled: {fileID: 11400000, guid: 11ee110f931c8ee42bd5f46ca76c3367, type: 2}
   TargetInRange: {fileID: 11400000, guid: c100625c8cab038478f9ab4f164e768d, type: 2}
+  EngineIdle: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
+  EngineDriving: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
+  Shooting: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}

@@ -6,15 +6,16 @@ using UnityEngine.Events;
 public class InputController : MonoBehaviour
 {
     [HideInInspector]
-    public UnityEvent OnEscapePressed = new UnityEvent();
+    public static UnityEvent OnEscapePressed = new UnityEvent();
 
     [HideInInspector]
-    public UnityEvent OnSpacePressed = new UnityEvent();
+    public static UnityEvent OnSpacePressed = new UnityEvent();
 
     [HideInInspector]
-    public AxisEvent OnMovementAxis = new AxisEvent();
+    public static AxisEvent OnMovementAxis = new AxisEvent();
+    
     [HideInInspector]
-    public AxisEvent OnTurningAxis = new AxisEvent();
+    public static AxisEvent OnTurningAxis = new AxisEvent();
 
     // Update is called once per frame
     void Update()

@@ -15,8 +15,8 @@ public abstract class Collect : GoapAction
     protected void Start()
     {
         agent = GetComponent<AIAgent>();
-        agentMemory = agent.GetMemory();
-        agentNavigation = agent.GetNavigation();
+        agentMemory = agent.Memory;
+        agentNavigation = agent.Navigation;
     }
 
     public override void ResetAction()
@@ -91,7 +91,6 @@ public abstract class Collect : GoapAction
         {
             ExitAction(actionFailed);
         }
-
     }
 
     protected override void ExitAction(Action ExitAction)

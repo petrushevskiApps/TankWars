@@ -31,7 +31,7 @@ public class PauseScreen : UIScreen
     private void OnExit()
     {
         GameManager.Instance.UnpauseGame();
-        GameManager.Instance.EndMatch();
+        GameManager.Instance.MatchExited();
     }
 
     private void OnResume()

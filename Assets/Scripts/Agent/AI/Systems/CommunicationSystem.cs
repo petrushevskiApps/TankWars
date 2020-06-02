@@ -1,10 +1,6 @@
 ﻿using Complete;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -76,7 +72,7 @@ public class CommunicationSystem : MonoBehaviour
 
     private void SendAmmoLocations(Action<List<GameObject>> receiver)
     {
-        List<GameObject> detectedList = agent.GetMemory().AmmoPacks.GetDetectedList();
+        List<GameObject> detectedList = agent.Memory.AmmoPacks.GetDetectedList();
 
         if(detectedList.Count > 0)
         {
@@ -86,7 +82,7 @@ public class CommunicationSystem : MonoBehaviour
 
     private void SendHealthLocations(Action<List<GameObject>> receiver)
     {
-        List<GameObject> detectedList = agent.GetMemory().HealthPacks.GetDetectedList();
+        List<GameObject> detectedList = agent.Memory.HealthPacks.GetDetectedList();
 
         if (detectedList.Count > 0)
         {

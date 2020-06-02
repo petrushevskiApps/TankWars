@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace Complete
 {
@@ -13,21 +14,26 @@ namespace Complete
         private Rigidbody rigidbody;              // Reference used to move the tank.
         private float movementInputValue;         // The current value of the movement input.
         private float turnInputValue;             // The current value of the turn input.
-        
-        
-        // AUDIO
-        public AudioSource movementAudio;         // Reference to the audio source used to play engine sounds. NB: different to the shooting audio source.
-        public AudioClip engineIdleAudio;            // Audio to play when the tank isn't moving.
-        public AudioClip engineDriving;           // Audio to play when the tank is moving.
 
-        public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
-        private float originalPitch;              // The pitch of the audio source at the start of the scene.
+        [HideInInspector]
+        public UnityEvent OnAgentMoving = new UnityEvent();
 
+        [HideInInspector]
+        public UnityEvent OnAgentIdling = new UnityEvent();
 
         private void Awake ()
         {
             rigidbody = GetComponent<Rigidbody> ();
-            
+        }
+        private void RegisterListeners()
+        {
+            InputController.OnMovementAxis.AddListener(UpdateMovement);
+            InputController.OnTurningAxis.AddListener(UpdateTurning);
+        }
+        private void UnregisterListeners()
+        {
+            InputController.OnMovementAxis.RemoveListener(UpdateMovement);
+            InputController.OnTurningAxis.RemoveListener(UpdateTurning);
         }
 
         private void OnEnable ()
@@ -40,44 +46,15 @@ namespace Complete
             movementInputValue = 0f;
             turnInputValue = 0f;
 
-            
         }
-        
-        private void UpdateMovement(float axisValue)
-        {
-            movementInputValue = axisValue;
-        }
-        private void UpdateTurning(float axisValue)
-        {
-            turnInputValue = axisValue;
-        }
-
-        
         private void OnDisable ()
         {
             UnregisterListeners();
             // When the tank is turned off, set it to kinematic so it stops moving.
             rigidbody.isKinematic = true;
-
-            
         }
 
 
-        private void Start ()
-        {
-            // Store the original pitch of the audio source.
-            originalPitch = movementAudio.pitch;
-            
-        }
-
-
-        private void Update ()
-        {
-            EngineAudio ();
-        }
-
-
-        
         private void FixedUpdate ()
         {
             // Adjust the rigidbodies position and orientation in FixedUpdate.
@@ -85,6 +62,16 @@ namespace Complete
             Turn();
         }
 
+        private void UpdateMovement(float axisValue)
+        {
+            movementInputValue = axisValue;
+            EngineAudio();
+        }
+        private void UpdateTurning(float axisValue)
+        {
+            turnInputValue = axisValue;
+            EngineAudio();
+        }
 
         private void Move ()
         {
@@ -114,38 +101,15 @@ namespace Complete
             // If there is no input (the tank is stationary)...
             if (Mathf.Abs(movementInputValue) < 0.1f && Mathf.Abs(turnInputValue) < 0.1f)
             {
-                // ... and if the audio source is currently playing the driving clip...
-                if (movementAudio.clip == engineDriving)
-                {
-                    // ... change the clip to idling and play it.
-                    movementAudio.clip = engineIdleAudio;
-                    movementAudio.pitch = UnityEngine.Random.Range(originalPitch - m_PitchRange, originalPitch + m_PitchRange);
-                    movementAudio.Play();
-                }
+                OnAgentIdling.Invoke();
             }
             else
             {
-                // Otherwise if the tank is moving and if the idling clip is currently playing...
-                if (movementAudio.clip == engineIdleAudio)
-                {
-                    // ... change the clip to driving and play.
-                    movementAudio.clip = engineDriving;
-                    movementAudio.pitch = UnityEngine.Random.Range(originalPitch - m_PitchRange, originalPitch + m_PitchRange);
-                    movementAudio.Play();
-                }
+                OnAgentMoving.Invoke();
             }
         }
         
 
-        private void RegisterListeners()
-        {
-            GameManager.Instance.InputController.OnMovementAxis.AddListener(UpdateMovement);
-            GameManager.Instance.InputController.OnTurningAxis.AddListener(UpdateTurning);
-        }
-        private void UnregisterListeners()
-        {
-            GameManager.Instance.InputController.OnMovementAxis.RemoveListener(UpdateMovement);
-            GameManager.Instance.InputController.OnTurningAxis.RemoveListener(UpdateTurning);
-        }
+        
     }
 }

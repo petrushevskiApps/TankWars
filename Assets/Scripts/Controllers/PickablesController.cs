@@ -30,6 +30,8 @@ public class PickablesController : MonoBehaviour
 
     private List<List<GameObject>> proximityCheckList = new List<List<GameObject>>();
 
+    private List<Coroutine> Timers = new List<Coroutine>();
+
     private void Awake()
     {
         GameManager.Instance.OnMatchEnd.AddListener(CleanupPickables);
@@ -57,6 +59,11 @@ public class PickablesController : MonoBehaviour
 
     private void CleanupPickables()
     {
+        foreach(Coroutine timer in Timers)
+        {
+            StopCoroutine(timer);
+        }
+
         foreach(GameObject go in healthPacks)
         {
             Destroy(go);
@@ -88,7 +95,8 @@ public class PickablesController : MonoBehaviour
 
     private void ReActivatePickable(GameObject pickable)
     {
-        StartCoroutine(ReactivationTimer(pickable));
+        Coroutine timer = StartCoroutine(ReactivationTimer(pickable));
+        Timers.Add(timer);
     }
 
     IEnumerator ReactivationTimer(GameObject pickable)

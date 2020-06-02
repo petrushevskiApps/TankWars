@@ -4970,7 +4970,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: EliminateEnemy
   minRequiredRange: 3
-  maxRequiredRange: 15
+  maxRequiredRange: 10
   requiresRange: 1
   cost: 1
   OnEnemyKilled:
@@ -5089,7 +5089,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5620603241876384143}
-  - component: {fileID: 2569673503842427213}
+  - component: {fileID: 2103396978221001995}
   m_Layer: 9
   m_Name: AudioSystem
   m_TagString: Untagged
@@ -5114,7 +5114,7 @@ Transform:
   m_Father: {fileID: 2406014621032319886}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2569673503842427213
+--- !u!114 &2103396978221001995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5123,13 +5123,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2594108402704307291}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdc37e474bd3b1144892f1a89fe00ce5, type: 3}
+  m_Script: {fileID: 11500000, guid: eab77f570dfe3c54993d92b847cd77a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   configuration: {fileID: 11400000, guid: 49996a0eed1bcfb4cb51363f120f89a0, type: 2}
   drivingSource: {fileID: 5278597515682889265}
   sfxSource: {fileID: 1061722339846479447}
   voiceSource: {fileID: 3979569714764403350}
+  m_PitchRange: 0.2
 --- !u!1 &3172094305143845581
 GameObject:
   m_ObjectHideFlags: 0
@@ -10416,7 +10417,7 @@ GameObject:
   - component: {fileID: 2362645176384149558}
   - component: {fileID: 5829359755463935598}
   m_Layer: 0
-  m_Name: Weapon
+  m_Name: WeaponSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10448,11 +10449,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58704736e638fb349818e9ff09fd837b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
+  bulletPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
   fireRange: 10
-  shootingAudioSource: {fileID: 1061722339846479447}
-  fireAudioClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
-  fireAngle: 40
+  OnShooting:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6373671554245482376
 GameObject:
   m_ObjectHideFlags: 0

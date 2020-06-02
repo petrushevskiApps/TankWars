@@ -72,12 +72,13 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 
 	private void OnDeath()
 	{
+		OnAgentDeath.Invoke(gameObject);
+
 		// Set the flag so that this function is only called once.
 		isDead = true;
 
 		renderController.ShowParticles();
-
-		OnAgentDeath.Invoke(gameObject);
+		
 		// Turn the tank off.
 		Destroy(gameObject);
 	}
@@ -113,6 +114,11 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	{
 		return name;
 	}
+	public List<Agent> GetTeamMembers()
+	{
+		return team;
+	}
+
 	public class PlayerDeath : UnityEvent<GameObject>
 	{
 

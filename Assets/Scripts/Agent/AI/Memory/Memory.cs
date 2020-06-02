@@ -117,8 +117,8 @@ public class MemorySystem
             OnUnderFire.Invoke();
         }
         IsUnderAttack = true;
-        missileDirection = missile.gameObject.transform.forward;
-
+        missileDirection = missile.gameObject.transform.position;
+        //missileDirection = missile.gameObject.transform.forward;
         if (UnderAttackTimer != null)
         {
             parent.StopCoroutine(UnderAttackTimer);

@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 public class HideAndRegenerate : GoapAction 
 {
-	protected IGoap agent;
+	protected AIAgent agent;
 	protected MemorySystem agentMemory;
 	protected NavigationSystem agentNavigation;
 	protected Detectable detectedMemory;
@@ -26,9 +26,9 @@ public class HideAndRegenerate : GoapAction
 	}
 	private void Start()
 	{
-		agent = GetComponent<IGoap>();
-		agentMemory = agent.GetMemory();
-		agentNavigation = agent.GetNavigation();
+		agent = GetComponent<AIAgent>();
+		agentMemory = agent.Memory;
+		agentNavigation = agent.Navigation;
 
 		detectedMemory = agentMemory.HidingSpots;
 	}

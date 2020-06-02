@@ -88,7 +88,7 @@ public class AIDebuggerWindow : EditorWindow
                         GUILayout.Label("    Health: " + tank.GetInventory().GetHealth().ToString());
                         GUILayout.Label("    Ammo: " + tank.GetInventory().GetAmmo().ToString());
                         GUILayout.Label("    Agent Internal State: ");
-                        PrintWorldState(tank.GetMemory().GetWorldState());
+                        PrintWorldState(tank.Memory?.GetWorldState());
 
                     }
                     EditorGUILayout.EndVertical();

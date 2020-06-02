@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 [System.Serializable]
 
@@ -20,6 +21,17 @@ public class NavigationSystem
 	private bool isLookAtActive = false;
 
 	[SerializeField] private float rotationSpeed = 5f;
+
+	public UnityEvent OnAgentMoving = new UnityEvent();
+	public UnityEvent OnAgentIdling = new UnityEvent();
+
+	private Vector3 previousPosition = Vector3.positiveInfinity;
+	private Vector3 moveToPosition = Vector3.positiveInfinity;
+
+	private float followDifference = 0.5f;
+	private bool isFollowActive = false;
+	private bool isFollowPaused = false;
+
 
 	public NavigationSystem(GameObject agent)
 	{
@@ -42,8 +54,9 @@ public class NavigationSystem
 		{
 			while (!CheckAngle(navigationTarget))
 			{
+				OnAgentMoving.Invoke();
 				Vector3 dir = navigationTarget.transform.position - agent.transform.position;
-				dir.y = 0;//This allows the object to only rotate on its y axis
+				dir.y = 0; //This allows the object to only rotate on its y axis
 
 				if (!dir.Equals(Vector3.zero))
 				{
@@ -55,6 +68,7 @@ public class NavigationSystem
 			}
 			yield return null;
 		}
+		OnAgentIdling.Invoke();
 	}
 
 	public void OnDestroy()
@@ -62,7 +76,7 @@ public class NavigationSystem
 		UnityEngine.Object.Destroy(navigationTarget);
 	}
 
-	private bool CheckAngle(GameObject target)
+	public bool CheckAngle(GameObject target)
 	{
 		if(target != null)
 		{
@@ -71,12 +85,7 @@ public class NavigationSystem
 		}
 		return true;
 	}
-	private Vector3 previousPosition = Vector3.positiveInfinity;
-	private Vector3 moveToPosition = Vector3.positiveInfinity;
-
-	private float followDifference = 0.5f;
-	private bool isFollowActive = false;
-	private bool isFollowPaused = false;
+	
 
 
 	public IEnumerator Follow(float maxRange)
@@ -87,6 +96,8 @@ public class NavigationSystem
 		{
 			while(!isFollowPaused && navigationTarget != null)
 			{
+				OnAgentMoving.Invoke();
+
 				Vector3 position = navigationTarget.transform.position;
 
 				if (Vector3.Distance(position, previousPosition) > followDifference)
@@ -101,6 +112,7 @@ public class NavigationSystem
 
 			yield return null;
 		}
+		OnAgentIdling.Invoke();
 	}
 
 	public void MoveTo(Vector3 position, float stoppingDistance = 1f)
@@ -112,6 +124,7 @@ public class NavigationSystem
 	{
 		isFollowPaused = status;
 	}
+
 	public void Move(GoapAction action)
 	{
 		if (navigationTarget == null) return;
@@ -131,10 +144,16 @@ public class NavigationSystem
 			if (navMeshAgent.remainingDistance <= action.maxRequiredRange)
 			{
 				action.IsInRange = true;
+				OnAgentIdling.Invoke();
+			}
+			else
+			{
+				OnAgentMoving.Invoke();
 			}
 		}
 		else
 		{
+			OnAgentIdling.Invoke();
 			InvalidateTarget();
 			action.InvalidTargetLocation();
 		}
@@ -209,14 +228,22 @@ public class NavigationSystem
 		}
 	}
 	
-	private GameObject CreateRunawayLocation(Vector3 direction)
+	private GameObject CreateRunawayLocation(Vector3 runFromTarget)
 	{
-		Vector3 runTo = direction;
+		// Find direction from where agent is attacked
+		Vector3 direction = (runFromTarget - agent.transform.position).normalized;
 
-		runTo.x *= UnityEngine.Random.Range(-30, 30);
-		runTo.z *= UnityEngine.Random.Range(10, 30);
+		// Get opposite direction with magnitude
+		direction *= (-15);
 
-		return SetTargetLocation(runTo);
+		// Find location in opposite direction of the attack
+		Vector3 runToLocation = direction + agent.transform.position;
+
+		// Re-position run location on the plane in vertical space
+		runToLocation.y = 0f;
+
+		// Set run location
+		return SetTargetLocation(runToLocation);
 	}
 
 	private GameObject SetTargetLocation(Vector3 targetPosition)

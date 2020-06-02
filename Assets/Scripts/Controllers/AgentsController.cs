@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AgentsController : MonoBehaviour
 {
@@ -16,6 +17,11 @@ public class AgentsController : MonoBehaviour
     [SerializeField] private GameObject aiPrefab;
     [SerializeField] private GameObject playerPrefab;
 
+    public MatchCompletedEvent OnMatchFinished = new MatchCompletedEvent();
+    private List<int> agentsInTeam = new List<int>();
+
+    public int PlayerTeamId { get; private set; } = 0;
+
     private void Awake()
     {
         GameManager.Instance.OnMatchEnd.AddListener(ResetController);
@@ -24,6 +30,8 @@ public class AgentsController : MonoBehaviour
     {
         GameManager.Instance.OnMatchEnd.RemoveListener(ResetController);
     }
+
+
     public void Setup(MatchConfiguration configuration)
     {
         SpawnAgents(configuration.teamsConfig);
@@ -37,14 +45,16 @@ public class AgentsController : MonoBehaviour
 
             if(team.isPlayer)
             {
-                GameObject player = InstantiatePlayer(currentTeam);
+                GameObject player = InstantiateAgent(playerPrefab, currentTeam);
                 playerAgent = player.GetComponent<Agent>();
+                PlayerTeamId = playerAgent.GetTeamID() + 1;
             }
             for (int i=0; i<team.agentsCount; i++)
             {
-                InstantiateAgent(currentTeam);
+                InstantiateAgent(aiPrefab, currentTeam);
             }
 
+            agentsInTeam.Add(currentTeam.Count);
             teams.Add(currentTeam);
             
             InitializeAgents(team.teamID, currentTeam);
@@ -52,22 +62,25 @@ public class AgentsController : MonoBehaviour
         ActivateAgents();
     }
 
-    
-
-    private GameObject InstantiatePlayer(List<Agent> teamList)
+    private GameObject InstantiateAgent(GameObject prefab, List<Agent> teamList)
     {
-        GameObject player = Instantiate(playerPrefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
+        GameObject agentObject = Instantiate(prefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
+        agentObject.GetComponent<IDestroyable>().RegisterOnDestroy(OnAgentDestroyed);
+        teamList.Add(agentObject.GetComponent<Agent>());
 
-        teamList.Add(player.GetComponent<Agent>());
-
-        return player;
+        return agentObject;
     }
 
-    private void InstantiateAgent(List<Agent> teamList)
+    private void OnAgentDestroyed(GameObject agent)
     {
-        GameObject agentObject = Instantiate(aiPrefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
-        
-        teamList.Add(agentObject.GetComponent<Agent>());
+        int id = agent.GetComponent<Agent>().GetTeamID();
+
+        agentsInTeam[id]--;
+
+        if(agentsInTeam[id] == 0)
+        {
+            OnMatchFinished.Invoke(id);
+        }
     }
 
     private void ResetController()
@@ -76,10 +89,14 @@ public class AgentsController : MonoBehaviour
         {
             foreach(Agent agent in team)
             {
-                Destroy(agent.gameObject);
+                if(agent != null)
+                {
+                    Destroy(agent.gameObject);
+                }
             }
         }
 
+        agentsInTeam = new List<int>();
         teams = new List<List<Agent>>();
         playerAgent = null;
     }
@@ -108,7 +125,6 @@ public class AgentsController : MonoBehaviour
     {
         return playerAgent;
     }
-
     public List<List<Agent>> GetTeamsList()
     {
         return teams;
@@ -131,4 +147,8 @@ public class AgentsController : MonoBehaviour
         return agent;
     }
 
+    public class MatchCompletedEvent : UnityEvent<int>
+    {
+
+    }
 }

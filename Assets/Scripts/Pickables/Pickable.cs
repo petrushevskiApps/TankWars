@@ -9,7 +9,6 @@ public class Pickable : MonoBehaviour, IDestroyable
 
     public OnCollectedEvent OnCollected = new OnCollectedEvent();
 
-  
     public float GetTimeToCollect()
     {
         return timeToCollect;
