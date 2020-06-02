@@ -20,7 +20,7 @@ public class PickablesController : MonoBehaviour
 
     [SerializeField]  private List<GameObject> healthPacks;
     [SerializeField]  private List<GameObject> ammoPacks;
-    [SerializeField] private List<GameObject> hidingSpots;
+    [SerializeField]  private List<GameObject> hidingSpots;
 
 
 
@@ -38,12 +38,7 @@ public class PickablesController : MonoBehaviour
         
         path = new NavMeshPath();
 
-        healthPacks = new List<GameObject>();
-        ammoPacks = new List<GameObject>();
-
-        proximityCheckList.Add(healthPacks);
-        proximityCheckList.Add(ammoPacks);
-        proximityCheckList.Add(hidingSpots);
+        SetupLists();
     }
 
     private void OnDestroy()
@@ -73,9 +68,21 @@ public class PickablesController : MonoBehaviour
         {
             Destroy(go);
         }
+
+        SetupLists();
     }
 
-    
+    private void SetupLists()
+    {
+        healthPacks = new List<GameObject>();
+        ammoPacks = new List<GameObject>();
+
+        proximityCheckList.Clear();
+
+        proximityCheckList.Add(healthPacks);
+        proximityCheckList.Add(ammoPacks);
+        proximityCheckList.Add(hidingSpots);
+    }
 
     private void InstantiatePickables(GameObject prefab, int limit, List<GameObject> list)
     {
