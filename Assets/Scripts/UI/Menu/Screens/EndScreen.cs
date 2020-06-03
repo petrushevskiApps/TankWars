@@ -40,13 +40,13 @@ public class EndScreen : UIScreen
 
     private void SetupTitle()
     {
-        if(teamID == 0)
+        if(teamID == -1)
         {
             title.text = "No Winner";
         }
         else
         {
-            if(playerTeamId != 0)
+            if(playerTeamId != -1)
             {
                 if (playerTeamId == teamID)
                 {
@@ -59,7 +59,7 @@ public class EndScreen : UIScreen
             }
             else
             {
-                title.text = "Team " + teamID + " Won";
+                title.text = "Team " + ( teamID + 1 ) + " Won";
             }
         }
     }

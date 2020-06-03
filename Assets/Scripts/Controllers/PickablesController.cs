@@ -33,21 +33,34 @@ public class PickablesController : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.OnMatchSetup.AddListener(CreatePickables);
+        GameManager.OnMatchSetup.AddListener(Setup);
         GameManager.OnMatchEnded.AddListener(CleanupPickables);
         
         path = new NavMeshPath();
 
-        SetupLists();
     }
 
     private void OnDestroy()
     {
-        GameManager.OnMatchSetup.RemoveListener(CreatePickables);
+        GameManager.OnMatchSetup.RemoveListener(Setup);
         GameManager.OnMatchEnded.RemoveListener(CleanupPickables);
     }
 
-    private void CreatePickables(MatchConfiguration configuration)
+    private void Setup(MatchConfiguration configuration)
+    {
+        healthPacks = new List<GameObject>();
+        ammoPacks = new List<GameObject>();
+
+        proximityCheckList.Clear();
+
+        proximityCheckList.Add(healthPacks);
+        proximityCheckList.Add(ammoPacks);
+        proximityCheckList.Add(hidingSpots);
+
+        CreatePickables();
+    }
+
+    private void CreatePickables()
     {
         InstantiatePickables(healthPackPrefab, hpMapLimit, healthPacks);
         InstantiatePickables(ammoPackPrefab, ammoMapLimit, ammoPacks);
@@ -69,20 +82,9 @@ public class PickablesController : MonoBehaviour
             Destroy(go);
         }
 
-        SetupLists();
     }
 
-    private void SetupLists()
-    {
-        healthPacks = new List<GameObject>();
-        ammoPacks = new List<GameObject>();
-
-        proximityCheckList.Clear();
-
-        proximityCheckList.Add(healthPacks);
-        proximityCheckList.Add(ammoPacks);
-        proximityCheckList.Add(hidingSpots);
-    }
+    
 
     private void InstantiatePickables(GameObject prefab, int limit, List<GameObject> list)
     {

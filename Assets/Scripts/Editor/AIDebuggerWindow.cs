@@ -33,16 +33,16 @@ public class AIDebuggerWindow : EditorWindow
 
         selectedObjects = Selection.gameObjects.ToList();
 
-        List<List<Agent>> teams = GameManager.Instance?.Teams ;
+        List<Team> teams = GameManager.Instance?.Teams ;
 
         if (teams != null && teams.Count > 0)
         {
             EditorGUILayout.BeginVertical();
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-            foreach (List<Agent> team in teams)
+            foreach (Team team in teams)
             {
-                PrintTeam(team);
+                PrintTeam(team.TeamMembers);
             }
 
             EditorGUILayout.EndScrollView();

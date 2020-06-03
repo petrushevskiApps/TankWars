@@ -11,7 +11,7 @@ public class GameManager : Singleton<GameManager>
 
     public int WinningTeamId { get; private set; }
     
-    public List<List<Agent>> Teams => AgentsController?.GetTeamsList();
+    public List<Team> Teams => AgentsController?.GetTeamsList();
 
     private float savedTimeScale = 1;
     private MatchConfiguration configuration;
@@ -27,11 +27,11 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
 
         AgentsController = GetComponent<AgentsController>();
-        AgentsController.OnMatchFinished.AddListener(MatchEnded);
+        AgentsController.OneTeamLeft.AddListener(MatchEnded);
     }
     private void OnDestroy()
     {
-        AgentsController.OnMatchFinished.RemoveListener(MatchEnded);
+        AgentsController.OneTeamLeft.RemoveListener(MatchEnded);
     }
     void Start()
     {
@@ -64,7 +64,7 @@ public class GameManager : Singleton<GameManager>
 
     private void StartMatch()
     {
-        WinningTeamId = 0;
+        WinningTeamId = -1;
         OnMatchStarted.Invoke(configuration);
 
         UIController.Instance.ShowScreen<HUDScreen>();

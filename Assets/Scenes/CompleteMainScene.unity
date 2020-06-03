@@ -5224,7 +5224,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c0893a78ecc3c46b23d17146aa49b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerAgent: {fileID: 0}
   spawnLocations: {fileID: 1925608929}
   teamColors: {fileID: 11400000, guid: 1377291382ea0d84b9a929f5bb66907d, type: 2}
   npcNames: {fileID: 11400000, guid: f2c3b38a19a4ad34aa4a4e4e13b69d87, type: 2}

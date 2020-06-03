@@ -40,7 +40,7 @@ public class CameraController : Singleton<CameraController>
         }
         else if(configuration.CameraMode == CameraMode.FollowPlayer)
         {
-            cameraTarget = GameManager.Instance.AgentsController.GetPlayer().cameraTracker;
+            cameraTarget = GameManager.Instance.AgentsController.PlayerAgent.cameraTracker;
             SetupFollowCamera();
         }
         else if (configuration.CameraMode == CameraMode.FollowOne)
@@ -67,9 +67,9 @@ public class CameraController : Singleton<CameraController>
 
     private void SetCameraTargets()
     {
-        foreach (List<Agent> team in GameManager.Instance.Teams)
+        foreach (Team team in GameManager.Instance.Teams)
         {
-            foreach (Agent agent in team)
+            foreach (Agent agent in team.TeamMembers)
             {
                 overviewTargetGroup.AddMember(agent.gameObject.transform, 1, 0);
             }

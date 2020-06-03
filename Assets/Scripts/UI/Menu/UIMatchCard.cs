@@ -56,7 +56,7 @@ public class UIMatchCard : MonoBehaviour
         int agents = 0;
         int player = 0;
 
-        foreach(Team team in matchConfiguration.teamsConfig)
+        foreach(TeamData team in matchConfiguration.teamsConfig)
         {
             agents += team.agentsCount;
             if (team.isPlayer) player = 1;

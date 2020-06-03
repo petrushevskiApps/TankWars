@@ -8,13 +8,12 @@ public class MatchConfiguration : ScriptableObject
     public MatchType LevelMode;
     public CameraMode CameraMode;
 
-    public List<Team> teamsConfig = new List<Team>();
+    public List<TeamData> teamsConfig = new List<TeamData>();
 }
 
 [System.Serializable]
-public class Team
+public class TeamData
 {
-    public int teamID = 0;
     public int agentsCount = 0;
     public bool isPlayer = false;
 }
