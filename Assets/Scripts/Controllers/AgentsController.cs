@@ -6,14 +6,12 @@ using Random = UnityEngine.Random;
 
 public class AgentsController : MonoBehaviour
 {
-    public Agent PlayerAgent { get; private set; }
-
-    [SerializeField] private List<Team> teams = new List<Team>();
+    
     
     [Header("Configurations")]
     [SerializeField] private SpawnLocationsController spawnLocations;
     [SerializeField] private TeamColors teamColors;
-    [SerializeField] private NPCNames npcNames;
+    [SerializeField] private NPCNames agentNames;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject aiPrefab;
@@ -22,6 +20,8 @@ public class AgentsController : MonoBehaviour
     public MatchCompletedEvent OneTeamLeft = new MatchCompletedEvent();
 
     public int PlayerTeamId { get; private set; } = -1;
+    public Agent PlayerAgent { get; private set; }
+    public List<Team> MatchTeams { get; private set; } = new List<Team>();
 
     private void Awake()
     {
@@ -42,7 +42,7 @@ public class AgentsController : MonoBehaviour
     }
     private void ResetController()
     {
-        foreach (Team team in teams)
+        foreach (Team team in MatchTeams)
         {
             foreach (Agent agent in team.TeamMembers)
             {
@@ -53,7 +53,7 @@ public class AgentsController : MonoBehaviour
             }
         }
 
-        teams = new List<Team>();
+        MatchTeams = new List<Team>();
         PlayerAgent = null;
         PlayerTeamId = -1;
     }
@@ -64,28 +64,34 @@ public class AgentsController : MonoBehaviour
         {
             List<Agent> teamMembers = new List<Agent>();
 
+            
             if(teamData.isPlayer)
             {
+                // Add Player to the team if its player team
                 PlayerAgent = InstantiateAgent(playerPrefab, teamMembers);
-                PlayerTeamId = teams.Count;
+                PlayerTeamId = MatchTeams.Count;
             }
 
             for (int i=0; i<teamData.agentsCount; i++)
             {
+                // Add agents to team as specified in teamData
                 InstantiateAgent(aiPrefab, teamMembers);
             }
 
-            InitializeTeam(new Team(teams.Count, "NoName", teamData.isPlayer, teamMembers));
+            InitializeTeam(new Team(MatchTeams.Count, "NoName", teamData.isPlayer, teamMembers));
         }
     }
 
-    private void OnTeamEmpty(Team team)
+    // This event is called when team has no
+    // more alive agents. If only one team is
+    // left with alive members Match ends.
+    private void OnTeamEmpty(Team emptyTeam)
     {
-        teams.Remove(team);
+        MatchTeams.Remove(emptyTeam);
 
-        if(teams.Count == 1)
+        if(MatchTeams.Count == 1)
         {
-            OneTeamLeft.Invoke(teams[0].TeamID);
+            OneTeamLeft.Invoke(MatchTeams[0].TeamID);
         }
     }
 
@@ -102,33 +108,35 @@ public class AgentsController : MonoBehaviour
     {
         foreach (Agent agent in team.TeamMembers)
         {
-            agent.Initialize(team.TeamID, npcNames.GetRandomName(), teamColors.GetTeamColor(team.TeamID), team.TeamMembers);
+            agent.Initialize(team.TeamID, agentNames.GetRandomName(), teamColors.GetTeamColor(team.TeamID), team.TeamMembers);
         }
 
         team.TeamEmpty.AddListener(OnTeamEmpty);
-        teams.Add(team);
+        MatchTeams.Add(team);
     }
 
-    
+    // Once all teams are initialized
+    // enable spawned agents.
     private void ActivateTeams()
     {
-        foreach (Team team in teams)
+        foreach (Team team in MatchTeams)
         {
             team.ActivateTeamMembers();
         }
     }
 
-    public List<Team> GetTeamsList()
-    {
-        return teams;
-    }
-
-
     public Agent GetCameraTargetAgent()
     {
-        List<Agent> teamMembers = teams[Random.Range(0, teams.Count)].TeamMembers;
-        Agent agent = teamMembers[Random.Range(0, teamMembers.Count)];
+        // Random team index
+        int teamIndex = Random.Range(0, MatchTeams.Count);
+        List<Agent> teamMembers = MatchTeams[teamIndex].TeamMembers;
+
+        // Random agent from team
+        int agentIndex = Random.Range(0, teamMembers.Count);
+        Agent agent = teamMembers[agentIndex];
+
         agent.GetComponent<AudioListener>().enabled = true;
+
         return agent;
     }
 

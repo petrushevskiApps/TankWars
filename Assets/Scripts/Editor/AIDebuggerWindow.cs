@@ -33,7 +33,7 @@ public class AIDebuggerWindow : EditorWindow
 
         selectedObjects = Selection.gameObjects.ToList();
 
-        List<Team> teams = GameManager.Instance?.Teams ;
+        List<Team> teams = GameManager.Instance?.AgentsController.MatchTeams;
 
         if (teams != null && teams.Count > 0)
         {

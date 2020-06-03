@@ -6,7 +6,7 @@ public class SimulationModeScreen : ModeScreen
 {
     private new void Awake()
     {
-        gameMode = GameModeTypes.Simulation;
+        gameModeType = GameModeTypes.Simulation;
         base.Awake();
     }
 }

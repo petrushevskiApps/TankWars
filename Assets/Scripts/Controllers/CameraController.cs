@@ -26,6 +26,7 @@ public class CameraController : Singleton<CameraController>
     {
         World.Instance.ToggleUiTank(status);
         uiCamera.gameObject.SetActive(status);
+
         overviewCamera.gameObject.SetActive(false);
         followCamera.gameObject.SetActive(false);
     }
@@ -67,12 +68,12 @@ public class CameraController : Singleton<CameraController>
 
     private void SetCameraTargets()
     {
-        foreach (Team team in GameManager.Instance.Teams)
+        foreach (Team team in GameManager.Instance.AgentsController.MatchTeams)
         {
-            foreach (Agent agent in team.TeamMembers)
-            {
-                overviewTargetGroup.AddMember(agent.gameObject.transform, 1, 0);
-            }
+            team.TeamMembers.ForEach( agent => 
+            { 
+                overviewTargetGroup.AddMember(agent.gameObject.transform, 1, 0); 
+            });
         }
     }
 

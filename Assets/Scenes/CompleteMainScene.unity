@@ -224,8 +224,8 @@ MonoBehaviour:
   hpMapLimit: 3
   ammoMapLimit: 3
   minProximity: 10
-  minRelactionTime: 10
-  maxRelactionTime: 30
+  minRelocationTime: 60
+  maxRelocationTime: 600
   healthPacks: []
   ammoPacks: []
   hidingSpots:
@@ -5188,6 +5188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6553942aa3da2414ebf017d18397380e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameMode: {fileID: 11400000, guid: c9370b2637c238c45959c52596afb9c0, type: 2}
   title: {fileID: 898267090}
   cardPrefab: {fileID: 1239927525602363531, guid: 016de215110979b47bfffebc580fdcc6,
     type: 3}
@@ -5226,7 +5227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnLocations: {fileID: 1925608929}
   teamColors: {fileID: 11400000, guid: 1377291382ea0d84b9a929f5bb66907d, type: 2}
-  npcNames: {fileID: 11400000, guid: f2c3b38a19a4ad34aa4a4e4e13b69d87, type: 2}
+  agentNames: {fileID: 11400000, guid: f2c3b38a19a4ad34aa4a4e4e13b69d87, type: 2}
   aiPrefab: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
     type: 3}
   playerPrefab: {fileID: 4998884739790146126, guid: 066a1819dc60d0e499e1f8eb300c3365,
@@ -5243,7 +5244,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a000792783c934885973b761b3f96f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameModes: {fileID: 11400000, guid: d6459ec18ef1d154ba3fda676c41d2fa, type: 2}
 --- !u!4 &1267109861
 Transform:
   m_ObjectHideFlags: 0
@@ -6111,6 +6111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e13777c81815b49961eb2c73a5dd70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameMode: {fileID: 11400000, guid: d8a4a7e16f9ae7241b0c2b3d03c10438, type: 2}
   title: {fileID: 249292310}
   cardPrefab: {fileID: 1239927525602363531, guid: 016de215110979b47bfffebc580fdcc6,
     type: 3}

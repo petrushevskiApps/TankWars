@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1266401672512697664}
   - component: {fileID: 1266401672512697667}
   - component: {fileID: 3478355754811992040}
+  - component: {fileID: 3509736805057082525}
   m_Layer: 9
   m_Name: HealthPack
   m_TagString: HealthPack
@@ -63,6 +64,25 @@ MonoBehaviour:
   collectingProgress: {fileID: 97922806369108405}
   timeToCollect: 2
   amountToCollect: 100
+--- !u!95 &3509736805057082525
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266401672512697669}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 97ec418a36e92eb4fad74ad4c66fc936, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6592404020754708247
 GameObject:
   m_ObjectHideFlags: 0

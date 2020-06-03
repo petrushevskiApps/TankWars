@@ -7,20 +7,17 @@ using UnityEngine.Events;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private GameModes gameModes;
-
-    public int WinningTeamId { get; private set; }
-    
-    public List<Team> Teams => AgentsController?.GetTeamsList();
-
-    private float savedTimeScale = 1;
-    private MatchConfiguration configuration;
-
+    // Events
     public static MatchStartedEvent OnMatchSetup = new MatchStartedEvent();
     public static MatchStartedEvent OnMatchStarted = new MatchStartedEvent();
     public static MatchEvent OnMatchEnded = new MatchEvent();
 
+    public int WinningTeamId { get; private set; }
+
     public AgentsController AgentsController { get; private set; }
+
+    private float savedTimeScale = 1;
+    private MatchConfiguration configuration;
 
     private new void Awake()
     {
@@ -33,6 +30,7 @@ public class GameManager : Singleton<GameManager>
     {
         AgentsController.OneTeamLeft.RemoveListener(MatchEnded);
     }
+
     void Start()
     {
         ShowMenu();
@@ -83,20 +81,6 @@ public class GameManager : Singleton<GameManager>
         OnMatchEnded.Invoke();
     }
 
-    //TODO:: Refactor this
-    public List<MatchConfiguration> GetMatchConfigurations(GameModeTypes gameModeType)
-    {
-        if(gameModeType == GameModeTypes.Simulation)
-        {
-            return gameModes.simulationConfigs;
-        }
-        else if(gameModeType == GameModeTypes.Player)
-        {
-            return gameModes.playerConfigs;
-        }
-        else return null;
-    }
-
     public void PauseGame()
     {
         savedTimeScale = Time.timeScale;
@@ -109,5 +93,6 @@ public class GameManager : Singleton<GameManager>
     }
 
     public class MatchStartedEvent : UnityEvent<MatchConfiguration> { }
+    
     public class MatchEvent : UnityEvent { }
 }

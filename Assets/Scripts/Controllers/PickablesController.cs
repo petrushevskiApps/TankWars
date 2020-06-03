@@ -6,17 +6,19 @@ using UnityEngine.AI;
 
 public class PickablesController : MonoBehaviour
 {
+    [Header("Prefabs")]
     [SerializeField] GameObject healthPackPrefab;
     [SerializeField] GameObject ammoPackPrefab;
-    [SerializeField] private NavMeshAgent navMeshTest;
 
+    [Header("Procedural Settings")]
+    [SerializeField] private NavMeshAgent navMeshTest;
     [SerializeField] private int hpMapLimit = 3;
     [SerializeField] private int ammoMapLimit = 3;
     [SerializeField] private float minProximity = 20f;
 
-    // Relocation timer range in seconds
-    [SerializeField] private int minRelactionTime = 60;
-    [SerializeField] private int maxRelactionTime = 60 * 10;
+    [Header("Relocation Timer (seconds)")]
+    [SerializeField] private int minRelocationTime = 60;
+    [SerializeField] private int maxRelocationTime = 60 * 10;
 
     [SerializeField]  private List<GameObject> healthPacks;
     [SerializeField]  private List<GameObject> ammoPacks;
@@ -27,7 +29,7 @@ public class PickablesController : MonoBehaviour
     
     private NavMeshPath path;
 
-    private List<List<GameObject>> proximityCheckList = new List<List<GameObject>>();
+    private List<List<GameObject>> proximityCheckList;
 
     private List<Coroutine> Timers = new List<Coroutine>();
 
@@ -37,7 +39,7 @@ public class PickablesController : MonoBehaviour
         GameManager.OnMatchEnded.AddListener(CleanupPickables);
         
         path = new NavMeshPath();
-
+        proximityCheckList = new List<List<GameObject>>();
     }
 
     private void OnDestroy()
@@ -68,31 +70,21 @@ public class PickablesController : MonoBehaviour
 
     private void CleanupPickables()
     {
-        foreach(Coroutine timer in Timers)
-        {
-            StopCoroutine(timer);
-        }
+        Timers.ForEach(timer => StopCoroutine(timer));
 
-        foreach(GameObject go in healthPacks)
-        {
-            Destroy(go);
-        }
-        foreach (GameObject go in ammoPacks)
-        {
-            Destroy(go);
-        }
+        healthPacks.ForEach(pack => Destroy(pack));
+
+        ammoPacks.ForEach(pack => Destroy(pack));
 
     }
-
-    
-
-    private void InstantiatePickables(GameObject prefab, int limit, List<GameObject> list)
+    private void InstantiatePickables(GameObject typePrefab, int typeLimit, List<GameObject> typeList)
     {
-        for(int i=0; i < limit; i++)
+        for(int i=0; i < typeLimit; i++)
         {
-            CreatePickable(prefab, list);
+            CreatePickable(typePrefab, typeList);
         }
     }
+
     private void CreatePickable(GameObject prefab, List<GameObject> list)
     {
         Vector3 location = GetLocation();
@@ -111,7 +103,7 @@ public class PickablesController : MonoBehaviour
 
     IEnumerator ReactivationTimer(GameObject pickable)
     {
-        float realocationSeconds = UnityEngine.Random.Range(minRelactionTime, maxRelactionTime);
+        float realocationSeconds = UnityEngine.Random.Range(minRelocationTime, maxRelocationTime);
         yield return new WaitForSecondsRealtime(realocationSeconds);
         pickable.transform.position = GetLocation();
         
@@ -119,8 +111,8 @@ public class PickablesController : MonoBehaviour
 
     }
 
-    // Check if the location of the pickable
-    // can be reached by the agents
+    // Check if the location for the pickable
+    // can be reached by navmesh agents
     private Vector3 GetLocation()
     {
         Vector3 location = World.Instance.GetRandomLocation();

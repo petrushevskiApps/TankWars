@@ -8,7 +8,7 @@ public class PlayerModeScreen : ModeScreen
 {
     private new void Awake()
     {
-        gameMode = GameModeTypes.Player;
+        gameModeType = GameModeTypes.Player;
         base.Awake();
     }
 }

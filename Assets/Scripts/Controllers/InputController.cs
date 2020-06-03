@@ -27,6 +27,7 @@ public class InputController : MonoBehaviour
         {
             OnEscapePressed.Invoke();
         }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             OnFirePressed.Invoke();
@@ -36,6 +37,7 @@ public class InputController : MonoBehaviour
         {
             OnCollecting.Invoke(true);
         }
+        
         if(Input.GetKeyUp(KeyCode.E))
         {
             OnCollecting.Invoke(false);

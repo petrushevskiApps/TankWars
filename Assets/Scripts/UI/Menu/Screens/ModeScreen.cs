@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class ModeScreen : UIScreen
 {
-    protected GameModeTypes gameMode;
+    protected GameModeTypes gameModeType;
+    [SerializeField] private GameMode gameMode;
 
     [SerializeField] private TMPro.TextMeshProUGUI title;
 
@@ -14,7 +15,7 @@ public class ModeScreen : UIScreen
 
     [SerializeField] private Button backButton;
 
-    private List<MatchConfiguration> matchConfigurations;
+    
     private bool isCardsGroupSet = false;
 
     protected void Awake()
@@ -31,15 +32,14 @@ public class ModeScreen : UIScreen
 
         if (!isCardsGroupSet)
         {
-            title.text = gameMode.ToString() + " Mode";
-            matchConfigurations = GameManager.Instance.GetMatchConfigurations(gameMode);
-            CreateCards();
+            title.text = gameModeType.ToString() + " Mode";
+            CreateMatchCards();
         }
     }
 
-    private void CreateCards()
+    private void CreateMatchCards()
     {
-        foreach (MatchConfiguration config in matchConfigurations)
+        foreach (MatchConfiguration config in gameMode.matchConfigs)
         {
             GameObject card = Instantiate(cardPrefab, cardsParent);
             card.GetComponent<UIMatchCard>().Setup(config);
