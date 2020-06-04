@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,23 +9,33 @@ public class SpawnLocationsController : MonoBehaviour
 
     private List<Transform> availableLocations = new List<Transform>();
 
-    public Transform GetSpawnLocation()
+    private void Awake()
     {
-        if(availableLocations.Count <= 0)
-        {
-            foreach (Transform location in spawnLocations)
-            {
-                availableLocations.Add(location);
-            }
-        }
+        GameManager.OnMatchSetup.AddListener(SetupController);
+    }
+    private void OnDestroy()
+    {
+        GameManager.OnMatchSetup.RemoveListener(SetupController);
+    }
 
+    private void SetupController(MatchConfiguration arg0)
+    {
+        availableLocations.Clear();
+        
+        spawnLocations.ForEach(location => availableLocations.Add(location));
+    }
+
+    public Vector3 GetSpawnLocation()
+    {
         if (availableLocations.Count > 0)
         {
-            Transform location = availableLocations[Random.Range(0, availableLocations.Count)];
-            availableLocations.RemoveAt(availableLocations.IndexOf(location));
+            int index = UnityEngine.Random.Range(0, availableLocations.Count);
+            Vector3 location = availableLocations[index].position;
+            availableLocations.RemoveAt(index);
+            
             return location;
         }
 
-        return null;
+        return Vector3.zero;
     }
 }

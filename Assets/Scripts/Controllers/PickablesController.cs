@@ -20,95 +20,79 @@ public class PickablesController : MonoBehaviour
     [SerializeField] private int minRelocationTime = 60;
     [SerializeField] private int maxRelocationTime = 60 * 10;
 
-    [SerializeField]  private List<GameObject> healthPacks;
-    [SerializeField]  private List<GameObject> ammoPacks;
-    [SerializeField]  private List<GameObject> hidingSpots;
-
-
+    [Header("Proximity Check Lists")]
+    [SerializeField]  private List<GameObject> pickables;
 
     
     private NavMeshPath path;
-
-    private List<List<GameObject>> proximityCheckList;
 
     private List<Coroutine> Timers = new List<Coroutine>();
 
     private void Awake()
     {
-        GameManager.OnMatchSetup.AddListener(Setup);
+        GameManager.OnMatchSetup.AddListener(SetupController);
         GameManager.OnMatchEnded.AddListener(CleanupPickables);
         
         path = new NavMeshPath();
-        proximityCheckList = new List<List<GameObject>>();
+        pickables = new List<GameObject>();
     }
 
     private void OnDestroy()
     {
-        GameManager.OnMatchSetup.RemoveListener(Setup);
+        GameManager.OnMatchSetup.RemoveListener(SetupController);
         GameManager.OnMatchEnded.RemoveListener(CleanupPickables);
     }
 
-    private void Setup(MatchConfiguration configuration)
+    private void SetupController(MatchConfiguration configuration)
     {
-        healthPacks = new List<GameObject>();
-        ammoPacks = new List<GameObject>();
-
-        proximityCheckList.Clear();
-
-        proximityCheckList.Add(healthPacks);
-        proximityCheckList.Add(ammoPacks);
-        proximityCheckList.Add(hidingSpots);
+        pickables.Clear();
 
         CreatePickables();
     }
 
     private void CreatePickables()
     {
-        InstantiatePickables(healthPackPrefab, hpMapLimit, healthPacks);
-        InstantiatePickables(ammoPackPrefab, ammoMapLimit, ammoPacks);
+        InstantiatePickables(healthPackPrefab, hpMapLimit);
+        InstantiatePickables(ammoPackPrefab, ammoMapLimit);
     }
 
     private void CleanupPickables()
     {
         Timers.ForEach(timer => StopCoroutine(timer));
 
-        healthPacks.ForEach(pack => Destroy(pack));
-
-        ammoPacks.ForEach(pack => Destroy(pack));
-
+        pickables.ForEach(pack => Destroy(pack));
     }
-    private void InstantiatePickables(GameObject typePrefab, int typeLimit, List<GameObject> typeList)
+
+    private void InstantiatePickables(GameObject typePrefab, int typeLimit)
     {
         for(int i=0; i < typeLimit; i++)
         {
-            CreatePickable(typePrefab, typeList);
+            GameObject pickable = Instantiate(typePrefab, Vector3.zero, Quaternion.identity, transform);
+            SetupPickable(pickable);
+            pickables.Add(pickable);
         }
     }
 
-    private void CreatePickable(GameObject prefab, List<GameObject> list)
+    private void SetupPickable(GameObject pickable)
     {
-        Vector3 location = GetLocation();
-        
-        GameObject pickable = Instantiate(prefab, location, Quaternion.identity, transform);
-        pickable.name = pickable.name + "( " + ( list.Count + 1 ) + " )";
+        pickable.transform.position = GetLocation();
+        pickable.name = pickable.name + "( " + ( pickables.Count + 1 ) + " )";
         pickable.GetComponentInChildren<Pickable>().OnCollected.AddListener(ReactivatePickable);
-        list.Add(pickable);
+        pickable.SetActive(true);
     }
 
     private void ReactivatePickable(GameObject pickable)
     {
+        pickable.GetComponentInChildren<Pickable>().OnCollected.RemoveListener(ReactivatePickable);
         Coroutine timer = StartCoroutine(ReactivationTimer(pickable));
         Timers.Add(timer);
     }
 
     IEnumerator ReactivationTimer(GameObject pickable)
     {
-        float realocationSeconds = UnityEngine.Random.Range(minRelocationTime, maxRelocationTime);
-        yield return new WaitForSecondsRealtime(realocationSeconds);
-        pickable.transform.position = GetLocation();
-        
-        pickable.SetActive(true);
-
+        float relocationSeconds = UnityEngine.Random.Range(minRelocationTime, maxRelocationTime);
+        yield return new WaitForSecondsRealtime(relocationSeconds);
+        SetupPickable(pickable);
     }
 
     // Check if the location for the pickable
@@ -138,14 +122,11 @@ public class PickablesController : MonoBehaviour
     // to other pickables or hiding spots
     private bool CheckProximity(Vector3 location)
     {
-        foreach (List<GameObject> list in proximityCheckList)
+        foreach (GameObject element in pickables)
         {
-            foreach (GameObject element in list)
+            if (Vector3.Distance(location, element.transform.position) <= minProximity)
             {
-                if (Vector3.Distance(location, element.transform.position) <= minProximity)
-                {
-                    return false;
-                }
+                return false;
             }
         }
 

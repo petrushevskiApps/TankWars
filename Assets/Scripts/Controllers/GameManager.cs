@@ -24,11 +24,11 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
 
         AgentsController = GetComponent<AgentsController>();
-        AgentsController.OneTeamLeft.AddListener(MatchEnded);
+        AgentsController.OnWinCondition.AddListener(MatchEnded);
     }
     private void OnDestroy()
     {
-        AgentsController.OneTeamLeft.RemoveListener(MatchEnded);
+        AgentsController.OnWinCondition.RemoveListener(MatchEnded);
     }
 
     void Start()
@@ -68,17 +68,30 @@ public class GameManager : Singleton<GameManager>
         UIController.Instance.ShowScreen<HUDScreen>();
     }
 
+    // Match win conditions fullfiled
     public void MatchEnded(int winnerId)
     {
         WinningTeamId = winnerId;
         UIController.Instance.ShowScreen<EndScreen>();
-        OnMatchEnded.Invoke();
+        PauseGame();
     }
 
+    // Restart match without changing match
+    // configuration and opening start menu
+    public void MatchRestarted()
+    {
+        UnpauseGame();
+        OnMatchEnded.Invoke();
+        SetupMatch();
+    }
+
+    // Exit match and open start menu for picking
+    // new match configuration
     public void MatchExited()
     {
-        ShowMenu();
+        UnpauseGame();
         OnMatchEnded.Invoke();
+        ShowMenu();
     }
 
     public void PauseGame()

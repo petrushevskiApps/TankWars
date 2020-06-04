@@ -224,22 +224,9 @@ MonoBehaviour:
   hpMapLimit: 3
   ammoMapLimit: 3
   minProximity: 10
-  minRelocationTime: 60
-  maxRelocationTime: 600
-  healthPacks: []
-  ammoPacks: []
-  hidingSpots:
-  - {fileID: 103572352}
-  - {fileID: 979762720}
-  - {fileID: 321196464}
-  - {fileID: 366594965}
-  - {fileID: 775858065}
-  - {fileID: 39762013}
-  - {fileID: 623085486}
-  - {fileID: 1442353034}
-  - {fileID: 1457171354}
-  - {fileID: 1537060075}
-  - {fileID: 162213053}
+  minRelocationTime: 30
+  maxRelocationTime: 120
+  pickables: []
 --- !u!1 &64427506
 GameObject:
   m_ObjectHideFlags: 0

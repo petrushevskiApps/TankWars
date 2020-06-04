@@ -36,32 +36,35 @@ public class CameraController : Singleton<CameraController>
 
         if (configuration.CameraMode == CameraMode.Overview)
         {
-            GetComponent<AudioListener>().enabled = true;
             SetupOverviewCamera();
         }
         else if(configuration.CameraMode == CameraMode.FollowPlayer)
         {
             cameraTarget = GameManager.Instance.AgentsController.PlayerAgent.cameraTracker;
-            SetupFollowCamera();
+            SetupFollowCamera(cameraTarget);
         }
         else if (configuration.CameraMode == CameraMode.FollowOne)
         {
             cameraTarget = GameManager.Instance.AgentsController.GetCameraTargetAgent().cameraTracker;
-            SetupFollowCamera();
+            SetupFollowCamera(cameraTarget);
         }
 
     }
 
     private void SetupOverviewCamera()
     {
+        GetComponent<AudioListener>().enabled = true;
+
         SetCameraTargets();
         overviewCamera.gameObject.SetActive(true);
     }
 
-    private void SetupFollowCamera()
+    private void SetupFollowCamera(GameObject tracker)
     {
-        followCamera.Follow = cameraTarget.transform;
-        followCamera.LookAt = cameraTarget.transform;
+        GetComponent<AudioListener>().enabled = false;
+
+        followCamera.Follow = tracker.transform;
+        followCamera.LookAt = tracker.transform;
         followCamera.gameObject.SetActive(true);
     }
 

@@ -6,8 +6,6 @@ using Random = UnityEngine.Random;
 
 public class AgentsController : MonoBehaviour
 {
-    
-    
     [Header("Configurations")]
     [SerializeField] private SpawnLocationsController spawnLocations;
     [SerializeField] private TeamColors teamColors;
@@ -17,7 +15,7 @@ public class AgentsController : MonoBehaviour
     [SerializeField] private GameObject aiPrefab;
     [SerializeField] private GameObject playerPrefab;
 
-    public MatchCompletedEvent OneTeamLeft = new MatchCompletedEvent();
+    public MatchCompletedEvent OnWinCondition = new MatchCompletedEvent();
 
     public int PlayerTeamId { get; private set; } = -1;
     public Agent PlayerAgent { get; private set; }
@@ -91,13 +89,13 @@ public class AgentsController : MonoBehaviour
 
         if(MatchTeams.Count == 1)
         {
-            OneTeamLeft.Invoke(MatchTeams[0].TeamID);
+            OnWinCondition.Invoke(MatchTeams[0].TeamID);
         }
     }
 
     private Agent InstantiateAgent(GameObject prefab, List<Agent> teamMembers)
     {
-        GameObject agentObject = Instantiate(prefab, spawnLocations.GetSpawnLocation().position, Quaternion.identity);
+        GameObject agentObject = Instantiate(prefab, spawnLocations.GetSpawnLocation(), Quaternion.identity);
         Agent agent = agentObject.GetComponent<Agent>();
         teamMembers.Add(agent);
 

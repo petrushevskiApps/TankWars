@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: TeamVsTeam4
   m_EditorClassIdentifier: 
   LevelMode: 1
-  CameraMode: 1
+  CameraMode: 0
   teamsConfig:
-  - teamID: 0
-    agentsCount: 4
+  - agentsCount: 4
     isPlayer: 0
-  - teamID: 1
-    agentsCount: 4
+  - agentsCount: 4
     isPlayer: 0
