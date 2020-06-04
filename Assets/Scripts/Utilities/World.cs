@@ -21,13 +21,17 @@ public class World : Singleton<World>
     private new void Awake()
     {
         base.Awake();
-        GameManager.OnMatchEnded.AddListener(CleanupWorld);
+
+        GameManager.OnMatchStarted.AddListener(OnMatchStart);
+        GameManager.OnMatchExited.AddListener(OnMatchExit);
 
         SetupWorldCorners();
     }
+
     private void OnDestroy()
     {
-        GameManager.OnMatchEnded.RemoveListener(CleanupWorld);
+        GameManager.OnMatchStarted.AddListener(OnMatchStart);
+        GameManager.OnMatchExited.RemoveListener(CleanupWorld);
     }
 
     private void SetupWorldCorners()
@@ -64,13 +68,16 @@ public class World : Singleton<World>
 
         return new Vector3(x, corners[0].position.y, z);
     }
-    
-    public void ToggleUiTank(bool status)
+
+    private void OnMatchStart(MatchConfiguration arg0)
     {
-        if(uiTank.activeSelf != status)
-        {
-            uiTank.SetActive(status);
-        }
+        uiTank.SetActive(false);
+    }
+
+    private void OnMatchExit()
+    {
+        uiTank.SetActive(true);
+        CleanupWorld();
     }
 
     public void CleanupWorld()

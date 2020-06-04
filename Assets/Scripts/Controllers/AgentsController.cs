@@ -24,12 +24,12 @@ public class AgentsController : MonoBehaviour
     private void Awake()
     {
         GameManager.OnMatchSetup.AddListener(SetupController);
-        GameManager.OnMatchEnded.AddListener(ResetController);
+        GameManager.OnMatchExited.AddListener(ResetController);
     }
     private void OnDestroy()
     {
         GameManager.OnMatchSetup.RemoveListener(SetupController);
-        GameManager.OnMatchEnded.RemoveListener(ResetController);
+        GameManager.OnMatchExited.RemoveListener(ResetController);
     }
 
 
@@ -121,21 +121,6 @@ public class AgentsController : MonoBehaviour
         {
             team.ActivateTeamMembers();
         }
-    }
-
-    public Agent GetCameraTargetAgent()
-    {
-        // Random team index
-        int teamIndex = Random.Range(0, MatchTeams.Count);
-        List<Agent> teamMembers = MatchTeams[teamIndex].TeamMembers;
-
-        // Random agent from team
-        int agentIndex = Random.Range(0, teamMembers.Count);
-        Agent agent = teamMembers[agentIndex];
-
-        agent.GetComponent<AudioListener>().enabled = true;
-
-        return agent;
     }
 
     public class MatchCompletedEvent : UnityEvent<int> { }

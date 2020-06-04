@@ -31,7 +31,7 @@ public class PickablesController : MonoBehaviour
     private void Awake()
     {
         GameManager.OnMatchSetup.AddListener(SetupController);
-        GameManager.OnMatchEnded.AddListener(CleanupPickables);
+        GameManager.OnMatchExited.AddListener(CleanupPickables);
         
         path = new NavMeshPath();
         pickables = new List<GameObject>();
@@ -40,7 +40,7 @@ public class PickablesController : MonoBehaviour
     private void OnDestroy()
     {
         GameManager.OnMatchSetup.RemoveListener(SetupController);
-        GameManager.OnMatchEnded.RemoveListener(CleanupPickables);
+        GameManager.OnMatchExited.RemoveListener(CleanupPickables);
     }
 
     private void SetupController(MatchConfiguration configuration)

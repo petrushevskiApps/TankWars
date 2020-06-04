@@ -10,7 +10,7 @@ public class GameManager : Singleton<GameManager>
     // Events
     public static MatchStartedEvent OnMatchSetup = new MatchStartedEvent();
     public static MatchStartedEvent OnMatchStarted = new MatchStartedEvent();
-    public static MatchEvent OnMatchEnded = new MatchEvent();
+    public static MatchEvent OnMatchExited = new MatchEvent();
 
     public int WinningTeamId { get; private set; }
 
@@ -38,7 +38,7 @@ public class GameManager : Singleton<GameManager>
     
     private void ShowMenu()
     {
-        CameraController.Instance.ToggleUICamera(true);
+        CameraController.Instance.ActivateUICamera();
         UIController.Instance.ShowScreen<StartScreen>();
     }
 
@@ -81,7 +81,7 @@ public class GameManager : Singleton<GameManager>
     public void MatchRestarted()
     {
         UnpauseGame();
-        OnMatchEnded.Invoke();
+        OnMatchExited.Invoke();
         SetupMatch();
     }
 
@@ -90,7 +90,7 @@ public class GameManager : Singleton<GameManager>
     public void MatchExited()
     {
         UnpauseGame();
-        OnMatchEnded.Invoke();
+        OnMatchExited.Invoke();
         ShowMenu();
     }
 
