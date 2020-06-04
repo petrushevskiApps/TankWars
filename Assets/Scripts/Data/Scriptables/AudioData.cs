@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/*
+ * This Scriptable object holds reference
+ * list to audio clips of same type.
+ * Example: Shooting audio clips.
+ */
 [CreateAssetMenu(fileName = "AudioData", menuName = "Data/AudioData", order = 1)]
 public class AudioData : ScriptableObject
 {

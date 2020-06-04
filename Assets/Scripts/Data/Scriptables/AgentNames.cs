@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NPCNames", menuName = "Data/NPCNames", order = 1)]
-public class NPCNames : ScriptableObject
+/*
+ * This Scriptable object contains list of names
+ * to be assigned to agents on creation.
+ */
+[CreateAssetMenu(fileName = "AgentNames", menuName = "Data/AgentNames", order = 1)]
+public class AgentNames : ScriptableObject
 {
-    [SerializeField] List<string> npcNames = new List<string>();
+    [SerializeField] List<string> agentNames = new List<string>();
 
     private static List<string> availableNames;
 
@@ -15,10 +19,7 @@ public class NPCNames : ScriptableObject
 
         if (availableNames.Count <= 0)
         {
-            foreach (string npcName in npcNames)
-            {
-                availableNames.Add(npcName);
-            }
+            agentNames.ForEach(name => availableNames.Add(name));
         }
     }
 
@@ -32,9 +33,9 @@ public class NPCNames : ScriptableObject
         if(availableNames.Count > 0)
         {
             int index = Random.Range(0, availableNames.Count);
-            string npcName = availableNames[index];
+            string name = availableNames[index];
             availableNames.RemoveAt(index);
-            return npcName;
+            return name;
 
         }
 

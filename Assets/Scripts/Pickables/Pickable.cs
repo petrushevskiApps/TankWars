@@ -63,9 +63,9 @@ public class Pickable : MonoBehaviour, IDestroyable
     }
     protected virtual void Collect(ICollector collector)
     {
-        OnCollected.Invoke(transform.gameObject);
+        OnCollected.Invoke(gameObject);
         
-        transform.gameObject.SetActive(false);
+        gameObject.SetActive(false);
         this.collector = null;
     }
 

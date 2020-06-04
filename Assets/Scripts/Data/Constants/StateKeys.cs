@@ -15,14 +15,6 @@ public class StateKeys
     public const string PATROL = "patrol";
 }
 
-public class GoalKeys
-{
-    public const string GET_READY = "getReady";
-    
-    public const string ELIMINATE_ENEMY = "eliminateEnemy";
-    public const string SURVIVE = "survive";
-}
-
 public class FSMKeys
 {
     public const string IDLE_STATE = "IdleState";

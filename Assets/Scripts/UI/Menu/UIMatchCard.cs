@@ -31,7 +31,7 @@ public class UIMatchCard : MonoBehaviour
     public void Setup(MatchConfiguration matchConfiguration)
     {
         this.matchConfiguration = matchConfiguration;
-        SetText(title, matchConfiguration.LevelMode.ToString());
+        SetText(title, "Team Vs Team");
         SetText(subtitle, GetSubtitleText());
         SetText(description, GetDescriptionText());
         gameObject.SetActive(true);
@@ -39,15 +39,7 @@ public class UIMatchCard : MonoBehaviour
 
     private string GetDescriptionText()
     {
-        switch(matchConfiguration.LevelMode)
-        {
-            case MatchType.Deathmatch:
-                return ConstStrings.DeathmatchDescription;
-            case MatchType.TeamVsTeam:
-                return ConstStrings.TeamVsTeamDescription;
-            default:
-                return "No Description Found";
-        }
+        return ConstStrings.TeamVsTeamDescription;
     }
 
     private string GetSubtitleText()

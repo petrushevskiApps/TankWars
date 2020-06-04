@@ -9,7 +9,7 @@ public class AgentsController : MonoBehaviour
     [Header("Configurations")]
     [SerializeField] private SpawnLocationsController spawnLocations;
     [SerializeField] private TeamColors teamColors;
-    [SerializeField] private NPCNames agentNames;
+    [SerializeField] private AgentNames agentNames;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject aiPrefab;
