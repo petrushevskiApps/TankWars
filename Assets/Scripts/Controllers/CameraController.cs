@@ -40,7 +40,10 @@ public class CameraController : Singleton<CameraController>
     {
         overviewTargetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
 
-        groupTargets.Clear();
+        if(groupTargets != null)
+        {
+            groupTargets.Clear();
+        }
         playerTarget = null;
 
         if (currentCamera != null)

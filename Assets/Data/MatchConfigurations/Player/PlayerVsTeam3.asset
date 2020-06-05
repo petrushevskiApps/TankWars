@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f64bceba8f56be144b78666007f94664, type: 3}
   m_Name: PlayerVsTeam3
   m_EditorClassIdentifier: 
-  LevelMode: 1
   CameraMode: 2
+  matchTime: 300
   teamsConfig:
-  - teamID: 0
-    agentsCount: 0
+  - agentsCount: 0
     isPlayer: 1

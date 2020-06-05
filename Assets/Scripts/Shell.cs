@@ -15,7 +15,7 @@ namespace Complete
 
         private Agent owner;
         [SerializeField] private string agentName;
-        [SerializeField] private int teamID;
+        [SerializeField] private Team teamID;
 
 
         private void Start ()
@@ -28,20 +28,16 @@ namespace Complete
         {
             this.owner = owner;
             agentName = owner.name;
-            teamID = owner.GetTeamID();
         }
-        public GameObject GetOwner()
+        public Agent GetOwner()
         {
-            return owner.gameObject;
+            return owner;
         }
         public string GetOwnerName()
         {
             return agentName;
         }
-        public int GetOwnerTeam()
-        {
-            return teamID;
-        }
+
         private void OnTriggerEnter (Collider other)
         {
             // If tigger detects its owner or missile sensor - Abort trigger
@@ -62,13 +58,14 @@ namespace Complete
                 // Find the TankHealth script associated with the rigidbody.
                 Agent agent = targetRigidbody.GetComponent<Agent>();
 
-                if(agent.GetTeamID() != GetOwnerTeam())
+                if(agent.Team.ID != owner.Team.ID)
                 {
                     // Calculate the amount of damage the target should take based on it's distance from the shell.
                     float damage = CalculateDamage(targetRigidbody.position);
 
+                    
                     // Deal this damage to the tank.
-                    agent.TakeDamage(damage);
+                    agent.TakeDamage(damage, owner);
                 }
             }
 

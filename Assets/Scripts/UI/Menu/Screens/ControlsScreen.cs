@@ -1,18 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
+using System;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class ControlsScreen : UIScreen
 {
-    [SerializeField] private Button backButton;
+    [SerializeField] private Transform contentParent;
 
-    protected void Awake()
-    {
-        backButton.onClick.AddListener(UIController.Instance.OnBack);
-    }
-    private void OnDestroy()
-    {
-        backButton.onClick.RemoveListener(UIController.Instance.OnBack);
-    }
+
 }

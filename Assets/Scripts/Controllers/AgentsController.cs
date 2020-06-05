@@ -9,17 +9,22 @@ public class AgentsController : MonoBehaviour
     [Header("Configurations")]
     [SerializeField] private SpawnLocationsController spawnLocations;
     [SerializeField] private TeamColors teamColors;
-    [SerializeField] private AgentNames agentNames;
+    [SerializeField] private Names agentNamesList;
+    [SerializeField] private Names teamNamesList;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject aiPrefab;
     [SerializeField] private GameObject playerPrefab;
 
-    public MatchCompletedEvent OnWinCondition = new MatchCompletedEvent();
+    public UnityEvent OneTeamLeft = new UnityEvent();
+    public UnityEvent NoTeamLeft = new UnityEvent();
 
     public int PlayerTeamId { get; private set; } = -1;
     public Agent PlayerAgent { get; private set; }
     public List<Team> MatchTeams { get; private set; } = new List<Team>();
+
+    private List<string> teamNames = new List<string>();
+    private List<string> agentNames = new List<string>();
 
     private void Awake()
     {
@@ -35,6 +40,8 @@ public class AgentsController : MonoBehaviour
 
     private void SetupController(MatchConfiguration configuration)
     {
+        Setup(agentNames, agentNamesList);
+        Setup(teamNames, teamNamesList);
         SpawnAgents(configuration.teamsConfig);
         ActivateTeams();
     }
@@ -42,7 +49,7 @@ public class AgentsController : MonoBehaviour
     {
         foreach (Team team in MatchTeams)
         {
-            foreach (Agent agent in team.TeamMembers)
+            foreach (Agent agent in team.Members)
             {
                 if (agent != null)
                 {
@@ -76,7 +83,7 @@ public class AgentsController : MonoBehaviour
                 InstantiateAgent(aiPrefab, teamMembers);
             }
 
-            InitializeTeam(new Team(MatchTeams.Count, "NoName", teamData.isPlayer, teamMembers));
+            InitializeTeam(new Team(MatchTeams.Count, GetRandomName(teamNames), teamData.isPlayer, teamMembers));
         }
     }
 
@@ -87,10 +94,18 @@ public class AgentsController : MonoBehaviour
     {
         MatchTeams.Remove(emptyTeam);
 
-        if(MatchTeams.Count == 1)
+        if(MatchTeams.Count == 1) OneTeamLeft.Invoke();
+
+    }
+
+    public Team GetWinnerTeam()
+    {
+        if (MatchTeams.Count > 0)
         {
-            OnWinCondition.Invoke(MatchTeams[0].TeamID);
+            MatchTeams.Sort();
+            return MatchTeams[0];
         }
+        else return null;
     }
 
     private Agent InstantiateAgent(GameObject prefab, List<Agent> teamMembers)
@@ -104,9 +119,9 @@ public class AgentsController : MonoBehaviour
 
     private void InitializeTeam(Team team)
     {
-        foreach (Agent agent in team.TeamMembers)
+        foreach (Agent agent in team.Members)
         {
-            agent.Initialize(team.TeamID, agentNames.GetRandomName(), teamColors.GetTeamColor(team.TeamID), team.TeamMembers);
+            agent.Initialize(team, GetRandomName(agentNames), teamColors.GetTeamColor(team.ID));
         }
 
         team.TeamEmpty.AddListener(OnTeamEmpty);
@@ -123,5 +138,29 @@ public class AgentsController : MonoBehaviour
         }
     }
 
-    public class MatchCompletedEvent : UnityEvent<int> { }
+    
+
+    public void Setup(List<string> availableNames, Names namesList)
+    {
+        availableNames.Clear();
+
+        if (availableNames.Count <= 0)
+        {
+            namesList.names.ForEach(name => availableNames.Add(name));
+        }
+    }
+
+    public string GetRandomName(List<string> availableNames)
+    {
+        if (availableNames.Count > 0)
+        {
+            int index = Random.Range(0, availableNames.Count);
+            string name = availableNames[index];
+            availableNames.RemoveAt(index);
+            return name;
+
+        }
+
+        return "NoNameAvailable";
+    }
 }

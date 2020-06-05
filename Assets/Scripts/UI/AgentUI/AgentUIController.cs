@@ -12,7 +12,7 @@ public class AgentUIController : MonoBehaviour
 
     public void Setup(Agent agent)
     {
-        SetName(agent.GetName());
+        SetName(agent.GetAgentName());
         SetHealthBar(agent.GetInventory());
         SetAmmoBar(agent.GetInventory());
     }

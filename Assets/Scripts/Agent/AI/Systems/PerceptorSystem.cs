@@ -61,7 +61,7 @@ public class PerceptorSystem : MonoBehaviour
         {
             Agent agent = detected.GetComponent<Agent>();
 
-            if (agent != null && IsEnemy(agent.GetTeamID()))
+            if (agent != null && IsEnemy(agent.Team.ID))
             {
                 OnEnemyLost.Invoke(detected);
             }
@@ -81,7 +81,7 @@ public class PerceptorSystem : MonoBehaviour
 
             if(agent != null)
             {
-                if (IsEnemy(agent.GetTeamID()))
+                if (IsEnemy(agent.Team.ID))
                 {
                     if (drawDebug) Debug.DrawRay(transform.position, detected.transform.position - transform.position, Color.red);
                     OnEnemyDetected.Invoke(detected);
@@ -123,7 +123,7 @@ public class PerceptorSystem : MonoBehaviour
 
             if(missile != null)
             {
-                if (IsEnemy(missile.GetOwnerTeam()))
+                if (IsEnemy(missile.GetOwner().Team.ID))
                 {
                     OnUnderAttack.Invoke(detected);
                 }
@@ -138,7 +138,7 @@ public class PerceptorSystem : MonoBehaviour
     }
     private bool IsEnemy(int targetTeamID)
     {
-        int ID = transform.parent.GetComponent<Agent>().GetTeamID();
+        int ID = transform.parent.GetComponent<Agent>().Team.ID;
         return ID != targetTeamID;
     }
     private bool IsOwner(string targetName)

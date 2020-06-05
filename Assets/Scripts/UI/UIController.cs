@@ -2,27 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIController : MonoBehaviour
+public class UIController : Singleton<UIController>
 {
     [SerializeField] private List<UIScreen> screens = new List<UIScreen>();
 
     private Stack<UIScreen> backStack = new Stack<UIScreen>();
 
-    public static UIController Instance;
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(Instance.gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        
-    }
 
     public void ShowScreen<T>() where T : UIScreen
     {

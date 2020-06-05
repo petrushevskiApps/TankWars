@@ -8,22 +8,18 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 	//Events
 	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
-	[SerializeField] private int teamID = 0;
+	public Team Team { get; private set; }
 	public GameObject cameraTracker;
 
 	[Header("Agent Controllers")]
 	[SerializeField] private AgentUIController uiController; 
 	[SerializeField] private RenderController renderController;
 	
-
-
 	[Header("Agent Systems")]
 	[SerializeField] protected Inventory inventory = new Inventory();
 	[SerializeField] protected WeaponSystem weapon;
 	[SerializeField] protected AgentParticlesSystem particlesSystem;
 	[SerializeField] protected CollectorSystem collectorSystem;
-
-	protected List<Agent> team = new List<Agent>();
 
 	protected string name = "tankName";
 
@@ -49,16 +45,15 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		particlesSystem.StopParticles();
 	}
 
-	public virtual void Initialize(int teamID, string name, Material teamColor, List<Agent> team)
+	public virtual void Initialize(Team team, string name, Material teamColor)
 	{
-		this.teamID = teamID;
-		this.team = team;
+		Team = team;
 		this.name = name;
 		gameObject.name = name;
 		renderController.SetTeamColor(teamColor);
 	}
 
-	public void TakeDamage(float amount)
+	public void TakeDamage(float amount, Agent owner)
 	{
 		// Reduce current health by the amount of damage done.
 		
@@ -67,16 +62,17 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		// If the current health is at or below zero and it has not yet been registered, call OnDeath.
 		if (!isDead && inventory.GetHealth() <= 0f)
 		{
+			owner.Team.IncreaseTeamKills();
 			OnDeath();
 		}
 	}
 
 	private void OnDeath()
 	{
-		OnAgentDeath.Invoke(gameObject);
-
 		// Set the flag so that this function is only called once.
 		isDead = true;
+
+		OnAgentDeath.Invoke(gameObject);
 
 		renderController.ShowParticles();
 		
@@ -111,18 +107,11 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		inventory.IncreaseHealth(collected.amountToCollect);
 	}
 
-	public int GetTeamID()
-	{
-		return teamID;
-	}
-	public string GetName()
+	public string GetAgentName()
 	{
 		return name;
 	}
-	public List<Agent> GetTeamMembers()
-	{
-		return team;
-	}
+	
 
 	public class PlayerDeath : UnityEvent<GameObject>
 	{

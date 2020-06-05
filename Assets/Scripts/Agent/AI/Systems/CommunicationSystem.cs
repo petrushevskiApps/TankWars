@@ -34,7 +34,7 @@ public class CommunicationSystem : MonoBehaviour
 
     private void RegisterToBroadcasts()
     {
-        foreach(Agent agent in agent.GetTeamMembers())
+        foreach(Agent agent in agent.Team.Members)
         {
             if(agent.GetType() == typeof(AIAgent))
             {
@@ -53,7 +53,7 @@ public class CommunicationSystem : MonoBehaviour
 
     private void UnregisterToBroadcast()
     {
-        foreach (Agent agent in agent.GetTeamMembers())
+        foreach (Agent agent in agent.Team.Members)
         {
             if (agent.GetType() == typeof(AIAgent))
             {
@@ -101,7 +101,7 @@ public class CommunicationSystem : MonoBehaviour
 
     public void BroadcastUnderAttack(GameObject shell)
     {
-        UnderAttack.Invoke(shell.GetComponent<Shell>().GetOwner());
+        UnderAttack.Invoke(shell.GetComponent<Shell>().GetOwner().gameObject);
     }
 
 

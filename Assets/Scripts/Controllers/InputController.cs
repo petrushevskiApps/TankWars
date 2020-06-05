@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class InputController : MonoBehaviour
 {
     [HideInInspector]
-    public static UnityEvent OnEscapePressed = new UnityEvent();
+    public static UnityEvent OnBackKey = new UnityEvent();
 
     [HideInInspector]
     public static UnityEvent OnFirePressed = new UnityEvent();
@@ -25,7 +25,7 @@ public class InputController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            OnEscapePressed.Invoke();
+            OnBackKey.Invoke();
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

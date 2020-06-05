@@ -7,11 +7,11 @@ public class UIScreen : MonoBehaviour, IEquatable<UIScreen>
 {
     protected void OnEnable()
     {
-        InputController.OnEscapePressed.AddListener(OnBackButton);
+        InputController.OnBackKey.AddListener(OnBackPressed);
     }
     private void OnDisable()
     {
-        InputController.OnEscapePressed.RemoveListener(OnBackButton);
+        InputController.OnBackKey.RemoveListener(OnBackPressed);
     }
     public void Open()
     {
@@ -23,7 +23,7 @@ public class UIScreen : MonoBehaviour, IEquatable<UIScreen>
         gameObject.SetActive(false);
     }
 
-    public virtual void OnBackButton()
+    public virtual void OnBackPressed()
     {
         UIController.Instance.OnBack();
     }

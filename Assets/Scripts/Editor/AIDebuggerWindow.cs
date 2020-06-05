@@ -42,7 +42,7 @@ public class AIDebuggerWindow : EditorWindow
 
             foreach (Team team in teams)
             {
-                PrintTeam(team.TeamMembers);
+                PrintTeam(team.Members);
             }
 
             EditorGUILayout.EndScrollView();

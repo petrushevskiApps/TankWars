@@ -18,9 +18,9 @@ public class AIAgent : Agent, IGoap
 
 	[SerializeField] private PerceptorSystem perceptor;
 
-	public override void Initialize(int teamID, string name, Material teamColor, List<Agent> team)
+	public override void Initialize(Team team, string name, Material teamColor)
 	{
-		base.Initialize(teamID, name, teamColor, team);
+		base.Initialize(team, name, teamColor);
 
 		Memory = new MemorySystem();
 		Navigation = new NavigationSystem(gameObject);

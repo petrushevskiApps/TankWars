@@ -11,24 +11,32 @@ public class GameManager : Singleton<GameManager>
     public static MatchStartedEvent OnMatchSetup = new MatchStartedEvent();
     public static MatchStartedEvent OnMatchStarted = new MatchStartedEvent();
     public static MatchEvent OnMatchExited = new MatchEvent();
+    public static MatchEvent OnMatchEnded = new MatchEvent();
 
-    public int WinningTeamId { get; private set; }
+    public Team WinningTeamId { get; private set; } = null;
 
     public AgentsController AgentsController { get; private set; }
+    public MatchTimer MatchTimer { get; private set; }
+
+    public MatchConfiguration MatchConfiguration { get; private set; }
 
     private float savedTimeScale = 1;
-    private MatchConfiguration configuration;
+    
 
     private new void Awake()
     {
         base.Awake();
 
         AgentsController = GetComponent<AgentsController>();
-        AgentsController.OnWinCondition.AddListener(MatchEnded);
+        MatchTimer = GetComponent<MatchTimer>();
+
+        MatchTimer.OnTimerEnd.AddListener(MatchEnded);
+        AgentsController.OneTeamLeft.AddListener(MatchEnded);
     }
     private void OnDestroy()
     {
-        AgentsController.OnWinCondition.RemoveListener(MatchEnded);
+        MatchTimer.OnTimerEnd.RemoveListener(MatchEnded);
+        AgentsController.OneTeamLeft.RemoveListener(MatchEnded);
     }
 
     void Start()
@@ -46,12 +54,12 @@ public class GameManager : Singleton<GameManager>
     {
         if (matchConfiguration != null)
         {
-            configuration = matchConfiguration;
+            MatchConfiguration = matchConfiguration;
         }
 
-        if (configuration != null)
+        if (MatchConfiguration != null)
         {
-            OnMatchSetup.Invoke(configuration);
+            OnMatchSetup.Invoke(MatchConfiguration);
             StartMatch();
         }
         else
@@ -62,23 +70,28 @@ public class GameManager : Singleton<GameManager>
 
     private void StartMatch()
     {
-        WinningTeamId = -1;
-        OnMatchStarted.Invoke(configuration);
+        WinningTeamId = null;
+        OnMatchStarted.Invoke(MatchConfiguration);
 
         UIController.Instance.ShowScreen<HUDScreen>();
     }
 
+
     // Match win conditions fullfiled
-    public void MatchEnded(int winnerId)
+    public void MatchEnded()
     {
-        WinningTeamId = winnerId;
+        SetWinner();
         UIController.Instance.ShowScreen<EndScreen>();
+        OnMatchEnded.Invoke();
         PauseGame();
     }
-
+    private void SetWinner()
+    {
+        WinningTeamId = AgentsController.GetWinnerTeam();
+    }
     // Restart match without changing match
     // configuration and opening start menu
-    public void MatchRestarted()
+    public void RestartMatch()
     {
         UnpauseGame();
         OnMatchExited.Invoke();
@@ -87,7 +100,7 @@ public class GameManager : Singleton<GameManager>
 
     // Exit match and open start menu for picking
     // new match configuration
-    public void MatchExited()
+    public void ExitMatch()
     {
         UnpauseGame();
         OnMatchExited.Invoke();

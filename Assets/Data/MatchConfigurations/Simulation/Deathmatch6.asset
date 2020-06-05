@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f64bceba8f56be144b78666007f94664, type: 3}
   m_Name: Deathmatch6
   m_EditorClassIdentifier: 
-  LevelMode: 1
   CameraMode: 0
+  matchTime: 300
   teamsConfig:
-  - teamID: 0
-    agentsCount: 1
+  - agentsCount: 1
     isPlayer: 0
-  - teamID: 1
-    agentsCount: 1
+  - agentsCount: 1
     isPlayer: 0

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PauseScreen : UIScreen
@@ -21,14 +18,14 @@ public class PauseScreen : UIScreen
     private void OnDestroy()
     {
         resumeButton.onClick.RemoveListener(OnResume);
-        restartMatchButton.onClick.AddListener(OnRestartMatch);
+        restartMatchButton.onClick.RemoveListener(OnRestartMatch);
         controlsButton.onClick.RemoveListener(OnControl);
         exitMatchButton.onClick.RemoveListener(OnExit);
     }
 
     private void OnRestartMatch()
     {
-        GameManager.Instance.MatchRestarted();
+        GameManager.Instance.RestartMatch();
     }
 
     private void OnControl()
@@ -38,17 +35,17 @@ public class PauseScreen : UIScreen
 
     private void OnExit()
     {
-        GameManager.Instance.UnpauseGame();
-        GameManager.Instance.MatchExited();
+        GameManager.Instance.ExitMatch();
     }
 
     private void OnResume()
     {
-        OnBackButton();
+        OnBackPressed();
     }
-    public override void OnBackButton()
+
+    public override void OnBackPressed()
     {
         GameManager.Instance.UnpauseGame();
-        base.OnBackButton();
+        base.OnBackPressed();
     }
 }
