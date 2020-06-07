@@ -14466,7 +14466,7 @@ GameObject:
   - component: {fileID: 5409530}
   - component: {fileID: 10833074}
   - component: {fileID: 11426614}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Shell
   m_TagString: Missile
   m_Icon: {fileID: 0}
@@ -14648,4 +14648,3 @@ MonoBehaviour:
   m_MaxLifeTime: 2
   m_ExplosionRadius: 5
   agentName: 
-  teamID: 0

@@ -58,7 +58,7 @@ public class Pickable : MonoBehaviour, IDestroyable
         {
             currentTime += Time.deltaTime;
             collectingProgress.fillAmount = currentTime * ( 1 / timeToCollect );
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(0.001f);
         }
         
         Collect(collector);

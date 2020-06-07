@@ -1,26 +1,16 @@
 ﻿using GOAP;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class VisionSensor : Sensor
 {
 
     // On Trigger is called when detectable object
-    // is in radius range of visibility.
+    // is in sight ( in front ).
     private void OnTriggerStay(Collider detected)
     {
         if(IsInFront(detected))
         {
-            if(IsVisible(detected.gameObject))
-            {
-                OnVisibleDetected.Invoke(detected.gameObject, true);
-            }
-            else
-            {
-                OnDetected.Invoke(detected.gameObject, true);
-            }
+            OnDetected.Invoke(detected.gameObject, (IsVisible(detected.gameObject)));
         }
     }
 
@@ -28,7 +18,7 @@ public class VisionSensor : Sensor
     // object is lost of sight.
     private void OnTriggerExit(Collider other)
     {
-        OnLost.Invoke(other.gameObject, true);
+        OnLost.Invoke(other.gameObject);
     }
 
     // Check if the target object is
@@ -40,7 +30,7 @@ public class VisionSensor : Sensor
     }
 
     // Check if the target object is not behind
-    // other objects in scene
+    // other objects in scene ( Line of sight )
     private bool IsVisible(GameObject target)
     {
         RaycastHit hit;

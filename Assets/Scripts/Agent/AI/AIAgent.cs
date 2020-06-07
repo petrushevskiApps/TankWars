@@ -9,15 +9,13 @@ public class AIAgent : Agent, IGoap
 	[Header("AI Controllers")]
 	[SerializeField] private NavigationController navigation;
 	[SerializeField] private MemoryController memory;
-	[SerializeField] private CommunicationController communication;
 
 	public NavigationController Navigation { get => navigation; }
 	public MemoryController Memory { get => memory; }
-	public CommunicationController Communication { get => communication; }
 
 	[Header("AI Systems")]
 
-	[SerializeField] private PerceptorSystem perceptor;
+	[SerializeField] private SensorController perceptor;
 
 	public override void Initialize(Team team, string name, Material teamColor)
 	{
@@ -27,7 +25,6 @@ public class AIAgent : Agent, IGoap
 
 		Memory.Initialize(this);
 
-		communication.Initialize(this);
 	}
 
 	public void MoveAgent(GoapAction nextAction)
@@ -35,7 +32,7 @@ public class AIAgent : Agent, IGoap
 		Navigation.Move(nextAction);
 	}
 	
-	public PerceptorSystem GetPerceptor()
+	public SensorController GetPerceptor()
 	{
 		return perceptor;
 	}

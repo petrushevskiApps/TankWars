@@ -175,7 +175,7 @@ GameObject:
   m_Component:
   - component: {fileID: 39762014}
   - component: {fileID: 39762015}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (5)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -687,7 +687,7 @@ GameObject:
   m_Component:
   - component: {fileID: 103572354}
   - component: {fileID: 103572353}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -1018,7 +1018,7 @@ GameObject:
   m_Component:
   - component: {fileID: 162213054}
   - component: {fileID: 162213055}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (10)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -1686,7 +1686,7 @@ GameObject:
   m_Component:
   - component: {fileID: 321196465}
   - component: {fileID: 321196466}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (2)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -1927,7 +1927,7 @@ GameObject:
   m_Component:
   - component: {fileID: 366594966}
   - component: {fileID: 366594967}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (3)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -3149,7 +3149,7 @@ GameObject:
   m_Component:
   - component: {fileID: 623085487}
   - component: {fileID: 623085488}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (6)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -4191,7 +4191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 775858066}
   - component: {fileID: 775858067}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (4)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -5309,7 +5309,7 @@ GameObject:
   m_Component:
   - component: {fileID: 979762721}
   - component: {fileID: 979762722}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (1)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -8377,7 +8377,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1442353035}
   - component: {fileID: 1442353036}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (7)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -8421,7 +8421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1457171355}
   - component: {fileID: 1457171356}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (8)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -9081,7 +9081,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1537060076}
   - component: {fileID: 1537060077}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: HidingSpot (9)
   m_TagString: HidingSpot
   m_Icon: {fileID: 0}
@@ -12321,41 +12321,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_Name
@@ -12414,16 +12379,6 @@ PrefabInstance:
     - target: {fileID: 2406014621032319886, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
-        type: 3}
-      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

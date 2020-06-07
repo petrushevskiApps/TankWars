@@ -41,26 +41,9 @@ public class Patrol : MoveAction
 	}
 	public override void ExecuteAction(GameObject agent)
 	{
-		CallForHelp();
 		RestartAction();
 	}
 
-	private void CallForHelp()
-	{
-		if (!agentMemory.IsHealthAvailable())
-		{
-			agent.Communication.BroadcastNeedHealth();
-		}
-		else if (!agentMemory.IsAmmoAvailable())
-		{
-			agent.Communication.BroadcastNeedAmmo();
-		}
-		else
-		{
-			// Health and Ammo Full and No Enemies found
-			OnPatrolExecuted.Invoke();
-		}
-	}
 	protected override void AddListeners()
 	{
 		agent.GetPerceptor().OnEnemyDetected.AddListener(EnemyDetected);

@@ -23,11 +23,11 @@ TagManager:
   - Detectable
   - Tank
   - Pickable
-  - Missile
-  - MissileSensor
+  - VisionSensor
+  - RadarSensor
   - World
-  - 
-  - 
+  - RadarDetectable
+  - VisionDetectable
   - 
   - 
   - 
