@@ -11,13 +11,14 @@ public class Team : IEquatable<Team>, IComparable<Team>
     public bool IsPlayerTeam { get; private set; }
 
     public int TeamMembersAlive => Members.Count;
+    public int TeamKills { get; private set; } = 0;
 
     public List<Agent> Members { get; private set; }
 
-    public TeamEvent TeamEmpty = new TeamEvent();
-    public TeamKillEvent TeamKill = new TeamKillEvent();
+    public TeamEvent OnTeamEmpty = new TeamEvent();
+    public TeamKillEvent OnTeamKill = new TeamKillEvent();
 
-    private int teamKills = 0;
+    
 
     public Team(int teamId, string teamName, bool isPlayerTeam, List<Agent> teamMembers)
     {
@@ -40,8 +41,8 @@ public class Team : IEquatable<Team>, IComparable<Team>
 
     public void IncreaseTeamKills()
     {
-        teamKills++;
-        TeamKill.Invoke(teamKills);
+        TeamKills++;
+        OnTeamKill.Invoke(TeamKills);
     }
 
     private void OnAgentDestroyed(GameObject agent)
@@ -57,7 +58,7 @@ public class Team : IEquatable<Team>, IComparable<Team>
             Members.RemoveAll(x => x == null);
         }
 
-        if (TeamMembersAlive == 0) TeamEmpty.Invoke(this);
+        if (TeamMembersAlive == 0) OnTeamEmpty.Invoke(this);
     }
     public bool Equals(Team other)
     {
@@ -67,8 +68,8 @@ public class Team : IEquatable<Team>, IComparable<Team>
 
     public int CompareTo(Team other)
     {
-        if (teamKills > other.teamKills) return -1;
-        else if (teamKills < other.teamKills) return 1;
+        if (TeamKills > other.TeamKills) return -1;
+        else if (TeamKills < other.TeamKills) return 1;
         else return 0;
     }
 

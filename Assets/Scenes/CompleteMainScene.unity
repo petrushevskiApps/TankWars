@@ -4460,6 +4460,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countDown: {fileID: 103405459}
+  normalColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  lowColor:
+    serializedVersion: 2
+    rgba: 4278193919
 --- !u!1 &883457957
 GameObject:
   m_ObjectHideFlags: 0
@@ -7103,12 +7109,6 @@ MonoBehaviour:
     type: 3}
   playerPrefab: {fileID: 4998884739790146126, guid: 066a1819dc60d0e499e1f8eb300c3365,
     type: 3}
-  OneTeamLeft:
-    m_PersistentCalls:
-      m_Calls: []
-  NoTeamLeft:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1267109860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7159,9 +7159,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e19325c36816f4b943f1608e815b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnTimerEnd:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &1282556331
 GameObject:
   m_ObjectHideFlags: 0

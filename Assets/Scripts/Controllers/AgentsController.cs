@@ -16,8 +16,7 @@ public class AgentsController : MonoBehaviour
     [SerializeField] private GameObject aiPrefab;
     [SerializeField] private GameObject playerPrefab;
 
-    public UnityEvent OneTeamLeft = new UnityEvent();
-    public UnityEvent NoTeamLeft = new UnityEvent();
+    public OneTeamLeftEvent OneTeamLeft = new OneTeamLeftEvent();
 
     public int PlayerTeamId { get; private set; } = -1;
     public Agent PlayerAgent { get; private set; }
@@ -94,16 +93,25 @@ public class AgentsController : MonoBehaviour
     {
         MatchTeams.Remove(emptyTeam);
 
-        if(MatchTeams.Count == 1) OneTeamLeft.Invoke();
+        if(MatchTeams.Count == 1) OneTeamLeft.Invoke(false);
 
     }
 
     public Team GetWinnerTeam()
     {
-        if (MatchTeams.Count > 0)
+        if(MatchTeams.Count == 1)
+        {
+            return MatchTeams[0];
+        }
+        else if (MatchTeams.Count >= 2)
         {
             MatchTeams.Sort();
-            return MatchTeams[0];
+
+            if(MatchTeams[0].TeamKills == MatchTeams[1].TeamKills)
+            {
+                return null;
+            }
+            else return MatchTeams[0];
         }
         else return null;
     }
@@ -124,7 +132,7 @@ public class AgentsController : MonoBehaviour
             agent.Initialize(team, GetRandomName(agentNames), teamColors.GetTeamColor(team.ID));
         }
 
-        team.TeamEmpty.AddListener(OnTeamEmpty);
+        team.OnTeamEmpty.AddListener(OnTeamEmpty);
         MatchTeams.Add(team);
     }
 
@@ -163,4 +171,6 @@ public class AgentsController : MonoBehaviour
 
         return "NoNameAvailable";
     }
+
+    public class OneTeamLeftEvent : UnityEvent<bool> { }
 }

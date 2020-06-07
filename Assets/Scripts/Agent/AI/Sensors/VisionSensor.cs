@@ -9,19 +9,17 @@ public class VisionSensor : Sensor
 
     // On Trigger is called when detectable object
     // is in radius range of visibility.
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider detected)
     {
-        float angle = Utilities.GetAngle(transform.parent.gameObject, other.gameObject);
-
-        if(IsInFront(angle))
+        if(IsInFront(detected))
         {
-            if(IsVisible(other.gameObject))
+            if(IsVisible(detected.gameObject))
             {
-                OnVisibleDetected.Invoke(other.gameObject, true);
+                OnVisibleDetected.Invoke(detected.gameObject, true);
             }
             else
             {
-                OnDetected.Invoke(other.gameObject, true);
+                OnDetected.Invoke(detected.gameObject, true);
             }
         }
     }
@@ -35,8 +33,9 @@ public class VisionSensor : Sensor
 
     // Check if the target object is
     // in front of the current object.
-    private bool IsInFront(float angle)
+    private bool IsInFront(Collider detected)
     {
+        float angle = Utilities.GetAngle(transform.parent.gameObject, detected.gameObject);
         return angle < 90f;
     }
 

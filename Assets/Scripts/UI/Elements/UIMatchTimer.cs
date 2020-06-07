@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -8,6 +9,11 @@ public class UIMatchTimer : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI countDown;
 
+    [SerializeField] private Color32 normalColor;
+    [SerializeField] private Color32 lowColor;
+
+    private float startTime = 0;
+
     public void Awake()
     {
         GameManager.Instance.MatchTimer.OnTimerTick.AddListener(UpdateTimer);
@@ -16,7 +22,17 @@ public class UIMatchTimer : MonoBehaviour
     {
         GameManager.Instance.MatchTimer.OnTimerTick.RemoveListener(UpdateTimer);
     }
-    
+    private void OnEnable()
+    {
+        Setup(GameManager.Instance.MatchConfiguration);
+    }
+    private void Setup(MatchConfiguration config)
+    {
+        startTime = config.matchTime;
+        countDown.color = normalColor;
+        countDown.fontStyle = FontStyles.Normal;
+    }
+
     private void UpdateTimer(float time)
     {
         int minutes = (int)time / 60;
@@ -33,5 +49,19 @@ public class UIMatchTimer : MonoBehaviour
         else cdString.Append(seconds.ToString());
 
         countDown.text = cdString.ToString();
+
+        SetTimerColor(time);
+        
+    }
+
+    private void SetTimerColor(float currentTime)
+    {
+        float timeLeftPercents = (currentTime / startTime) * 100;
+
+        if (timeLeftPercents < 20f)
+        {
+            countDown.color = lowColor;
+            countDown.fontStyle = FontStyles.Bold;
+        }
     }
 }

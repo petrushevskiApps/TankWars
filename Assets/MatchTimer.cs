@@ -10,7 +10,7 @@ public class MatchTimer : MonoBehaviour
     private float timeInMatch = 0;
     private Coroutine Timer;
 
-    public UnityEvent OnTimerEnd = new UnityEvent();
+    public TimerEndEvent OnTimerEnd = new TimerEndEvent();
     public TimerEvent OnTimerTick = new TimerEvent();
 
     private void Awake()
@@ -46,7 +46,7 @@ public class MatchTimer : MonoBehaviour
             OnTimerTick.Invoke(timeInMatch);
             yield return new WaitForEndOfFrame();
         }
-        OnTimerEnd.Invoke();
+        OnTimerEnd.Invoke(true);
     }
 
     private void StopTimer()
@@ -59,4 +59,5 @@ public class MatchTimer : MonoBehaviour
     }
 
     public class TimerEvent : UnityEvent<float> { }
+    public class TimerEndEvent : UnityEvent<bool> { }
 }

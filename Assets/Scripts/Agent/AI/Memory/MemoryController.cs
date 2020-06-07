@@ -18,6 +18,7 @@ public class MemoryController : MonoBehaviour
 
     public DetectedHolder HidingSpots { get; private set; }
 
+
     public Vector3 MissileDirection { get; private set; }
 
     public bool IsUnderAttack { get; private set; }
@@ -141,6 +142,7 @@ public class MemoryController : MonoBehaviour
         {
             OnUnderFire.Invoke();
         }
+
         IsUnderAttack = true;
         MissileDirection = missile.gameObject.transform.position;
 

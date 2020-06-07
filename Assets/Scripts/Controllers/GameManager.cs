@@ -79,15 +79,17 @@ public class GameManager : Singleton<GameManager>
 
 
     // Match win conditions fullfiled
-    public void MatchEnded()
+    public void MatchEnded(bool isTimerEnd = false)
     {
         SetWinner();
+
         StartCoroutine(DelayTimer(()=>
         {
             UIController.Instance.ShowScreen<EndScreen>();
             OnMatchEnded.Invoke();
             PauseGame();
-        }, 2f));
+
+        }, isTimerEnd ? 0f : 2f));
         
     }
     IEnumerator DelayTimer(Action delayedAction, float delayTime)

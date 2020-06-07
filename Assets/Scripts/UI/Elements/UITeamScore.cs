@@ -14,7 +14,7 @@ public class UITeamScore : MonoBehaviour
     public void Initialized(Team team)
     {
         this.team = team;
-        this.team.TeamKill.AddListener(UpdateTeamKills);
+        this.team.OnTeamKill.AddListener(UpdateTeamKills);
         gameObject.SetActive(true);
 
         SetNames();
@@ -25,7 +25,7 @@ public class UITeamScore : MonoBehaviour
     {
         if(team != null)
         {
-            team.TeamKill.RemoveListener(UpdateTeamKills);
+            team.OnTeamKill.RemoveListener(UpdateTeamKills);
         }
         
     }

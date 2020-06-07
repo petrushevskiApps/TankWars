@@ -31,7 +31,6 @@ public class EndScreen : UIScreen
     private void SetTitle()
     {
         Team winningTeam = GameManager.Instance.WinningTeamId;
-        MatchConfiguration config = GameManager.Instance.MatchConfiguration;
 
         if (winningTeam != null)
         {
