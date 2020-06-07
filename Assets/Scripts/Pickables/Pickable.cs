@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Pickable : MonoBehaviour, IDestroyable
 {
+    public float amountToCollect = 0;
+
     public OnCollectedEvent OnCollected = new OnCollectedEvent();
 
     [SerializeField] private GameObject canvas;

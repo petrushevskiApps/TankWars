@@ -62,12 +62,7 @@ public interface IGoap
 	 */
 	void MoveAgent(GoapAction nextAction);
 
-	Inventory GetInventory();
-
 	PerceptorSystem GetPerceptor();
 
-	CommunicationSystem GetCommunication();
-
-	void ShowMessage(string text);
 }
 

@@ -132,7 +132,6 @@ public class PerceptorSystem : MonoBehaviour
                     OnFriendlyFire.Invoke(detected);
                 }
             }
-            
         }
 
     }
@@ -145,22 +144,10 @@ public class PerceptorSystem : MonoBehaviour
     {
         return transform.parent.name.Equals(targetName);
     }
-    public class PlayerEvent : UnityEvent<GameObject>
-    {
 
-    }
 
-    public class PackageEvent : UnityEvent<GameObject>
-    {
-
-    }
-    public class HiddingSpot : UnityEvent<GameObject>
-    {
-
-    }
-
-    public class MissileEvent : UnityEvent<GameObject>
-    {
-
-    }
+    public class PlayerEvent : UnityEvent<GameObject> { }
+    public class PackageEvent : UnityEvent<GameObject> { }
+    public class HiddingSpot : UnityEvent<GameObject> { }
+    public class MissileEvent : UnityEvent<GameObject> { }
 }

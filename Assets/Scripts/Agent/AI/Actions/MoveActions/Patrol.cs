@@ -22,7 +22,7 @@ public class Patrol : MoveAction
 	public override void SetActionTarget()
 	{
 		agentNavigation.SetTarget();
-		target = agentNavigation.GetNavigationTarget();
+		target = agentNavigation.Target;
 	}
 
 	public override void InvalidTargetLocation()
@@ -49,11 +49,11 @@ public class Patrol : MoveAction
 	{
 		if (!agentMemory.IsHealthAvailable())
 		{
-			agent.GetCommunication().BroadcastNeedHealth();
+			agent.Communication.BroadcastNeedHealth();
 		}
 		else if (!agentMemory.IsAmmoAvailable())
 		{
-			agent.GetCommunication().BroadcastNeedAmmo();
+			agent.Communication.BroadcastNeedAmmo();
 		}
 		else
 		{

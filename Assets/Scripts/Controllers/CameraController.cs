@@ -105,9 +105,9 @@ public class CameraController : Singleton<CameraController>
     {
         target.GetComponent<AudioListener>().enabled = true;
 
-        followCamera.Follow = target.cameraTracker.transform;
-        followCamera.LookAt = target.cameraTracker.transform;
-        
+        followCamera.Follow = target.VisualSystem.Tracker;
+        followCamera.LookAt = target.VisualSystem.Tracker;
+
         currentCamera = followCamera;
     }
 

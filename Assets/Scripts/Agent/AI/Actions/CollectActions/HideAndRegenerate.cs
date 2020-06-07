@@ -8,9 +8,9 @@ using UnityEngine.AI;
 public class HideAndRegenerate : GoapAction 
 {
 	protected AIAgent agent;
-	protected MemorySystem agentMemory;
-	protected NavigationSystem agentNavigation;
-	protected Detectable detectedMemory;
+	protected MemoryController agentMemory;
+	protected NavigationController agentNavigation;
+	protected DetectedHolder detectedMemory;
 
 	protected Coroutine UpdateCoroutine;
 
@@ -36,7 +36,7 @@ public class HideAndRegenerate : GoapAction
 	{
 		if (detectedMemory.IsAnyValidDetected())
 		{
-			target = detectedMemory.GetDetected();
+			target = detectedMemory.GetSortedDetected();
 			agentNavigation.SetTarget(target);
 		}
 		else
@@ -90,14 +90,14 @@ public class HideAndRegenerate : GoapAction
 	{
 		if (!detectedMemory.IsDetectedValid(target)) ExitAction(actionFailed);
 
-		while(agent.GetInventory().HealthStatus != InventoryStatus.Full)
+		while(agent.Inventory.Health.Status != InventoryStatus.Full)
 		{
-			agent.GetInventory().IncreaseHealth(10);
+			agent.Inventory.Health.Increase(10);
 			yield return new WaitForSeconds(1f);
 		}
-		while(agent.GetInventory().AmmoStatus != InventoryStatus.Full)
+		while(agent.Inventory.Ammo.Status != InventoryStatus.Full)
 		{
-			agent.GetInventory().IncreaseAmmo(2);
+			agent.Inventory.Ammo.Increase(2);
 			yield return new WaitForSeconds(1f);
 		}
 		

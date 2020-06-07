@@ -25,6 +25,24 @@ namespace Complete
         {
             rigidbody = GetComponent<Rigidbody> ();
         }
+        private void OnEnable()
+        {
+            RegisterListeners();
+            // When the tank is turned on, make sure it's not kinematic.
+            rigidbody.isKinematic = false;
+
+            // Also reset the input values.
+            movementInputValue = 0f;
+            turnInputValue = 0f;
+
+        }
+        private void OnDisable()
+        {
+            UnregisterListeners();
+            // When the tank is turned off, set it to kinematic so it stops moving.
+            rigidbody.isKinematic = true;
+        }
+
         private void RegisterListeners()
         {
             InputController.OnMovementAxis.AddListener(UpdateMovement);
@@ -36,23 +54,7 @@ namespace Complete
             InputController.OnTurningAxis.RemoveListener(UpdateTurning);
         }
 
-        private void OnEnable ()
-        {
-            RegisterListeners();
-            // When the tank is turned on, make sure it's not kinematic.
-            rigidbody.isKinematic = false;
-
-            // Also reset the input values.
-            movementInputValue = 0f;
-            turnInputValue = 0f;
-
-        }
-        private void OnDisable ()
-        {
-            UnregisterListeners();
-            // When the tank is turned off, set it to kinematic so it stops moving.
-            rigidbody.isKinematic = true;
-        }
+        
 
 
         private void FixedUpdate ()

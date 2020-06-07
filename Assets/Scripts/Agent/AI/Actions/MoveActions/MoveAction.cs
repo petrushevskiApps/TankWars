@@ -8,8 +8,8 @@ using UnityEngine;
 public abstract class MoveAction : GoapAction
 {
 	protected AIAgent agent;
-	protected MemorySystem agentMemory;
-	protected NavigationSystem agentNavigation;
+	protected MemoryController agentMemory;
+	protected NavigationController agentNavigation;
 	protected bool isActionExited = false;
 
 	private void Start()

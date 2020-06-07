@@ -84,8 +84,6 @@ public sealed class GoapAgent : MonoBehaviour
 		Dictionary<string, bool> goal = agentImplementation.GetGoalState(goalIndex);
 
 
-		agentImplementation.ShowMessage("Planning...");
-
 		// Plan
 		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
 
@@ -163,7 +161,6 @@ public sealed class GoapAgent : MonoBehaviour
 			{
 				// Get the agent to move itself
 				breadCrumbs.Append("MoveTo State: Moving Agent!!\n");
-				agentImplementation.ShowMessage("Going to " + action.name);
 				agentImplementation.MoveAgent(action);
 
 				breadCrumbs.Append("MoveTo State: Loop MOVE_TO State!!\n");
@@ -195,7 +192,6 @@ public sealed class GoapAgent : MonoBehaviour
 			if (currentAction.IsInRange)
 			{
 				breadCrumbs.Append("Perform State: Action In Range, Execute\n");
-				agentImplementation.ShowMessage(currentAction.name);
 				// we are in range, so perform the action
 				currentAction.ExecuteAction(gameObject);
 			}
@@ -245,10 +241,12 @@ public sealed class GoapAgent : MonoBehaviour
 		ChangeState(FSMKeys.IDLE_STATE);
 		agentImplementation.PlanAborted(currentAction);
 	}
+	
 	private void OnActionReset()
 	{
 		ChangeState(FSMKeys.PERFORM_STATE);
 	}
+	
 	private void ChangeState(string stateKey)
 	{
 		breadCrumbs.Append("ChangeState: State Key:: " + stateKey + "\n");

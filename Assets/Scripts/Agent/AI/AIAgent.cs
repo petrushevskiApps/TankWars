@@ -6,15 +6,16 @@ using UnityEngine;
 
 public class AIAgent : Agent, IGoap
 {
-	
+	[Header("AI Controllers")]
+	[SerializeField] private NavigationController navigation;
+	[SerializeField] private MemoryController memory;
+	[SerializeField] private CommunicationController communication;
 
-	public MemorySystem Memory { get; private set; }
-
-	public NavigationSystem Navigation { get; private set; }
+	public NavigationController Navigation { get => navigation; }
+	public MemoryController Memory { get => memory; }
+	public CommunicationController Communication { get => communication; }
 
 	[Header("AI Systems")]
-
-	[SerializeField] private CommunicationSystem communication;
 
 	[SerializeField] private PerceptorSystem perceptor;
 
@@ -22,44 +23,23 @@ public class AIAgent : Agent, IGoap
 	{
 		base.Initialize(team, name, teamColor);
 
-		Memory = new MemorySystem();
-		Navigation = new NavigationSystem(gameObject);
+		Navigation.Initialize(gameObject);
 
 		Memory.Initialize(this);
 
-		Memory.RegisterEvents(perceptor);
-
 		communication.Initialize(this);
-	}
-
-	
-
-	private void OnDestroy()
-	{
-		Memory.UnregisterEvents(perceptor);
-		Navigation.OnDestroy();
-		
 	}
 
 	public void MoveAgent(GoapAction nextAction)
 	{
 		Navigation.Move(nextAction);
 	}
-
-	//public MemorySystem GetMemory()
-	//{
-	//	return Memory;
-	//}
-
 	
 	public PerceptorSystem GetPerceptor()
 	{
 		return perceptor;
 	}
-	public CommunicationSystem GetCommunication()
-	{
-		return communication;
-	}
+
 	public Dictionary<string, bool> GetWorldState()
 	{
 		return Memory.GetWorldState();
@@ -73,11 +53,6 @@ public class AIAgent : Agent, IGoap
 	public int GetGoalsCount()
 	{
 		return Memory.GetGoals().Count;
-	}
-
-	public void ShowMessage(string text)
-	{
-		
 	}
 
 

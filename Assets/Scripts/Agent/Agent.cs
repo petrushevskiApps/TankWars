@@ -3,64 +3,53 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using System;
 
-public class Agent : MonoBehaviour, ICollector, IDestroyable
+public class Agent : MonoBehaviour, IDestroyable
 {
 	//Events
 	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
-	public Team Team { get; private set; }
-	public GameObject cameraTracker;
-
 	[Header("Agent Controllers")]
-	[SerializeField] private AgentUIController uiController; 
-	[SerializeField] private RenderController renderController;
-	
-	[Header("Agent Systems")]
-	[SerializeField] protected Inventory inventory = new Inventory();
-	[SerializeField] protected WeaponSystem weapon;
-	[SerializeField] protected AgentParticlesSystem particlesSystem;
-	[SerializeField] protected CollectorSystem collectorSystem;
+	[SerializeField] protected CollectController collectController;
+	[SerializeField] protected WeaponController weaponController;
 
-	protected string name = "tankName";
+	[Header("Agent Systems")]
+	[SerializeField] protected InventorySystem inventorySystem;
+	[SerializeField] private VisualSystem visualSystem;
+
+	public CollectController Collector { get => collectController; }
+	public WeaponController Weapon { get => weaponController; }
+	public InventorySystem Inventory { get => inventorySystem; }
+	public VisualSystem VisualSystem { get => visualSystem; }
+
+	public Team Team { get; private set; }
+	public string AgentName { get; private set; } = "tankName";
+	
 
 	private bool isDead;
 
 	protected void Awake()
 	{
-		weapon.Initialize(this);
-
-		uiController.Setup(this);
+		Weapon.Initialize(this);
+		Collector.Initialize(Inventory);
 	}
 
-	private void Start()
-	{
-		inventory.Initialize();
-	}
-	private void OnEnable()
-	{
-		particlesSystem.PlayParticles();
-	}
-	private void OnDisable()
-	{
-		particlesSystem.StopParticles();
-	}
 
 	public virtual void Initialize(Team team, string name, Material teamColor)
 	{
 		Team = team;
-		this.name = name;
+		AgentName = name;
 		gameObject.name = name;
-		renderController.SetTeamColor(teamColor);
+		visualSystem.Setup(this, teamColor);
 	}
 
 	public void TakeDamage(float amount, Agent owner)
 	{
 		// Reduce current health by the amount of damage done.
-		
-		inventory.DecreaseHealth(amount);
+		inventorySystem.Health.Decrease(amount);
 
-		// If the current health is at or below zero and it has not yet been registered, call OnDeath.
-		if (!isDead && inventory.GetHealth() <= 0f)
+		// If the current health is at or below zero
+		// and it has not yet been registered, call OnDeath.
+		if (!isDead && inventorySystem.Health.Amount <= 0f)
 		{
 			owner.Team.IncreaseTeamKills();
 			OnDeath();
@@ -73,10 +62,7 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		isDead = true;
 
 		OnAgentDeath.Invoke(gameObject);
-
-		renderController.ShowParticles();
 		
-		// Turn the tank off.
 		Destroy(gameObject);
 	}
 
@@ -85,36 +71,5 @@ public class Agent : MonoBehaviour, ICollector, IDestroyable
 		OnAgentDeath.AddListener(OnDestroyAction);
 	}
 
-	public CollectorSystem GetCollector()
-	{
-		return collectorSystem;
-	}
-	public Inventory GetInventory()
-	{
-		return inventory;
-	}
-	public WeaponSystem GetWeapon()
-	{
-		return weapon;
-	}
-	public void PickableCollected(AmmoPack collected)
-	{
-		inventory.IncreaseAmmo(collected.amountToCollect);
-	}
-
-	public void PickableCollected(HealthPack collected)
-	{
-		inventory.IncreaseHealth(collected.amountToCollect);
-	}
-
-	public string GetAgentName()
-	{
-		return name;
-	}
-	
-
-	public class PlayerDeath : UnityEvent<GameObject>
-	{
-
-	}
+	public class PlayerDeath : UnityEvent<GameObject> { }
 }

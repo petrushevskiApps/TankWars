@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
@@ -81,9 +82,18 @@ public class GameManager : Singleton<GameManager>
     public void MatchEnded()
     {
         SetWinner();
-        UIController.Instance.ShowScreen<EndScreen>();
-        OnMatchEnded.Invoke();
-        PauseGame();
+        StartCoroutine(DelayTimer(()=>
+        {
+            UIController.Instance.ShowScreen<EndScreen>();
+            OnMatchEnded.Invoke();
+            PauseGame();
+        }, 2f));
+        
+    }
+    IEnumerator DelayTimer(Action delayedAction, float delayTime)
+    {
+        yield return new WaitForSeconds(delayTime);
+        delayedAction.Invoke();
     }
     private void SetWinner()
     {

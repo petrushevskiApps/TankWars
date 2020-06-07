@@ -6,9 +6,9 @@ using UnityEngine;
 public abstract class Collect : GoapAction
 {
     protected AIAgent agent;
-    protected MemorySystem agentMemory;
-    protected NavigationSystem agentNavigation;
-    protected Detectable detectedMemory;
+    protected MemoryController agentMemory;
+    protected NavigationController agentNavigation;
+    protected DetectedHolder detectedMemory;
 
     protected Coroutine UpdateCoroutine;
 
@@ -28,7 +28,7 @@ public abstract class Collect : GoapAction
     {
         if (detectedMemory.IsAnyValidDetected())
         {
-            target = detectedMemory.GetDetected();
+            target = detectedMemory.GetSortedDetected();
             agentNavigation.SetTarget(target);
         }
         else
@@ -72,7 +72,7 @@ public abstract class Collect : GoapAction
     {
         Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
 
-        CollectorSystem collector = agent.GetComponent<Agent>().GetCollector();
+        CollectController collector = agent.GetComponent<Agent>().Collector;
 
         if (collector!= null && collector.IsPickableReady)
         {

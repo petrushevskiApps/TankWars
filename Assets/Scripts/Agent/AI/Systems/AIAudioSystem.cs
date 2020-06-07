@@ -16,7 +16,7 @@ public class AIAudioSystem : AudioSystem
     {
         agent.Navigation.OnAgentIdling.AddListener(PlayIdling);
         agent.Navigation.OnAgentMoving.AddListener(PlayDriving);
-        agent.GetWeapon().OnShooting.AddListener(PlayShooting);
+        agent.Weapon.OnShooting.AddListener(PlayShooting);
 
         agent.OnAgentDeath.AddListener(PlayAgentDeath);
         //agent.GetInventory().OnHealthChange.AddListener(PlayHealthLow);
@@ -37,7 +37,7 @@ public class AIAudioSystem : AudioSystem
     {
         agent.Navigation.OnAgentIdling.RemoveListener(PlayIdling);
         agent.Navigation.OnAgentMoving.RemoveListener(PlayDriving);
-        agent.GetWeapon().OnShooting.RemoveListener(PlayShooting);
+        agent.Weapon.OnShooting.RemoveListener(PlayShooting);
 
         agent.OnAgentDeath.RemoveListener(PlayAgentDeath);
         //agent.GetInventory().OnHealthChange.AddListener(PlayHealthLow);

@@ -26,12 +26,12 @@ public class RunAway : MoveAction
 
 	public override void SetActionTarget()
 	{
-		Vector3 missileDirection = agentMemory.missileDirection;
+		Vector3 missileDirection = agentMemory.MissileDirection;
 		
 		if(missileDirection != Vector3.zero)
 		{
-			agentNavigation.SetRunFromTarget(missileDirection);
-			target = agentNavigation.GetNavigationTarget();
+			agentNavigation.SetTarget(missileDirection, true);
+			target = agentNavigation.Target;
 		}
 		else
 		{

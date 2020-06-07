@@ -17,17 +17,17 @@ public class Player : Agent
     private void RegisterListeners()
     {
         InputController.OnFirePressed.AddListener(Fire);
-        InputController.OnCollecting.AddListener(collectorSystem.CollectPickable);
+        InputController.OnCollecting.AddListener(collectController.CollectPickable);
     }
     private void UnregisterListeners()
     {
         InputController.OnFirePressed.RemoveListener(Fire);
-        InputController.OnCollecting.RemoveListener(collectorSystem.CollectPickable);
+        InputController.OnCollecting.RemoveListener(collectController.CollectPickable);
     }
     
     private void Fire()
     {
-        weapon.FireBullet();
+        weaponController.FireBullet();
     }
 
 }

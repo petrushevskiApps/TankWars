@@ -12324,6 +12324,41 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_Name
@@ -12382,6 +12417,16 @@ PrefabInstance:
     - target: {fileID: 2406014621032319886, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -12903,7 +12948,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8044540949313906509}
   - component: {fileID: 8044540949314233084}
-  - component: {fileID: 8044540949314233087}
   m_Layer: 10
   m_Name: TankRenderers
   m_TagString: Untagged
@@ -12911,24 +12955,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8044540949314233087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8044540949314233085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdb2c16e8e305354c80558172c881727, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deathParticles: {fileID: 151086, guid: 6bc6d0dd8b8428e4ca316513f2cf13c6, type: 3}
-  renderMaterials:
-  - {fileID: 8044540949311993205}
-  - {fileID: 8044540949311994755}
-  - {fileID: 8044540949312073001}
-  - {fileID: 8044540949312082675}
 --- !u!1 &8044540949314242759
 GameObject:
   m_ObjectHideFlags: 0

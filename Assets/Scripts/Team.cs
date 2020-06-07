@@ -56,6 +56,7 @@ public class Team : IEquatable<Team>, IComparable<Team>
         {
             Members.RemoveAll(x => x == null);
         }
+
         if (TeamMembersAlive == 0) TeamEmpty.Invoke(this);
     }
     public bool Equals(Team other)

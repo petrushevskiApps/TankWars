@@ -15,8 +15,8 @@ public class EliminateEnemy : GoapAction
 		ToClose
 	}
 	private AIAgent agent;
-	private MemorySystem agentMemory;
-	private NavigationSystem agentNavigation;
+	private MemoryController agentMemory;
+	private NavigationController agentNavigation;
 
 	public UnityEvent OnEnemyKilled = new UnityEvent();
 	public UnityEvent OnEnemyAttacked = new UnityEvent();
@@ -51,7 +51,7 @@ public class EliminateEnemy : GoapAction
 	{
 		if (agentMemory.Enemies.IsAnyValidDetected())
 		{
-			target = agentMemory.Enemies.GetDetected();
+			target = agentMemory.Enemies.GetSortedDetected();
 			agentNavigation.SetTarget(target);
 		}
 		else
@@ -94,8 +94,8 @@ public class EliminateEnemy : GoapAction
 
 	public override void ExecuteAction(GameObject agent)
 	{
-		StartCoroutine(agentNavigation.LookAtTarget());
-		StartCoroutine(agentNavigation.Follow(maxRequiredRange));
+		agentNavigation.LookAtTarget();
+		agentNavigation.FollowTarget(maxRequiredRange);
 
 		FireCoroutine = StartCoroutine(Fire());
 	}
@@ -133,9 +133,9 @@ public class EliminateEnemy : GoapAction
 					{
 						if(CheckActionRange() == FireRangeStatus.InPosition)
 						{
-							if(agentNavigation.CheckAngle(target))
+							if(agentNavigation.IsLookingAtTarget())
 							{
-								agent.GetWeapon().FireBullet();
+								agent.Weapon.FireBullet();
 							}
 						}
 					}
