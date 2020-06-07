@@ -4918,7 +4918,6 @@ MonoBehaviour:
   visualSystem: {fileID: 335154621028995124}
   navigation: {fileID: 5379109141541110610}
   memory: {fileID: 913618772496031007}
-  communication: {fileID: 373574343372209677}
   perceptor: {fileID: 8374072413681783067}
 --- !u!114 &7481986568535156036
 MonoBehaviour:
@@ -10188,7 +10187,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7958116068798592584}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1478712264854235278
 BoxCollider:
@@ -10579,7 +10578,6 @@ Transform:
   m_Children:
   - {fileID: 3426415707211742126}
   - {fileID: 4713275495158350190}
-  - {fileID: 6768422462654269079}
   - {fileID: 3825696960712710035}
   - {fileID: 2362645176384149558}
   m_Father: {fileID: 2406014621032319886}
@@ -10614,7 +10612,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7958116068798592584}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5829359755463935598
 MonoBehaviour:
@@ -11008,93 +11006,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9614fa36e12424479fc667e32a1eedd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &8000695959682705180
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1520744727191913267}
-  - component: {fileID: 324378378643249505}
-  m_Layer: 0
-  m_Name: AudioSensor
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1520744727191913267
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8000695959682705180}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4681233582608551201}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &324378378643249505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8000695959682705180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb96822ca5b17fb439a3398ae996a2bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &8006661245117497370
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6768422462654269079}
-  - component: {fileID: 373574343372209677}
-  m_Layer: 9
-  m_Name: CommunicationController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6768422462654269079
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8006661245117497370}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 7958116068798592584}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &373574343372209677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8006661245117497370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2047517f49c3c6b488670cec0f761a1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSensor: {fileID: 324378378643249505}
 --- !u!1 &8322945463963479943
 GameObject:
   m_ObjectHideFlags: 0
@@ -11278,7 +11189,7 @@ GameObject:
   - component: {fileID: 4681233582608551201}
   - component: {fileID: 8374072413681783067}
   m_Layer: 0
-  m_Name: PerceptorSystem
+  m_Name: SensorSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11297,7 +11208,6 @@ Transform:
   m_Children:
   - {fileID: 1663107925311929960}
   - {fileID: 6336688070812299321}
-  - {fileID: 1520744727191913267}
   m_Father: {fileID: 2406014621032319886}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11314,7 +11224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visionSensor: {fileID: 4458410233640002641}
-  radioSensor: {fileID: 324378378643249505}
   radarSensor: {fileID: 1566971472304968694}
 --- !u!1001 &7894187414665838604
 PrefabInstance:
