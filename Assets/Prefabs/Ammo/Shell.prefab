@@ -5142,7 +5142,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -5195,7 +5195,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -9639,10 +9639,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
+  MinDistance: 10
+  MaxDistance: 70
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -9650,23 +9650,41 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      time: 0.14600046
+      value: 0.9976883
+      inSlope: -3.798016
+      outSlope: -3.798016
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.5237934
+    - serializedVersion: 3
+      time: 0.23048246
+      value: 0.6283151
+      inSlope: -3.5920157
+      outSlope: -3.5920157
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.69942087
+      outWeight: 0.23969343
+    - serializedVersion: 3
+      time: 0.41626734
+      value: 0.24369031
+      inSlope: -1.1709136
+      outSlope: -1.1709136
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.106987335
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: 0.09264886
+      outSlope: 0.09264886
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0.6401992
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -9675,7 +9693,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -10033,7 +10051,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -10086,7 +10104,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:

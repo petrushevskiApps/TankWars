@@ -13,17 +13,15 @@ MonoBehaviour:
   m_Name: AudioConfiguration
   m_EditorClassIdentifier: 
   runAwayVoice: {fileID: 11400000, guid: 623c3a9c9dee0ef4892bb816f9cdd718, type: 2}
-  OnDeath: {fileID: 11400000, guid: 2303d5ef7466bcd4887e6eba8d3e75c1, type: 2}
   onHealthLowVoice: {fileID: 11400000, guid: a7187e53b5f67e942a7a56d6f41455ef, type: 2}
   underAttackVoice: {fileID: 11400000, guid: 11adf41c855c0e740a3c617538b1bb5b, type: 2}
-  onHealthDecrease: {fileID: 11400000, guid: b87f13e1cf6b834489050a5d04e01b7b, type: 2}
+  onHealthDecrease: {fileID: 11400000, guid: a7187e53b5f67e942a7a56d6f41455ef, type: 2}
   onPatrolComplete: {fileID: 11400000, guid: 88d8d21025f5e6f46bc06064faae19a7, type: 2}
   EnemyDetected: {fileID: 11400000, guid: 30f77a13852a04449bf6e69c87745efd, type: 2}
   EnemiesDetected: {fileID: 11400000, guid: 1e09c26e334519942a056eec450bd175, type: 2}
   EnemyLost: {fileID: 11400000, guid: 6a3297309c59fbf4f93741e01d0af40e, type: 2}
   EnemyAttack: {fileID: 11400000, guid: a3702c160af010a4c94b362db07d731d, type: 2}
   EnemyKilled: {fileID: 11400000, guid: 11ee110f931c8ee42bd5f46ca76c3367, type: 2}
-  TargetInRange: {fileID: 11400000, guid: c100625c8cab038478f9ab4f164e768d, type: 2}
   EngineIdle: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
   EngineDriving: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
   Shooting: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}

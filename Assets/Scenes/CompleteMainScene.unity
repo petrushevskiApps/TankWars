@@ -2681,7 +2681,6 @@ GameObject:
   m_Component:
   - component: {fileID: 525854090}
   - component: {fileID: 525854089}
-  - component: {fileID: 525854091}
   m_Layer: 0
   m_Name: CameraController
   m_TagString: Untagged
@@ -2723,14 +2722,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &525854091
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 525854088}
-  m_Enabled: 1
 --- !u!1 &568622024
 GameObject:
   m_ObjectHideFlags: 0
@@ -12321,10 +12312,50 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_Name
       value: AIAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2406014621032319886, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
@@ -12380,6 +12411,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9116724750762873186, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
