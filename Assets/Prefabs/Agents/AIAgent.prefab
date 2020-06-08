@@ -4718,7 +4718,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7081524124453014677}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: CameraTracker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4749,7 +4749,7 @@ GameObject:
   m_Component:
   - component: {fileID: 607520733515329078}
   - component: {fileID: 6996199043879509543}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10016,7 +10016,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1113829048298287903}
   - component: {fileID: 335154621028995124}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: VisualSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}

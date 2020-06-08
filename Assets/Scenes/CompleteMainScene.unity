@@ -9850,8 +9850,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 1906813467}
-  m_Follow: {fileID: 1906813467}
+  m_LookAt: {fileID: 0}
+  m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 60
     OrthographicSize: 10.4
@@ -10508,12 +10508,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1902959638}
   m_CullTransparentMesh: 0
---- !u!4 &1906813467 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2321524536910536855, guid: 066a1819dc60d0e499e1f8eb300c3365,
-    type: 3}
-  m_PrefabInstance: {fileID: 5182770707688438646}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1914633278
 GameObject:
   m_ObjectHideFlags: 0
@@ -12452,25 +12446,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3739692453420363656, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3739692453420363656, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4998884739790146126, guid: 066a1819dc60d0e499e1f8eb300c3365,
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 4998884739790146126, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4998884739790430492, guid: 066a1819dc60d0e499e1f8eb300c3365,
         type: 3}
@@ -12525,41 +12504,6 @@ PrefabInstance:
     - target: {fileID: 4998884739790430492, guid: 066a1819dc60d0e499e1f8eb300c3365,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5917039756491116582, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5917039756491116582, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6782791797887867268, guid: 066a1819dc60d0e499e1f8eb300c3365,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

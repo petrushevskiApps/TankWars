@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8218944908877533182}
   - component: {fileID: 8930893642485788929}
   - component: {fileID: 8996410456684435508}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 5256703840412803416}
   - component: {fileID: 9093704029437478492}
   - component: {fileID: 172778004651890347}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: AgentName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -251,7 +251,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1042041383693610573}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 3959443370719565611}
   - component: {fileID: 447717046736724897}
   - component: {fileID: 6750029856670258343}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: AgentCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +304,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2976302307310695927}
-  m_LocalRotation: {x: 0.48950073, y: 0.51028335, z: -0.51028335, w: 0.48950073}
+  m_LocalRotation: {x: 0.48949936, y: 0.51028466, z: -0.5102846, w: 0.4894993}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -313,7 +313,7 @@ RectTransform:
   - {fileID: 4028395679853574920}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90.00001, y: 0, z: -92.382}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0.099975586}
@@ -383,7 +383,7 @@ GameObject:
   - component: {fileID: 7571507075177480497}
   - component: {fileID: 926176011129672101}
   - component: {fileID: 6995491944367862605}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,7 +456,7 @@ GameObject:
   - component: {fileID: 8905971059094459856}
   - component: {fileID: 6126247209299148597}
   - component: {fileID: 633983527716962431}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -530,7 +530,7 @@ GameObject:
   - component: {fileID: 3201710368716396007}
   - component: {fileID: 4289552833041946412}
   - component: {fileID: 2097098608972265840}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: HealthSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -648,7 +648,7 @@ GameObject:
   - component: {fileID: 1437788400382292048}
   - component: {fileID: 8981650709051983322}
   - component: {fileID: 5155319356272384441}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -719,7 +719,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1729068120128836984}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -758,7 +758,7 @@ GameObject:
   - component: {fileID: 8331042099976878383}
   - component: {fileID: 3633806725716299829}
   - component: {fileID: 2039494171976359496}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: AmmoSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
