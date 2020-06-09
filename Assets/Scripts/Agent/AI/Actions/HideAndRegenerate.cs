@@ -8,11 +8,11 @@ using UnityEngine.AI;
 public class HideAndRegenerate : GoapAction 
 {
 	protected AIAgent agent;
-	protected MemoryController agentMemory;
-	protected NavigationController agentNavigation;
 	protected DetectedHolder detectedMemory;
 
 	protected Coroutine UpdateCoroutine;
+
+	private const float REGENERATE_INTERVAL = 1f;
 
 	public HideAndRegenerate() 
 	{
@@ -27,17 +27,15 @@ public class HideAndRegenerate : GoapAction
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
-		agentMemory = agent.Memory;
-		agentNavigation = agent.Navigation;
 
-		detectedMemory = agentMemory.HidingSpots;
+		detectedMemory = agent.Memory.HidingSpots;
 	}
 	public override void SetActionTarget()
 	{
 		if (detectedMemory.IsAnyValidDetected())
 		{
 			target = detectedMemory.GetSortedDetected();
-			agentNavigation.SetTarget(target);
+			agent.Navigation.SetTarget(target);
 		}
 		else
 		{
@@ -50,19 +48,11 @@ public class HideAndRegenerate : GoapAction
 		SetActionTarget();
 	}
 
-	protected bool IsTargetValid()
-	{
-		return target != null && target.activeSelf;
-	}
-
 	public override bool CheckProceduralPreconditions()
 	{
-		return !agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable();
+		return !agent.Memory.IsHealthAvailable() || !agent.Memory.IsAmmoAvailable();
 	}
-	public bool CheckActionConditions()
-	{
-		return IsTargetValid();
-	}
+
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
 		actionCompleted = Success;
@@ -75,8 +65,6 @@ public class HideAndRegenerate : GoapAction
 	}
 	public override void ExecuteAction(GameObject agent)
 	{
-		Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
-
 		if (!detectedMemory.IsDetectedValid(target))
 		{
 			ExitAction(actionFailed);
@@ -93,12 +81,12 @@ public class HideAndRegenerate : GoapAction
 		while(agent.Inventory.Health.Status != InventoryStatus.Full)
 		{
 			agent.Inventory.Health.Increase(10);
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(REGENERATE_INTERVAL);
 		}
 		while(agent.Inventory.Ammo.Status != InventoryStatus.Full)
 		{
 			agent.Inventory.Ammo.Increase(2);
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(REGENERATE_INTERVAL);
 		}
 		
 		ExitAction(actionCompleted);
@@ -115,31 +103,34 @@ public class HideAndRegenerate : GoapAction
 			UpdateCoroutine = null;
 		}
 		target = null;
-		agentNavigation.InvalidateTarget();
+		agent.Navigation.InvalidateTarget();
 
 		ExitAction?.Invoke();
 	}
+
 	protected void AddListeners()
 	{
-		agent.Sensors.OnEnemyDetected.AddListener(OnOtherDetected);
-		agent.Sensors.OnFriendlyDetected.AddListener(OnOtherDetected);
+		agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
+		agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
 		agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
 
-		agent.Sensors.OnHealthPackDetected.AddListener(HealthDetected);
-		agent.Sensors.OnAmmoPackDetected.AddListener(AmmoDetected);
-		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
+		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
 	}
 	protected void RemoveListeners()
 	{
-		agent.Sensors.OnEnemyDetected.RemoveListener(OnOtherDetected);
-		agent.Sensors.OnFriendlyDetected.RemoveListener(OnOtherDetected);
+		agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
+		agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
 		agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
 
-		agent.Sensors.OnHealthPackDetected.RemoveListener(HealthDetected);
-		agent.Sensors.OnAmmoPackDetected.RemoveListener(AmmoDetected);
-		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 	}
 
+	// When attacked abort current action and
+	// re-plan accordingly
 	private void OnUnderAttack(GameObject arg0)
 	{
 		if(target != null)
@@ -149,15 +140,19 @@ public class HideAndRegenerate : GoapAction
 		ExitAction(actionFailed);
 	}
 
-	private void OnOtherDetected(GameObject other)
+	// On agent detected, check if the agent is
+	// executing same action. If it does, check
+	// is it closer to target and abort and re-plan
+	// otherwise continue
+	private void OnAgentDetected(GameObject agent)
 	{
-		if (target != null && other != null)
+		if (target != null && agent != null)
 		{
-			GoapAgent gaOther = other.GetComponent<GoapAgent>();
+			GoapAgent gaOther = agent.GetComponent<GoapAgent>();
 
 			if (gaOther != null && gaOther.GetCurrentAction().Equals(actionName))
 			{
-				CompareDistanceToPacket(other);
+				CompareDistanceToPacket(agent);
 			}
 		}
 	}
@@ -168,7 +163,7 @@ public class HideAndRegenerate : GoapAction
 
 		if (distanceToPacket > otherDistanceToPacket)
 		{
-			if (distanceToPacket < 21)
+			if (distanceToPacket < 20)
 			{
 				detectedMemory.InvalidateDetected(target);
 				ExitAction(actionFailed);
@@ -188,52 +183,36 @@ public class HideAndRegenerate : GoapAction
 		}
 	}
 
-	
 
-	private void HidingSpotDetected(GameObject detected)
+	// On new hiding spot detected
+	// resetting target will re-sort detected
+	// spots and update target to the closest one
+	private void HidingSpotDetected()
 	{
-		if (!detected.Equals(target))
+		SetActionTarget();
+	}
+
+	// On new ammo pickable detected
+	// if health is available abort action
+	// and re-plan accordingly
+	private void AmmoDetected()
+	{
+		if (agent.Memory.IsHealthAvailable() && target != null)
 		{
-			if(target != null && detected != null)
-			{
-				if (Utilities.CompareDistances(transform.position, target.transform.position, detected.transform.position) == 1)
-				{
-					SetActionTarget();
-				}
-			}
-			
+			detectedMemory.InvalidateDetected(target);
+			ExitAction(actionFailed);
 		}
 	}
 
-	private void AmmoDetected(GameObject detected)
+	// On new health pickable detected
+	// if ammo is available abort action
+	// and re-plan accordingly
+	private void HealthDetected()
 	{
-		if (agentMemory.IsHealthAvailable())
+		if (agent.Memory.IsAmmoAvailable() && target != null)
 		{
-			if (target != null && detected != null)
-			{
-				if (Utilities.CompareDistances(transform.position, target.transform.position, detected.transform.position) == 1)
-				{
-					detectedMemory.InvalidateDetected(target);
-					ExitAction(actionFailed);
-				}
-			}
-				
-		}
-	}
-
-	private void HealthDetected(GameObject detected)
-	{
-		if(agentMemory.IsAmmoAvailable())
-		{
-			if(target != null && detected != null)
-			{
-				if (Utilities.CompareDistances(transform.position, target.transform.position, detected.transform.position) == 1)
-				{
-					detectedMemory.InvalidateDetected(target);
-					ExitAction(actionFailed);
-				}
-			}
-			
+			detectedMemory.InvalidateDetected(target);
+			ExitAction(actionFailed);
 		}
 	}
 

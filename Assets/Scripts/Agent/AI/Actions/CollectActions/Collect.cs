@@ -98,6 +98,8 @@ public abstract class Collect : GoapAction
         agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
     }
 
+    // When attacked abort current action and
+    // re-plan accordingly
     private void OnUnderAttack(GameObject arg0)
     {
         if (target != null)
@@ -107,6 +109,10 @@ public abstract class Collect : GoapAction
         ExitAction(actionFailed);
     }
 
+    // On agent detected, check if the agent is
+    // executing same action. If it does, check
+    // is it closer to target and abort and re-plan
+    // otherwise continue
     private void OnAgentDetected(GameObject agent)
     {
         if (target != null && agent != null)
@@ -148,9 +154,9 @@ public abstract class Collect : GoapAction
         }
     }
 
-    // When new health pack is detected
-    // resetting target will resort detected
-    // health packs and update target accordingly
+    // When new pickable is detected
+    // resetting target will re-sort detected
+    // pickables and update target to the closest one
     protected void OnNewDetected()
     {
         SetActionTarget();
