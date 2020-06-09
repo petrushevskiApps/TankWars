@@ -33,11 +33,6 @@ public abstract class Collect : GoapAction
         SetActionTarget();
     }
 
-    protected bool IsTargetValid()
-    {
-        return target != null && target.activeSelf;
-    }
-
     public override void EnterAction(Action Success, Action Fail, Action Reset)
     {
         actionCompleted = Success;
@@ -51,8 +46,6 @@ public abstract class Collect : GoapAction
 
     public override void ExecuteAction(GameObject agent)
     {
-        Debug.Log($"<color=green> {gameObject.name} Perform Action: {actionName}</color>");
-
         CollectController collector = agent.GetComponent<Agent>().Collector;
 
         if (collector!= null && collector.IsPickableReady)
@@ -89,15 +82,19 @@ public abstract class Collect : GoapAction
 
     protected virtual void AddListeners()
     {
-        agent.Sensors.OnEnemyDetected.AddListener(OnOtherDetected);
-        agent.Sensors.OnFriendlyDetected.AddListener(OnOtherDetected);
+        agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+
+        agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
+        agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
         agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
     }
 
     protected virtual void RemoveListeners()
     {
-        agent.Sensors.OnEnemyDetected.RemoveListener(OnOtherDetected);
-        agent.Sensors.OnFriendlyDetected.RemoveListener(OnOtherDetected);
+        agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
+
+        agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
+        agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
         agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
     }
 
@@ -110,28 +107,28 @@ public abstract class Collect : GoapAction
         ExitAction(actionFailed);
     }
 
-    private void OnOtherDetected(GameObject other)
+    private void OnAgentDetected(GameObject agent)
     {
-        if (target != null && other != null)
+        if (target != null && agent != null)
         {
-            GoapAgent gaOther = other.GetComponent<GoapAgent>();
+            GoapAgent gaOther = agent.GetComponent<GoapAgent>();
 
             if (gaOther != null && gaOther.GetCurrentAction().Equals(actionName))
             {
-                CompareDistanceToPacket(other);
+                CompareDistanceToPacket(agent);
             }
         }
     }
 
 
-    private void CompareDistanceToPacket(GameObject otherPlayer)
+    private void CompareDistanceToPacket(GameObject otherAgent)
     {
-        float otherDistanceToPacket = GetDistanceToCollectible(otherPlayer);
+        float otherDistanceToPacket = GetDistanceToCollectible(otherAgent);
         float distanceToPacket = GetDistanceToCollectible(gameObject);
 
         if (distanceToPacket > otherDistanceToPacket)
         {
-            if (distanceToPacket < 21)
+            if (distanceToPacket < 20)
             {
                 detectedMemory.InvalidateDetected(target);
                 ExitAction(actionFailed);
@@ -139,11 +136,11 @@ public abstract class Collect : GoapAction
         }
     }
 
-    public float GetDistanceToCollectible(GameObject player)
+    public float GetDistanceToCollectible(GameObject agent)
     {
-        if(player != null && target != null)
+        if(agent != null && target != null)
         {
-            return Vector3.Distance(player.transform.position, target.transform.position);
+            return Vector3.Distance(agent.transform.position, target.transform.position);
         }
         else
         {
@@ -151,5 +148,23 @@ public abstract class Collect : GoapAction
         }
     }
 
+    // When new health pack is detected
+    // resetting target will resort detected
+    // health packs and update target accordingly
+    protected void OnNewDetected()
+    {
+        SetActionTarget();
+    }
 
+    // When hidding spot is detected and
+    // both health and ammo are low, abort
+    // action and re-plan.
+    private void HidingSpotDetected()
+    {
+        if (!agent.Memory.IsHealthAvailable() && !agent.Memory.IsAmmoAvailable())
+        {
+            detectedMemory.InvalidateDetected(target);
+            ExitAction(actionFailed);
+        }
+    }
 }

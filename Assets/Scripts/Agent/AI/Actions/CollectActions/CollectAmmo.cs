@@ -7,8 +7,6 @@ using UnityEngine.AI;
 
 public class CollectAmmo : Collect 
 {
-	
-
 	public CollectAmmo() 
 	{
 		actionName = "CollectAmmo";
@@ -20,6 +18,7 @@ public class CollectAmmo : Collect
 		AddEffect(StateKeys.AMMO_AVAILABLE, true);
 
 	}
+
 	private new void Start()
 	{
 		base.Start();
@@ -35,42 +34,12 @@ public class CollectAmmo : Collect
 	protected override void AddListeners()
 	{
 		base.AddListeners();
-		agent.Sensors.OnAmmoPackDetected.AddListener(AmmoDetected);
-		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(OnNewDetected);
 	}
 	protected override void RemoveListeners()
 	{
 		base.RemoveListeners();
-		agent.Sensors.OnAmmoPackDetected.RemoveListener(AmmoDetected);
-		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(OnNewDetected);
 	}
 
-	private void AmmoDetected(GameObject ammoPack)
-	{
-		if(!ammoPack.Equals(target))
-		{
-			if (ammoPack != null && target != null)
-			{
-				if (Utilities.CompareDistances(transform.position, target.transform.position, ammoPack.transform.position) == 1)
-				{
-					SetActionTarget();
-				}
-			}
-			
-		}
-		
-	}
-	private void HidingSpotDetected(GameObject hidingSpot)
-	{
-		if(hidingSpot != null && target != null)
-		{
-			if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
-			{
-				detectedMemory.InvalidateDetected(target);
-				ExitAction(actionFailed);
-			}
-		}
-	}
-
-	
 }

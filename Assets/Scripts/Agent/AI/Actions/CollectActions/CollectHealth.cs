@@ -24,6 +24,7 @@ public class CollectHealth : Collect
 		base.Start();
 		detectedMemory = agent.Memory.HealthPacks;
 	}
+
 	protected override IEnumerator CollectPickable()
 	{
 		yield return new WaitUntil(() => agent.Memory.IsHealthAvailable());
@@ -33,36 +34,17 @@ public class CollectHealth : Collect
 	protected override void AddListeners()
 	{
 		base.AddListeners();
-		agent.Sensors.OnHealthPackDetected.AddListener(HealthDetected);
-		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Memory.HealthPacks.OnDetected.AddListener(OnNewDetected);
+		
 	}
 	protected override void RemoveListeners()
 	{
 		base.RemoveListeners();
-		agent.Sensors.OnHealthPackDetected.RemoveListener(HealthDetected);
-		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(OnNewDetected);
+		
 	}
 
-	private void HealthDetected(GameObject healthPack)
-	{
-		if (!healthPack.Equals(target))
-		{
-			if (Utilities.CompareDistances(transform.position, target.transform.position, healthPack.transform.position) == 1)
-			{
-				SetActionTarget();
-			}
-		}
+	
 
-	}
-	private void HidingSpotDetected(GameObject hidingSpot)
-	{
-		if(target != null && hidingSpot != null)
-		{
-			if (Utilities.CompareDistances(transform.position, target.transform.position, hidingSpot.transform.position) == 1)
-			{
-				detectedMemory.InvalidateDetected(target);
-				ExitAction(actionFailed);
-			}
-		}
-	}
+	
 }
