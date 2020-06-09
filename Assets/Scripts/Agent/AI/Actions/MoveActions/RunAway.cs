@@ -7,9 +7,6 @@ using UnityEngine.Events;
 
 public class RunAway : MoveAction 
 {
-	public UnityEvent OnRunAwayEntered = new UnityEvent();
-	public UnityEvent OnRunAwayExecuted = new UnityEvent();
-
 	public RunAway() 
 	{
 		actionName = "RunAway";
@@ -21,17 +18,17 @@ public class RunAway : MoveAction
 	}
 	public override bool CheckProceduralPreconditions()
 	{
-		return !agentMemory.IsAmmoAvailable() || !agentMemory.IsHealthAvailable();
+		return !agent.Memory.IsAmmoAvailable() || !agent.Memory.IsHealthAvailable();
 	}
 
 	public override void SetActionTarget()
 	{
-		Vector3 missileDirection = agentMemory.MissileDirection;
+		Vector3 missileDirection = agent.Memory.MissileDirection;
 		
 		if(missileDirection != Vector3.zero)
 		{
-			agentNavigation.SetTarget(missileDirection, true);
-			target = agentNavigation.Target;
+			agent.Navigation.SetTarget(missileDirection, true);
+			target = agent.Navigation.Target;
 		}
 		else
 		{
@@ -46,7 +43,6 @@ public class RunAway : MoveAction
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
 		base.EnterAction(Success, Fail, Reset);
-		OnRunAwayEntered.Invoke();
 	}
 	/*
 	 * If the agent arrives at the target location and isn't
@@ -56,33 +52,32 @@ public class RunAway : MoveAction
 	 */
 	public override void ExecuteAction(GameObject agent)
 	{
-		if(agentMemory.IsUnderAttack)
+		if(this.agent.Memory.IsUnderAttack)
 		{
 			RestartAction();
 		}
 		else
 		{
-			OnRunAwayExecuted.Invoke();
 			ExitAction(actionCompleted);
 		}
 	}
 
 	protected override void AddListeners()
 	{
-		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
 
 	}
 	protected override void RemoveListeners()
 	{
-		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 	}
 
 	
-	private void HidingSpotDetected(GameObject hiddingSpot)
+	private void HidingSpotDetected()
 	{
-		if (agentMemory.HidingSpots.IsAnyValidDetected() && !agentMemory.IsUnderAttack)
+		if (agent.Memory.HidingSpots.IsAnyValidDetected() && !agent.Memory.IsUnderAttack)
 		{
-			if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
+			if (CheckProceduralPreconditions())
 			{
 				ExitAction(actionCompleted);
 			}

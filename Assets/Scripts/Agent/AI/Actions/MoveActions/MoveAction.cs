@@ -1,27 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public abstract class MoveAction : GoapAction
 {
 	protected AIAgent agent;
-	protected MemoryController agentMemory;
-	protected NavigationController agentNavigation;
 	protected bool isActionExited = false;
 
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
-		agentMemory = agent.Memory;
-		agentNavigation = agent.Navigation;
-	}
-
-	public override void ResetAction()
-	{
-		base.ResetAction();
 	}
 	
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
@@ -43,7 +30,7 @@ public abstract class MoveAction : GoapAction
 	public void RestartAction()
 	{
 		ResetAction();
-		agentNavigation.InvalidateTarget();
+		agent.Navigation.InvalidateTarget();
 		actionReset.Invoke();
 	}
 
@@ -57,7 +44,7 @@ public abstract class MoveAction : GoapAction
 
 			ExitAction?.Invoke();
 			target = null;
-			agentNavigation.InvalidateTarget();
+			agent.Navigation.InvalidateTarget();
 			
 		}
 		

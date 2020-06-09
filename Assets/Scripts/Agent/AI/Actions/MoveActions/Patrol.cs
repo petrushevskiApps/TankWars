@@ -21,8 +21,8 @@ public class Patrol : MoveAction
 	
 	public override void SetActionTarget()
 	{
-		agentNavigation.SetTarget();
-		target = agentNavigation.Target;
+		agent.Navigation.SetTarget();
+		target = agent.Navigation.Target;
 	}
 
 	public override void InvalidTargetLocation()
@@ -59,17 +59,15 @@ public class Patrol : MoveAction
 		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
 		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
 		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
-		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);
 	}
 
 	private void EnemyDetected()
 	{
-		if (agentMemory.IsAmmoAvailable() && agentMemory.IsHealthAvailable())
-		{
-			ExitAction(actionCompleted);
-		}
+		ExitAction(actionCompleted);
 	}
+
 	private void UnderAttack(GameObject arg0)
 	{
 		ExitAction(actionFailed);
@@ -77,14 +75,14 @@ public class Patrol : MoveAction
 
 	private void HealthDetected()
 	{
-		if (!agentMemory.IsHealthAvailable())
+		if (!agent.Memory.IsHealthAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
 	}
 	private void AmmoDetected()
 	{
-		if (!agentMemory.IsAmmoAvailable())
+		if (!agent.Memory.IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
@@ -92,7 +90,7 @@ public class Patrol : MoveAction
 	
 	private void HidingSpotDetected()
 	{
-		if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
+		if (!agent.Memory.IsHealthAvailable() || !agent.Memory.IsAmmoAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
