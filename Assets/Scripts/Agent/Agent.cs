@@ -26,6 +26,7 @@ public class Agent : MonoBehaviour, IDestroyable
 	
 
 	private bool isDead;
+	protected int agentId;
 
 	protected void Awake()
 	{
@@ -34,11 +35,12 @@ public class Agent : MonoBehaviour, IDestroyable
 	}
 
 
-	public virtual void Initialize(Team team, string name, Material teamColor)
+	public virtual void Initialize(Team team, string name, Material teamColor, int agentId)
 	{
 		Team = team;
 		AgentName = name;
 		gameObject.name = name;
+		this.agentId = agentId;
 		visualSystem.Setup(this, teamColor);
 	}
 

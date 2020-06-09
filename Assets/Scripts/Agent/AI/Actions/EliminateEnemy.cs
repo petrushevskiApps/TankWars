@@ -71,6 +71,8 @@ public class EliminateEnemy : GoapAction
 	protected override void ExitAction(Action ExitAction)
 	{
 		RemoveListeners();
+		agent.Navigation.StopLookAt();
+		agent.Navigation.StopFollow();
 
 		if (FireCoroutine != null)
 		{

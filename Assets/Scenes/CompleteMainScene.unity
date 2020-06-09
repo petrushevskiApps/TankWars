@@ -108,14 +108,14 @@ NavMeshSettings:
     serializedVersion: 2
     agentTypeID: 0
     agentRadius: 1
-    agentHeight: 2
+    agentHeight: 1
     agentSlope: 5
-    agentClimb: 0.35
+    agentClimb: 0.2
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
     minRegionArea: 2
-    manualCellSize: 0
-    cellSize: 0.33333334
+    manualCellSize: 1
+    cellSize: 0.3
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
@@ -6484,6 +6484,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6501632, guid: 312c52d27be2d2d42acea3ccebc4694b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 312c52d27be2d2d42acea3ccebc4694b, type: 3}
 --- !u!1 &1161617914
@@ -12402,10 +12406,50 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422743868875245136, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270455750044340210, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
       propertyPath: m_Name
       value: AIAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 2358564809531985286, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2406014621032319886, guid: a7cc23296c3d02640a7832e908a9704e,
         type: 3}
@@ -12461,6 +12505,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9113532261159071836, guid: a7cc23296c3d02640a7832e908a9704e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7cc23296c3d02640a7832e908a9704e, type: 3}

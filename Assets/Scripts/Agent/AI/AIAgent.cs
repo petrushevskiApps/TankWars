@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class AIAgent : Agent, IGoap
 {
+
 	[Header("AI Controllers")]
 	[SerializeField] private NavigationController navigation;
 	[SerializeField] private MemoryController memory;
@@ -17,11 +18,11 @@ public class AIAgent : Agent, IGoap
 	public MemoryController Memory { get => memory; }
 	public SensorController Sensors { get => sensors; }
 
-	public override void Initialize(Team team, string name, Material teamColor)
+	public override void Initialize(Team team, string name, Material teamColor, int agentId)
 	{
-		base.Initialize(team, name, teamColor);
+		base.Initialize(team, name, teamColor, agentId);
 
-		Navigation.Initialize(gameObject);
+		Navigation.Initialize(gameObject, agentId);
 
 		Memory.Initialize(this);
 

@@ -4816,7 +4816,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2406014621032319886
 Transform:
   m_ObjectHideFlags: 0
@@ -4849,7 +4849,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 5
   avoidancePriority: 50
-  m_AngularSpeed: 130
+  m_AngularSpeed: 100
   m_StoppingDistance: 10
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -4868,7 +4868,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 20
   m_Drag: 5
-  m_AngularDrag: 5
+  m_AngularDrag: 50
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -9857,7 +9857,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 15
+  m_Radius: 7
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1566971472304968694
 MonoBehaviour:
@@ -10364,7 +10364,7 @@ MonoBehaviour:
   OnAgentIdling:
     m_PersistentCalls:
       m_Calls: []
-  lookAtSpeed: 0.5
+  lookAtSpeed: 5
   lookAtAngle: 5
   followDifference: 0.5
 --- !u!1 &4497559223133323817
@@ -11053,12 +11053,12 @@ PrefabInstance:
     - target: {fileID: 1437788400382292048, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1437788400382292048, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2976302307310695927, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}
@@ -11173,12 +11173,12 @@ PrefabInstance:
     - target: {fileID: 8218944908877533182, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8218944908877533182, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 23e1051edc4e9994e93f112254d5e548, type: 3}

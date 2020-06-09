@@ -34,34 +34,40 @@ public class NavigationController : MonoBehaviour
 	private Coroutine LookAtCoroutine;
 	private Coroutine FollowCoroutine;
 
-	public void Initialize(GameObject agent)
+	public void Initialize(GameObject agent, int agentID)
 	{
 		this.agent = agent;
 		navMeshAgent = agent.GetComponent<NavMeshAgent>();
-
+		navMeshAgent.avoidancePriority += agentID;
 		InstantiateLocationPointer();
 	}
 
 	public void LookAtTarget()
 	{
-		if(LookAtCoroutine != null)
+		StopLookAt();
+		LookAtCoroutine = StartCoroutine(LookAt());
+	}
+	public void StopLookAt()
+	{
+		if (LookAtCoroutine != null)
 		{
 			StopCoroutine(LookAtCoroutine);
 			LookAtCoroutine = null;
 		}
-		LookAtCoroutine = StartCoroutine(LookAt());
 	}
-
 	public void FollowTarget(float maxRange)
+	{
+		StopFollow();
+		FollowCoroutine = StartCoroutine(Follow(maxRange));
+	}
+	public void StopFollow()
 	{
 		if (FollowCoroutine != null)
 		{
 			StopCoroutine(FollowCoroutine);
 			FollowCoroutine = null;
 		}
-		FollowCoroutine = StartCoroutine(Follow(maxRange));
 	}
-
 	public bool IsLookingAtTarget()
 	{
 		if (Target != null)
@@ -158,7 +164,7 @@ public class NavigationController : MonoBehaviour
 		path = new NavMeshPath();
 		navMeshAgent.CalculatePath(destination, path);
 		navMeshAgent.stoppingDistance = stoppingDistance;
-		navMeshAgent.updateRotation = true;
+		//navMeshAgent.updateRotation = true;
 	}
 
 	public void InvalidateTarget()
@@ -205,7 +211,7 @@ public class NavigationController : MonoBehaviour
 
 	public void SetTarget(Vector3 location, bool isRunAway)
 	{
-		if(!IsTargetValid() && !IsPathValid())
+		if(!IsTargetValid() || !IsPathValid())
 		{
 			if(isRunAway)
 			{

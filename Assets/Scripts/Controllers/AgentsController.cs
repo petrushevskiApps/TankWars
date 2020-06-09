@@ -62,9 +62,13 @@ public class AgentsController : MonoBehaviour
         PlayerTeamId = -1;
     }
 
+    int agentId = 0;
+
     private void SpawnAgents(List<TeamData> teamsConfig) 
     {
-        foreach(TeamData teamData in teamsConfig)
+        agentId = 0;
+        
+        foreach (TeamData teamData in teamsConfig)
         {
             List<Agent> teamMembers = new List<Agent>();
 
@@ -127,9 +131,9 @@ public class AgentsController : MonoBehaviour
 
     private void InitializeTeam(Team team)
     {
-        foreach (Agent agent in team.Members)
+        foreach(Agent agent in team.Members)
         {
-            agent.Initialize(team, GetRandomName(agentNames), teamColors.GetTeamColor(team.ID));
+            agent.Initialize(team, GetRandomName(agentNames), teamColors.GetTeamColor(team.ID), 0);
         }
 
         team.OnTeamEmpty.AddListener(OnTeamEmpty);
