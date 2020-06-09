@@ -8,6 +8,9 @@ using System.Text;
 
 public sealed class GoapAgent : MonoBehaviour 
 {
+	public AgentState State { get; private set; }
+	public string CurrentPlanTextual { get; private set; } = "No Plan";
+
 	private HashSet<GoapAction> availableActions;
 	private Queue<GoapAction> currentActions;
 
@@ -20,13 +23,12 @@ public sealed class GoapAgent : MonoBehaviour
 	private Animator FSM;
 
 	private GoapAction currentAction;
-	
-	int goalIndex = 0;
+
+	private int goalIndex = 0;
 
 	private StringBuilder breadCrumbs = new StringBuilder();
 
-	public AgentState State { get; private set; }
-	public String currentPlan = "No Plan";
+	
 
 	void Start () 
 	{
@@ -50,7 +52,6 @@ public sealed class GoapAgent : MonoBehaviour
 		availableActions.Remove(action);
 	}
 
-
 	private bool HasActionPlan()
 	{
 		return currentActions.Count > 0;
@@ -65,20 +66,17 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			availableActions.Add(a);
 		}
-		Debug.Log("Found actions: " + actions.Length);
 	}
 
-	
-
+	// GOAP Planning State
 	public void IdleState()
 	{
 		breadCrumbs.Clear();
 		breadCrumbs.Append("IdleState: Enter:: Agent:: " + gameObject.name + "\n");
-		currentPlan = "No Plan";
+		CurrentPlanTextual = "No Plan";
 
 		State = AgentState.Planning;
-		// GOAP Planning State
-
+		
 		// get the world state and the goal we want to plan for
 		Dictionary<string, bool> worldState = agentImplementation.GetWorldState();
 		Dictionary<string, bool> goal = agentImplementation.GetGoalState(goalIndex);
@@ -90,9 +88,9 @@ public sealed class GoapAgent : MonoBehaviour
 
 		if (plan.Count > 0)
 		{
-			breadCrumbs.Append("IdleState: Action Plan Found :" + Utilities.GetCollectionString(plan.ToList<GoapAction>()) + "\n");;
-			currentPlan = Utilities.GetCollectionString(plan.ToList());
-			// we have a plan, hooray!
+			breadCrumbs.Append("IdleState: Action Plan Found :" + Utilities.GetCollectionString(plan.ToList()) + "\n");;
+			CurrentPlanTextual = Utilities.GetCollectionString(plan.ToList());
+			
 			currentActions = plan;
 			agentImplementation.PlanFound(goal, plan);
 			goalIndex = 0;
@@ -102,7 +100,6 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 		else
 		{
-			// ugh, we couldn't get a plan
 			Debug.Log("Failed Plan: " + goal);
 			breadCrumbs.Append("IdleState: Failed Plan | Goal Index:: " + goalIndex +"\n");
 			agentImplementation.PlanFailed(goal);
@@ -113,7 +110,7 @@ public sealed class GoapAgent : MonoBehaviour
 			}
 			else
 			{
-				goalIndex = 0;
+				goalIndex = 0; 
 			}
 
 			// Plan Not Available - Loop State
@@ -132,7 +129,6 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			breadCrumbs.Append("MoveTo State: Error:\n");
 			
-
 			return;
 		}
 
@@ -174,30 +170,23 @@ public sealed class GoapAgent : MonoBehaviour
 		breadCrumbs.Append("MoveTo State: Exit\n");
 	}
 
-
 	public void PerformActionState()
 	{
-		breadCrumbs.Append("Perform State: Enter\n");
-
 		State = AgentState.ExecutingAction;
 
 		if (HasActionPlan())
 		{
-			breadCrumbs.Append("Perform State: Has Action Plan Count: " + currentActions.Count + "\n");
 			// perform the next action
 			currentAction = currentActions.Peek();
-			breadCrumbs.Append("Perform State: Enter Action\n");
 			currentAction.EnterAction(OnActionSuccess, OnActionFail, OnActionReset);
 			
 			if (currentAction.IsInRange)
 			{
-				breadCrumbs.Append("Perform State: Action In Range, Execute\n");
 				// we are in range, so perform the action
 				currentAction.ExecuteAction(gameObject);
 			}
 			else
 			{
-				breadCrumbs.Append("Perform State: Action NOT In Range, Go to MoveTo State!!\n");
 				// we need to move there first
 				// push moveTo state
 				ChangeState(FSMKeys.MOVETO_STATE);
@@ -206,7 +195,6 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 		else
 		{
-			breadCrumbs.Append("Perform State: No Actions Left, Go to IDLE State!!\n");
 			// no actions left, move to Plan state
 			ChangeState(FSMKeys.IDLE_STATE);
 			agentImplementation.ActionsFinished();
@@ -214,9 +202,7 @@ public sealed class GoapAgent : MonoBehaviour
 	}
 
 	private void OnActionSuccess()
-	{
-		breadCrumbs.Append("OnActionSuccess: Action::" + currentAction.actionName + "\n");
-		
+	{		
 		if (currentAction.IsActionDone)
 		{
 			// the action is done. Remove it so we can perform the next one
@@ -224,19 +210,16 @@ public sealed class GoapAgent : MonoBehaviour
 			
 			if (currentActions.Count <= 0)
 			{
-				breadCrumbs.Append("OnActionSuccess: Actions Count::" + currentActions.Count + " Go to IDLE State!!\n");
 				ChangeState(FSMKeys.IDLE_STATE);
 				return;
 			}
-			breadCrumbs.Append("OnActionSuccess: Actions Count::" + currentActions.Count + "\n");
+			
 		}
-		breadCrumbs.Append("OnActionSuccess: Go to Perform State!!\n");
 		ChangeState(FSMKeys.PERFORM_STATE);
 	}
 
 	private void OnActionFail() 
 	{
-		breadCrumbs.Append("OnActionFail: Go to IDLE State!!\n");
 		// action failed, we need to plan again
 		ChangeState(FSMKeys.IDLE_STATE);
 		agentImplementation.PlanAborted(currentAction);
@@ -262,8 +245,4 @@ public sealed class GoapAgent : MonoBehaviour
 		return "No Action Selected";
 	}
 
-	public string GetCurrentPlanString()
-	{
-		return currentPlan;
-	}
 }

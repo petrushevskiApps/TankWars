@@ -30,7 +30,7 @@ public class Patrol : MoveAction
 		SetActionTarget();
 	}
 
-	public override bool TestProceduralPreconditions()
+	public override bool CheckProceduralPreconditions()
 	{
 		return true;
 	}
@@ -39,6 +39,7 @@ public class Patrol : MoveAction
 	{
 		base.EnterAction(Success, Fail, Reset);
 	}
+
 	public override void ExecuteAction(GameObject agent)
 	{
 		RestartAction();
@@ -46,25 +47,25 @@ public class Patrol : MoveAction
 
 	protected override void AddListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.AddListener(EnemyDetected);
-		agent.GetPerceptor().OnAmmoPackDetected.AddListener(AmmoDetected);
-		agent.GetPerceptor().OnHealthPackDetected.AddListener(HealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
-		agent.GetPerceptor().OnUnderAttack.AddListener(UnderAttack);
+		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
+		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
+		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+		agent.Sensors.OnUnderAttack.AddListener(UnderAttack);
 	}
 	
 	protected override void RemoveListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.RemoveListener(EnemyDetected);
-		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(AmmoDetected);
-		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(HealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
-		agent.GetPerceptor().OnUnderAttack.RemoveListener(UnderAttack);
+		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
+		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);
 	}
 
-	private void EnemyDetected(GameObject enemy)
+	private void EnemyDetected()
 	{
-		if(agentMemory.IsAmmoAvailable())
+		if (agentMemory.IsAmmoAvailable() && agentMemory.IsHealthAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
@@ -74,14 +75,14 @@ public class Patrol : MoveAction
 		ExitAction(actionFailed);
 	}
 
-	private void HealthDetected(GameObject health)
+	private void HealthDetected()
 	{
 		if (!agentMemory.IsHealthAvailable())
 		{
 			ExitAction(actionCompleted);
 		}
 	}
-	private void AmmoDetected(GameObject ammo)
+	private void AmmoDetected()
 	{
 		if (!agentMemory.IsAmmoAvailable())
 		{
@@ -89,14 +90,11 @@ public class Patrol : MoveAction
 		}
 	}
 	
-	private void HidingSpotDetected(GameObject hiddingSpot)
+	private void HidingSpotDetected()
 	{
-		if(agentMemory.HidingSpots.IsAnyValidDetected())
+		if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
 		{
-			if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
-			{
-				ExitAction(actionCompleted);
-			}
+			ExitAction(actionCompleted);
 		}
 	}
 

@@ -78,19 +78,31 @@ public class DetectedHolder
         }
     }
 
+
+    public void InvalidateDetected(GameObject detectedObject, float time)
+    {
+        Detected detected = GetDetected(detectedObject);
+
+        if (detected != null)
+        {
+            detected.status = false;
+            agent.GetComponent<Agent>().StartCoroutine(RevalidationTimer(detected, time));
+        }
+    }
+
     public void RevalidateDetected(GameObject detectedObject)
     {
         Detected detected = GetDetected(detectedObject);
 
         if (detected != null)
         {
-            agent.GetComponent<Agent>().StartCoroutine(RevalidationTimer(detected));
+            agent.GetComponent<Agent>().StartCoroutine(RevalidationTimer(detected, 5f));
         }
     }
 
-    IEnumerator RevalidationTimer(Detected detectable)
+    IEnumerator RevalidationTimer(Detected detectable, float revalidationTime)
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(revalidationTime);
         detectable.status = true;
     }
 

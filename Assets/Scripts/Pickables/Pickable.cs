@@ -16,7 +16,7 @@ public class Pickable : MonoBehaviour, IDestroyable
     private ICollector collector;
     private Coroutine CollectingCo;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Tank"))
         {
@@ -46,6 +46,7 @@ public class Pickable : MonoBehaviour, IDestroyable
             CollectingCo = null;
         }
 
+        canvas.SetActive(false);
         collector = null;
         collectingProgress.fillAmount = 0;
     }
@@ -54,15 +55,20 @@ public class Pickable : MonoBehaviour, IDestroyable
     {
         float currentTime = 0f;
 
-        while(currentTime < timeToCollect)
+        while(currentTime < timeToCollect && collector != null)
         {
             currentTime += Time.deltaTime;
             collectingProgress.fillAmount = currentTime * ( 1 / timeToCollect );
             yield return new WaitForSeconds(0.001f);
         }
-        
-        Collect(collector);
+
+        if(collector != null)
+        {
+            Collect(collector);
+        }
+       
     }
+
     protected virtual void Collect(ICollector collector)
     {
         OnCollected.Invoke(gameObject);

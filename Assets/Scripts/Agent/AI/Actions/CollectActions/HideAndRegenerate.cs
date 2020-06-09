@@ -55,7 +55,7 @@ public class HideAndRegenerate : GoapAction
 		return target != null && target.activeSelf;
 	}
 
-	public override bool TestProceduralPreconditions()
+	public override bool CheckProceduralPreconditions()
 	{
 		return !agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable();
 	}
@@ -121,23 +121,23 @@ public class HideAndRegenerate : GoapAction
 	}
 	protected void AddListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.AddListener(OnOtherDetected);
-		agent.GetPerceptor().OnFriendlyDetected.AddListener(OnOtherDetected);
-		agent.GetPerceptor().OnUnderAttack.AddListener(OnUnderAttack);
+		agent.Sensors.OnEnemyDetected.AddListener(OnOtherDetected);
+		agent.Sensors.OnFriendlyDetected.AddListener(OnOtherDetected);
+		agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
 
-		agent.GetPerceptor().OnHealthPackDetected.AddListener(HealthDetected);
-		agent.GetPerceptor().OnAmmoPackDetected.AddListener(AmmoDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Sensors.OnHealthPackDetected.AddListener(HealthDetected);
+		agent.Sensors.OnAmmoPackDetected.AddListener(AmmoDetected);
+		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
 	}
 	protected void RemoveListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnOtherDetected);
-		agent.GetPerceptor().OnFriendlyDetected.RemoveListener(OnOtherDetected);
-		agent.GetPerceptor().OnUnderAttack.RemoveListener(OnUnderAttack);
+		agent.Sensors.OnEnemyDetected.RemoveListener(OnOtherDetected);
+		agent.Sensors.OnFriendlyDetected.RemoveListener(OnOtherDetected);
+		agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
 
-		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(HealthDetected);
-		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(AmmoDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Sensors.OnHealthPackDetected.RemoveListener(HealthDetected);
+		agent.Sensors.OnAmmoPackDetected.RemoveListener(AmmoDetected);
+		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
 	}
 
 	private void OnUnderAttack(GameObject arg0)

@@ -6,8 +6,6 @@ using UnityEngine;
 public abstract class Collect : GoapAction
 {
     protected AIAgent agent;
-    protected MemoryController agentMemory;
-    protected NavigationController agentNavigation;
     protected DetectedHolder detectedMemory;
 
     protected Coroutine UpdateCoroutine;
@@ -15,13 +13,6 @@ public abstract class Collect : GoapAction
     protected void Start()
     {
         agent = GetComponent<AIAgent>();
-        agentMemory = agent.Memory;
-        agentNavigation = agent.Navigation;
-    }
-
-    public override void ResetAction()
-    {
-        base.ResetAction();
     }
 
     public override void SetActionTarget()
@@ -29,7 +20,7 @@ public abstract class Collect : GoapAction
         if (detectedMemory.IsAnyValidDetected())
         {
             target = detectedMemory.GetSortedDetected();
-            agentNavigation.SetTarget(target);
+            agent.Navigation.SetTarget(target);
         }
         else
         {
@@ -45,16 +36,6 @@ public abstract class Collect : GoapAction
     protected bool IsTargetValid()
     {
         return target != null && target.activeSelf;
-    }
-
-    public override bool TestProceduralPreconditions()
-    {
-        return true;
-    }
-
-    public bool CheckActionConditions()
-    {
-        return IsTargetValid();
     }
 
     public override void EnterAction(Action Success, Action Fail, Action Reset)
@@ -101,23 +82,23 @@ public abstract class Collect : GoapAction
         }
 
         target = null;
-        agentNavigation.InvalidateTarget();
+        agent.Navigation.InvalidateTarget();
 
         ExitAction?.Invoke();
     }
 
     protected virtual void AddListeners()
     {
-        agent.GetPerceptor().OnEnemyDetected.AddListener(OnOtherDetected);
-        agent.GetPerceptor().OnFriendlyDetected.AddListener(OnOtherDetected);
-        agent.GetPerceptor().OnUnderAttack.AddListener(OnUnderAttack);
+        agent.Sensors.OnEnemyDetected.AddListener(OnOtherDetected);
+        agent.Sensors.OnFriendlyDetected.AddListener(OnOtherDetected);
+        agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
     }
 
     protected virtual void RemoveListeners()
     {
-        agent.GetPerceptor().OnEnemyDetected.RemoveListener(OnOtherDetected);
-        agent.GetPerceptor().OnFriendlyDetected.RemoveListener(OnOtherDetected);
-        agent.GetPerceptor().OnUnderAttack.RemoveListener(OnUnderAttack);
+        agent.Sensors.OnEnemyDetected.RemoveListener(OnOtherDetected);
+        agent.Sensors.OnFriendlyDetected.RemoveListener(OnOtherDetected);
+        agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
     }
 
     private void OnUnderAttack(GameObject arg0)

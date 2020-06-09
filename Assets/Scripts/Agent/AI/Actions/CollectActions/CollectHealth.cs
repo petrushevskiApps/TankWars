@@ -22,25 +22,25 @@ public class CollectHealth : Collect
 	private new void Start()
 	{
 		base.Start();
-		detectedMemory = agentMemory.HealthPacks;
+		detectedMemory = agent.Memory.HealthPacks;
 	}
 	protected override IEnumerator CollectPickable()
 	{
-		yield return new WaitUntil(() => agentMemory.IsHealthAvailable());
+		yield return new WaitUntil(() => agent.Memory.IsHealthAvailable());
 		ExitAction(actionCompleted);
 	}
 
 	protected override void AddListeners()
 	{
 		base.AddListeners();
-		agent.GetPerceptor().OnHealthPackDetected.AddListener(HealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Sensors.OnHealthPackDetected.AddListener(HealthDetected);
+		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
 	}
 	protected override void RemoveListeners()
 	{
 		base.RemoveListeners();
-		agent.GetPerceptor().OnHealthPackDetected.RemoveListener(HealthDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Sensors.OnHealthPackDetected.RemoveListener(HealthDetected);
+		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
 	}
 
 	private void HealthDetected(GameObject healthPack)

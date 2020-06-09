@@ -109,7 +109,6 @@ namespace GOAP
 			{
 				return "root";
 			}
-
 		}
 	}
 }

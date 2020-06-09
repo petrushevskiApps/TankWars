@@ -7,19 +7,7 @@ using UnityEngine.Events;
 
 public class EliminateEnemy : GoapAction
 {
-
-	public enum FireRangeStatus
-	{
-		InPosition,
-		Follow,
-		ToClose
-	}
 	private AIAgent agent;
-	private MemoryController agentMemory;
-	private NavigationController agentNavigation;
-
-	public UnityEvent OnEnemyKilled = new UnityEvent();
-	public UnityEvent OnEnemyAttacked = new UnityEvent();
 
 	private Coroutine FireCoroutine;
 
@@ -38,49 +26,30 @@ public class EliminateEnemy : GoapAction
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
-		agentMemory = agent.Memory;
-		agentNavigation = agent.Navigation;
-	}
-
-	public override void ResetAction()
-	{
-		base.ResetAction();
 	}
 
 	public override void SetActionTarget()
 	{
-		if (agentMemory.Enemies.IsAnyValidDetected())
+		if (agent.Memory.Enemies.IsAnyValidDetected())
 		{
-			target = agentMemory.Enemies.GetSortedDetected();
-			agentNavigation.SetTarget(target);
+			target = agent.Memory.Enemies.GetSortedDetected();
+			agent.Navigation.SetTarget(target);
 		}
 		else
 		{
 			ExitAction(actionCompleted);
 		}
 	}
-	public override void InvalidTargetLocation()
-	{
-		SetActionTarget();
-	}
 
-	public override bool TestProceduralPreconditions()
-	{
-		return true;
-	}
+	
 
-	private bool CheckActionConditions()
-	{
-		return agentMemory.IsAmmoAvailable()
-			&& agentMemory.IsHealthAvailable();
-	}
 	private FireRangeStatus CheckActionRange()
 	{
 		float fireRange = Vector3.Distance(transform.position, target.transform.position);
 
 		if (fireRange > maxRequiredRange) return FireRangeStatus.Follow;
 		else if (fireRange < minRequiredRange) return FireRangeStatus.ToClose;
-		else return FireRangeStatus.InPosition;
+		else return FireRangeStatus.InRange;
 	}
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
@@ -94,58 +63,57 @@ public class EliminateEnemy : GoapAction
 
 	public override void ExecuteAction(GameObject agent)
 	{
-		agentNavigation.LookAtTarget();
-		agentNavigation.FollowTarget(maxRequiredRange);
-
+		this.agent.Navigation.LookAtTarget();
+		this.agent.Navigation.FollowTarget(maxRequiredRange);
 		FireCoroutine = StartCoroutine(Fire());
 	}
 
 	protected override void ExitAction(Action ExitAction)
 	{
 		RemoveListeners();
-		CancelCoroutines();
+
+		if (FireCoroutine != null)
+		{
+			StopCoroutine(FireCoroutine);
+			FireCoroutine = null;
+		}
+
 		IsActionDone = true;
 
 		ExitAction?.Invoke();
 		target = null;
-		agentNavigation.InvalidateTarget();
-		
+		agent.Navigation.InvalidateTarget();
 	}
 
 	
 	IEnumerator Fire()
 	{
-		OnEnemyAttacked.Invoke();
 		while (true)
 		{ 
-			if (CheckActionConditions())
+			if (agent.Memory.IsAmmoAvailable() && agent.Memory.IsHealthAvailable())
 			{
-				
 				if (target != null)
 				{
 					if(CheckActionRange() == FireRangeStatus.ToClose)
 					{
-						agentMemory.Enemies.InvalidateDetected(target);
+						agent.Memory.Enemies.InvalidateDetected(target, 2f);
 						ExitAction(actionFailed);
 						break;
 					}
-					else
+
+					if (CheckActionRange() == FireRangeStatus.InRange)
 					{
-						if(CheckActionRange() == FireRangeStatus.InPosition)
+						if (agent.Navigation.IsLookingAtTarget())
 						{
-							if(agentNavigation.IsLookingAtTarget())
-							{
-								agent.Weapon.FireBullet();
-							}
+							agent.Weapon.FireBullet();
+							yield return new WaitForSeconds(0.5f);
 						}
 					}
-
-					yield return new WaitForSeconds(0.5f);
+					yield return new WaitForSeconds(0.01f);
 				}
 				else
 				{
-					OnEnemyKilled.Invoke();
-					agentMemory.Enemies.RemoveDetected(target);
+					agent.Memory.Enemies.RemoveDetected(target);
 					ExitAction(actionCompleted);
 					break;
 				}
@@ -162,41 +130,20 @@ public class EliminateEnemy : GoapAction
 
 	private void AddListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.AddListener(EnemyDetected);
-		agent.GetPerceptor().OnEnemyLost.AddListener(EnemyLost);
+		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
 	}
 	private void RemoveListeners()
 	{
-		agent.GetPerceptor().OnEnemyDetected.RemoveListener(EnemyDetected);
-		agent.GetPerceptor().OnEnemyLost.RemoveListener(EnemyLost);
+		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
 	}
 
-	private void EnemyLost(GameObject enemy)
+	private void EnemyDetected()
 	{
-		if(agentMemory.Enemies.IsAnyValidDetected())
-		{
-			SetActionTarget();
-		}
-		else
-		{
-			ExitAction(actionCompleted);
-		}
+		ExitAction(actionReset);
 	}
-
-	private void EnemyDetected(GameObject enemy)
+	public override void InvalidTargetLocation()
 	{
-		SetActionTarget();
+		ExitAction(actionReset);
 	}
-
-
-	private void CancelCoroutines()
-	{
-		if(FireCoroutine != null)
-		{
-			StopCoroutine(FireCoroutine);
-			FireCoroutine = null;
-		}
-	}
-
 
 }

@@ -82,7 +82,7 @@ public class AIDebuggerWindow : EditorWindow
                             GUILayout.Label("Agent Name: " + agent.name);
                         }
 
-                        GUILayout.Label("    Plan: " + agent.GetCurrentPlanString());
+                        GUILayout.Label("    Plan: " + agent.CurrentPlanTextual);
                         GUILayout.Label("    State: " + agent.State.ToString());
                         GUILayout.Label("    Action: " + agent.GetCurrentAction());
                         GUILayout.Label("    Health: " + tank.Inventory.Health.Amount.ToString());

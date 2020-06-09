@@ -7,8 +7,8 @@ using UnityEngine.Events;
 
 public class SensorController : MonoBehaviour
 {
-    [SerializeField] private VisionSensor visionSensor = new VisionSensor();
-    [SerializeField] private RadarSensor radarSensor = new RadarSensor();
+    [SerializeField] private VisionSensor visionSensor;
+    [SerializeField] private RadarSensor radarSensor;
 
     public AgentEvent OnFriendlyDetected = new AgentEvent();
     public AgentEvent OnFriendlyLost = new AgentEvent();

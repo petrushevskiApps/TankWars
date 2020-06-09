@@ -61,6 +61,12 @@ public class CollectController : MonoBehaviour
         }
     }
 
-    
+    private void OnDestroy()
+    {
+        if(pickable != null)
+        {
+            pickable.StopCollecting();
+        }
+    }
 
 }

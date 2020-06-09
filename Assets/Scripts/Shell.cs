@@ -41,7 +41,7 @@ namespace Complete
         private void OnTriggerEnter (Collider other)
         {
             // If tigger detects its owner or missile sensor - Abort trigger
-            if (IsOwner(other) || other.gameObject.layer == LayerMask.NameToLayer("MissileSensor")) return;
+            if (IsOwner(other) || other.gameObject.layer == LayerMask.NameToLayer("RadarSensor")) return;
             
 			// Collect all the colliders in a sphere from the shell's current position to a radius of the explosion radius.
             Collider[] colliders = Physics.OverlapSphere (transform.position, m_ExplosionRadius, m_TankMask);

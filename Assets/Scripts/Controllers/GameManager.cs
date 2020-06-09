@@ -121,13 +121,12 @@ public class GameManager : Singleton<GameManager>
 
     public void PauseGame()
     {
-        savedTimeScale = Time.timeScale;
         Time.timeScale = 0;
     }
 
     public void UnpauseGame()
     {
-        Time.timeScale = savedTimeScale;
+        Time.timeScale = 1;
     }
 
     public class MatchStartedEvent : UnityEvent<MatchConfiguration> { }

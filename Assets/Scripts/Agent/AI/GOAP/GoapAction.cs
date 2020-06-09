@@ -8,6 +8,7 @@ public abstract class GoapAction : MonoBehaviour
 {
 	[HideInInspector] public new string actionName = "No Name";
 	
+	[SerializeField] protected float cost = 1f;
 
 	public float minRequiredRange = 10f;
 	public float maxRequiredRange = 15f;
@@ -16,7 +17,6 @@ public abstract class GoapAction : MonoBehaviour
 	public Dictionary<string, bool> Preconditions { get; }
 	public Dictionary<string, bool> Effects { get; }
 
-	[SerializeField] protected float cost = 1f;
 	
 	protected Action actionCompleted;
 	protected Action actionFailed;
@@ -32,6 +32,7 @@ public abstract class GoapAction : MonoBehaviour
 		set => inRange = value;
 	}
 
+	public float Cost { get => cost; }
 	public bool IsActionDone { get; set; } = false;
 
 	public GoapAction() 
@@ -60,16 +61,11 @@ public abstract class GoapAction : MonoBehaviour
 		return target != null;
 	}
 
-	public virtual float GetCost()
-	{
-		return cost;
-	}
-	public GameObject GetTarget()
-	{
-		return target;
-	}
 	/* Action Lifecycle */
-	public abstract bool TestProceduralPreconditions();
+	public virtual bool CheckProceduralPreconditions()
+	{
+		return true;
+	}
 
 	public abstract void EnterAction(Action Success, Action Fail, Action Reset);
 

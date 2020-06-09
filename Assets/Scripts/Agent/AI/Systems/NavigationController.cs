@@ -165,12 +165,12 @@ public class NavigationController : MonoBehaviour
 	{
 		if(Target != null)
 		{
-			if (Target.Equals(locationPointer))
+			if (!Target.Equals(locationPointer))
 			{
-				Target.SetActive(false);
+				Target = locationPointer;
 			}
-			
-			Target = null;
+
+			Target.SetActive(false);
 		}
 
 		path = null;
@@ -197,7 +197,7 @@ public class NavigationController : MonoBehaviour
 
 	public void SetTarget()
 	{
-		if (!IsTargetValid() && !IsPathValid())
+		if (!IsTargetValid() || !IsPathValid())
 		{
 			SetTargetLocation(World.Instance.GetRandomLocation());
 		}
@@ -255,6 +255,6 @@ public class NavigationController : MonoBehaviour
 
 	private void OnDestroy()
 	{
-		Destroy(Target);
+		Destroy(locationPointer);
 	}
 }

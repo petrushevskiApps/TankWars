@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using System.Linq;
 
 namespace GOAP
 {
@@ -34,13 +35,8 @@ namespace GOAP
 			}
 
 			// we now have all actions that can run, stored in usableActions
-
 			// build up the tree and record the leaf nodes that provide a solution to the goal.
 			List<Node> leaves = new List<Node>();
-
-			// build graph
-			//Node start = new Node(null, 0, worldState, null);
-			//bool success = BuildTree(start, leaves, usableActions, goals);
 
 			leaves = FindPlan(usableActions, worldState, goals);
 			
@@ -145,13 +141,13 @@ namespace GOAP
 				{
 					// Check if the Procedural Preconditions
 					// are also matched ( These are usually OR conditions )
-					if(action.TestProceduralPreconditions())
+					if(action.CheckProceduralPreconditions())
 					{
 						// apply the action's effects to the parent state
 						Dictionary<string, bool> state = UpdatedState(parent.state, action.Effects);
 
 						// Create new Node State
-						Node node = new Node(parent, parent.runningCost + action.GetCost(), state, action, goal);
+						Node node = new Node(parent, parent.runningCost + action.Cost, state, action, goal);
 
 						// Add the new state to adjacent states
 						AddToListAndSort(adjacent, node);

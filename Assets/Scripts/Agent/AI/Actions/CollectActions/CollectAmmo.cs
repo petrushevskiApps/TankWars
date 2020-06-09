@@ -23,26 +23,26 @@ public class CollectAmmo : Collect
 	private new void Start()
 	{
 		base.Start();
-		detectedMemory = agentMemory.AmmoPacks;
+		detectedMemory = agent.Memory.AmmoPacks;
 	}
 
 	protected override IEnumerator CollectPickable()
 	{
-		yield return new WaitUntil(() => agentMemory.IsAmmoAvailable());
+		yield return new WaitUntil(() => agent.Memory.IsAmmoAvailable());
 		ExitAction(actionCompleted);
 	}
 
 	protected override void AddListeners()
 	{
 		base.AddListeners();
-		agent.GetPerceptor().OnAmmoPackDetected.AddListener(AmmoDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Sensors.OnAmmoPackDetected.AddListener(AmmoDetected);
+		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
 	}
 	protected override void RemoveListeners()
 	{
 		base.RemoveListeners();
-		agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(AmmoDetected);
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Sensors.OnAmmoPackDetected.RemoveListener(AmmoDetected);
+		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
 	}
 
 	private void AmmoDetected(GameObject ammoPack)

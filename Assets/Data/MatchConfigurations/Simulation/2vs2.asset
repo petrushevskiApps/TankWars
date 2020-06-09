@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f64bceba8f56be144b78666007f94664, type: 3}
   m_Name: 2vs2
   m_EditorClassIdentifier: 
-  CameraMode: 1
-  matchTime: 90
+  CameraMode: 0
+  matchTime: 60
   teamsConfig:
   - agentsCount: 2
     isPlayer: 0

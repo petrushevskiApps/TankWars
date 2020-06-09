@@ -10,12 +10,12 @@ public class AIAgent : Agent, IGoap
 	[SerializeField] private NavigationController navigation;
 	[SerializeField] private MemoryController memory;
 
+	[Header("AI Systems")]
+	[SerializeField] private SensorController sensors;
+
 	public NavigationController Navigation { get => navigation; }
 	public MemoryController Memory { get => memory; }
-
-	[Header("AI Systems")]
-
-	[SerializeField] private SensorController perceptor;
+	public SensorController Sensors { get => sensors; }
 
 	public override void Initialize(Team team, string name, Material teamColor)
 	{
@@ -30,11 +30,6 @@ public class AIAgent : Agent, IGoap
 	public void MoveAgent(GoapAction nextAction)
 	{
 		Navigation.Move(nextAction);
-	}
-	
-	public SensorController GetPerceptor()
-	{
-		return perceptor;
 	}
 
 	public Dictionary<string, bool> GetWorldState()

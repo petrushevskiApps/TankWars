@@ -31,6 +31,7 @@ public interface IGoap
 	 */
 	Dictionary<string, bool> GetGoalState(int index);
 	int GetGoalsCount();
+	
 	/**
 	 * No sequence of actions could be found for the supplied goal.
 	 * You will need to try another goal
@@ -44,7 +45,7 @@ public interface IGoap
 	void PlanFound (Dictionary<string, bool> goal, Queue<GoapAction> actions);
 
 	/**
-	 * All actions are complete and the goal was reached. Hooray!
+	 * All actions are complete and the goal was reached.
 	 */
 	void ActionsFinished ();
 
@@ -57,12 +58,9 @@ public interface IGoap
 	/**
 	 * Called during Update. Move the agent towards the target in order
 	 * for the next action to be able to perform.
-	 * Return true if the Agent is at the target and the next action can perform.
-	 * False if it is not there yet.
 	 */
 	void MoveAgent(GoapAction nextAction);
 
-	SensorController GetPerceptor();
 
 }
 

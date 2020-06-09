@@ -19,7 +19,7 @@ public class RunAway : MoveAction
 		AddEffect(StateKeys.UNDER_ATTACK, false);
 
 	}
-	public override bool TestProceduralPreconditions()
+	public override bool CheckProceduralPreconditions()
 	{
 		return !agentMemory.IsAmmoAvailable() || !agentMemory.IsHealthAvailable();
 	}
@@ -69,18 +69,18 @@ public class RunAway : MoveAction
 
 	protected override void AddListeners()
 	{
-		agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpotDetected);
+		agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpotDetected);
 
 	}
 	protected override void RemoveListeners()
 	{
-		agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
+		agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpotDetected);
 	}
 
 	
 	private void HidingSpotDetected(GameObject hiddingSpot)
 	{
-		if (!agentMemory.IsUnderAttack)
+		if (agentMemory.HidingSpots.IsAnyValidDetected() && !agentMemory.IsUnderAttack)
 		{
 			if (!agentMemory.IsHealthAvailable() || !agentMemory.IsAmmoAvailable())
 			{

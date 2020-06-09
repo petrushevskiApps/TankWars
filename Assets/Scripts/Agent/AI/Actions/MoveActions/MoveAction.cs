@@ -30,6 +30,7 @@ public abstract class MoveAction : GoapAction
 		actionCompleted = Success;
 		actionFailed = Fail;
 		actionReset = Reset;
+
 		SetActionTarget();
 		AddListeners();
 
@@ -38,6 +39,7 @@ public abstract class MoveAction : GoapAction
 	{
 		ExitAction(actionCompleted);
 	}
+
 	public void RestartAction()
 	{
 		ResetAction();

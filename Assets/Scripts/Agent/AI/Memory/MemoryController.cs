@@ -85,37 +85,37 @@ public class MemoryController : MonoBehaviour
 
     private void RegisterEvents()
     {
-        agent.GetPerceptor().OnEnemyDetected.AddListener(Enemies.AddDetected);
-        agent.GetPerceptor().OnEnemyLost.AddListener(Enemies.RemoveDetected);
+        agent.Sensors.OnEnemyDetected.AddListener(Enemies.AddDetected);
+        agent.Sensors.OnEnemyLost.AddListener(Enemies.RemoveDetected);
 
-        agent.GetPerceptor().OnHidingSpotDetected.AddListener(HidingSpots.AddDetected);
-        agent.GetPerceptor().OnHidingSpotLost.AddListener(HidingSpots.RemoveDetected);
+        agent.Sensors.OnHidingSpotDetected.AddListener(HidingSpots.AddDetected);
+        agent.Sensors.OnHidingSpotLost.AddListener(HidingSpots.RemoveDetected);
 
-        agent.GetPerceptor().OnAmmoPackDetected.AddListener(AmmoPacks.AddDetected);
-        agent.GetPerceptor().OnAmmoPackLost.AddListener(AmmoPacks.RevalidateDetected);
+        agent.Sensors.OnAmmoPackDetected.AddListener(AmmoPacks.AddDetected);
+        agent.Sensors.OnAmmoPackLost.AddListener(AmmoPacks.RevalidateDetected);
 
-        agent.GetPerceptor().OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
-        agent.GetPerceptor().OnHealthPackLost.AddListener(HealthPacks.RevalidateDetected);
+        agent.Sensors.OnHealthPackDetected.AddListener(HealthPacks.AddDetected);
+        agent.Sensors.OnHealthPackLost.AddListener(HealthPacks.RevalidateDetected);
 
-        agent.GetPerceptor().OnUnderAttack.AddListener(SetIsUnderAttack);
+        agent.Sensors.OnUnderAttack.AddListener(SetIsUnderAttack);
 
     }
 
     private void UnregisterEvents()
     {
-        agent.GetPerceptor().OnEnemyDetected.RemoveListener(Enemies.AddDetected);
-        agent.GetPerceptor().OnEnemyLost.RemoveListener(Enemies.RemoveDetected);
+        agent.Sensors.OnEnemyDetected.RemoveListener(Enemies.AddDetected);
+        agent.Sensors.OnEnemyLost.RemoveListener(Enemies.RemoveDetected);
 
-        agent.GetPerceptor().OnHidingSpotDetected.RemoveListener(HidingSpots.AddDetected);
-        agent.GetPerceptor().OnHidingSpotLost.RemoveListener(HidingSpots.RemoveDetected);
+        agent.Sensors.OnHidingSpotDetected.RemoveListener(HidingSpots.AddDetected);
+        agent.Sensors.OnHidingSpotLost.RemoveListener(HidingSpots.RemoveDetected);
 
-        agent.GetPerceptor().OnAmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
-        agent.GetPerceptor().OnAmmoPackLost.RemoveListener(AmmoPacks.RevalidateDetected);
+        agent.Sensors.OnAmmoPackDetected.RemoveListener(AmmoPacks.AddDetected);
+        agent.Sensors.OnAmmoPackLost.RemoveListener(AmmoPacks.RevalidateDetected);
 
-        agent.GetPerceptor().OnHealthPackDetected.RemoveListener(HealthPacks.AddDetected);
-        agent.GetPerceptor().OnHealthPackLost.RemoveListener(HealthPacks.RevalidateDetected);
+        agent.Sensors.OnHealthPackDetected.RemoveListener(HealthPacks.AddDetected);
+        agent.Sensors.OnHealthPackLost.RemoveListener(HealthPacks.RevalidateDetected);
 
-        agent.GetPerceptor().OnUnderAttack.RemoveListener(SetIsUnderAttack);
+        agent.Sensors.OnUnderAttack.RemoveListener(SetIsUnderAttack);
     }
 
 
