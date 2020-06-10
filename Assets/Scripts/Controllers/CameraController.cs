@@ -13,7 +13,7 @@ public class CameraController : Singleton<CameraController>
     [SerializeField] private CinemachineVirtualCamera overviewCamera;
     [SerializeField] private CinemachineVirtualCamera followCamera;
 
-    private List<Agent> groupTargets;
+    private List<Agent> aiTargets;
     private Player playerTarget;
     private CinemachineVirtualCamera currentCamera;
 
@@ -40,9 +40,9 @@ public class CameraController : Singleton<CameraController>
     {
         overviewTargetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
 
-        if(groupTargets != null)
+        if(aiTargets != null)
         {
-            groupTargets.Clear();
+            aiTargets.Clear();
         }
         playerTarget = null;
 
@@ -55,23 +55,23 @@ public class CameraController : Singleton<CameraController>
 
     private void SetupMatchCamera(MatchConfiguration configuration)
     {
-        if (configuration.CameraMode == CameraMode.FollowPlayer)
+        CollectTargets();
+        
+        if (configuration.CameraMode == CameraMode.Overview)
         {
-            SetPlayerTarget();
+            SetupOverviewCamera();
+        }
+        else if (configuration.CameraMode == CameraMode.FollowOne)
+        {
+            SetupFollowCamera(GetRandomTarget());
+        }
+        else if (configuration.CameraMode == CameraMode.FollowPlayer)
+        {
             SetupFollowCamera(playerTarget);
         }
         else
         {
-            SetGroupTargets();
-
-            if (configuration.CameraMode == CameraMode.Overview)
-            {
-                SetupOverviewCamera();
-            }
-            if (configuration.CameraMode == CameraMode.FollowOne)
-            {
-                SetupFollowCamera(GetRandomTarget());
-            }
+            Debug.LogError("No camera mode selected!!!");
         }
     }
 
@@ -93,7 +93,7 @@ public class CameraController : Singleton<CameraController>
     {
         cameraAudioListener.enabled = true;
         
-        groupTargets.ForEach(target =>
+        aiTargets.ForEach(target =>
         {
             overviewTargetGroup.AddMember(target.gameObject.transform, 1, 0);
         });
@@ -109,9 +109,17 @@ public class CameraController : Singleton<CameraController>
         followCamera.LookAt = target.VisualSystem.Tracker;
 
         currentCamera = followCamera;
+
+        target.GetComponent<IDestroyable>().RegisterOnDestroy(ResetTracker);
     }
 
-    
+    // Once the agent ( ai / player ) with camera tracker
+    // is destroyed, set tracking random agent.
+    private void ResetTracker(GameObject arg0)
+    {
+        SetupFollowCamera(GetRandomTarget());
+    }
+
     private void ToggleUiCamera(bool status)
     {
         if(uiCamera != null)
@@ -128,16 +136,14 @@ public class CameraController : Singleton<CameraController>
         }
     }
 
-    private void SetPlayerTarget()
+    private void CollectTargets()
     {
+        aiTargets = GameManager.Instance.AgentsController.GetAllAgents();
         playerTarget = FindObjectOfType<Player>();
-    }
-    private void SetGroupTargets()
-    {
-        groupTargets = FindObjectsOfType<Agent>().ToList();
     }
     private Agent GetRandomTarget()
     {
-        return groupTargets[Random.Range(0, groupTargets.Count)];
+        aiTargets.RemoveAll(agent => agent == null);
+        return aiTargets[Random.Range(0, aiTargets.Count)];
     }
 }

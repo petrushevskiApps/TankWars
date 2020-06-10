@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -176,5 +177,11 @@ public class AgentsController : MonoBehaviour
         return "NoNameAvailable";
     }
 
+    public List<Agent> GetAllAgents()
+    {
+        List<Agent> allAgents = new List<Agent>();
+        MatchTeams.ForEach(team => team.Members.ForEach(agent => allAgents.Add(agent)));
+        return allAgents;
+    }
     public class OneTeamLeftEvent : UnityEvent<bool> { }
 }

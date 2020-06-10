@@ -60,7 +60,6 @@ public class AIDebuggerWindow : EditorWindow
     {
         if (team.Count > 0)
         {
-            
             foreach(AIAgent tank in team)
             {
                 if(tank != null)

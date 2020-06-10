@@ -12,11 +12,11 @@ public class CollectHealth : Collect
 	{
 		actionName = "CollectHealth";
 
-		AddPrecondition(StateKeys.HEALTH_AMOUNT, false);
+		AddPrecondition(StateKeys.HEALTH_AVAILABLE, false);
 		AddPrecondition(StateKeys.HEALTH_DETECTED, true);
 		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
-		AddEffect(StateKeys.HEALTH_AMOUNT, true);
+		AddEffect(StateKeys.HEALTH_AVAILABLE, true);
 
 	}
 	private new void Start()

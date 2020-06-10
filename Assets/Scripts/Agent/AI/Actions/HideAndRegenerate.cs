@@ -21,9 +21,14 @@ public class HideAndRegenerate : GoapAction
 		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 		AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, true);
 
-		AddEffect(StateKeys.HEALTH_AMOUNT, true);
+		AddEffect(StateKeys.HEALTH_AVAILABLE, true);
 		AddEffect(StateKeys.AMMO_AVAILABLE, true);
 	}
+	public override bool CheckProceduralPreconditions()
+	{
+		return !agent.Memory.IsHealthAvailable() || !agent.Memory.IsAmmoAvailable();
+	}
+
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
@@ -48,10 +53,7 @@ public class HideAndRegenerate : GoapAction
 		SetActionTarget();
 	}
 
-	public override bool CheckProceduralPreconditions()
-	{
-		return !agent.Memory.IsHealthAvailable() || !agent.Memory.IsAmmoAvailable();
-	}
+	
 
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
@@ -102,6 +104,7 @@ public class HideAndRegenerate : GoapAction
 			StopCoroutine(UpdateCoroutine);
 			UpdateCoroutine = null;
 		}
+
 		target = null;
 		agent.Navigation.InvalidateTarget();
 

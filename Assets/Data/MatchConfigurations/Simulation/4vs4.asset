@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f64bceba8f56be144b78666007f94664, type: 3}
   m_Name: 4vs4
   m_EditorClassIdentifier: 
-  CameraMode: 0
+  CameraMode: 1
   matchTime: 180
   teamsConfig:
   - agentsCount: 4

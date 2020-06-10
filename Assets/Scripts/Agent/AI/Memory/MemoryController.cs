@@ -56,7 +56,7 @@ public class MemoryController : MonoBehaviour
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
         worldState.Add(StateKeys.UNDER_ATTACK, () => IsUnderAttack);
 
-        worldState.Add(StateKeys.HEALTH_AMOUNT, IsHealthAvailable);
+        worldState.Add(StateKeys.HEALTH_AVAILABLE, IsHealthAvailable);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.AMMO_AVAILABLE, IsAmmoAvailable);
@@ -73,7 +73,7 @@ public class MemoryController : MonoBehaviour
         {
             { StateKeys.ENEMY_DETECTED, false },
             { StateKeys.AMMO_AVAILABLE, true },
-            { StateKeys.HEALTH_AMOUNT, true }, 
+            { StateKeys.HEALTH_AVAILABLE, true }, 
         });
 
         goals.Add(new Dictionary<string, bool>()

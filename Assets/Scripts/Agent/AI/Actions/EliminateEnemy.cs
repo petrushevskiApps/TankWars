@@ -18,7 +18,7 @@ public class EliminateEnemy : GoapAction
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 
 		AddPrecondition(StateKeys.AMMO_AVAILABLE, true);
-		AddPrecondition(StateKeys.HEALTH_AMOUNT, true);
+		AddPrecondition(StateKeys.HEALTH_AVAILABLE, true);
 
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 
@@ -40,8 +40,10 @@ public class EliminateEnemy : GoapAction
 			ExitAction(actionCompleted);
 		}
 	}
-
-	
+	public override void InvalidTargetLocation()
+	{
+		ExitAction(actionReset);
+	}
 
 	private FireRangeStatus CheckActionRange()
 	{
@@ -111,6 +113,7 @@ public class EliminateEnemy : GoapAction
 							yield return new WaitForSeconds(0.5f);
 						}
 					}
+
 					yield return new WaitForSeconds(0.01f);
 				}
 				else
@@ -126,7 +129,6 @@ public class EliminateEnemy : GoapAction
 				break;
 			}
 		}
-
 		
 	}
 
@@ -143,9 +145,6 @@ public class EliminateEnemy : GoapAction
 	{
 		ExitAction(actionReset);
 	}
-	public override void InvalidTargetLocation()
-	{
-		ExitAction(actionReset);
-	}
+	
 
 }

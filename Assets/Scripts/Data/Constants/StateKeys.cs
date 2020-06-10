@@ -2,16 +2,16 @@
 public class StateKeys
 {
     public const string ENEMY_DETECTED = "enemyDetected";
-    public const string IN_SHOOTING_RANGE = "inShootingRange";
     public const string UNDER_ATTACK = "isUnderAttack";
-    public const string HEALTH_AMOUNT = "healthCount";
+
+    public const string HEALTH_AVAILABLE = "healthCount";
+    public const string HEALTH_DETECTED = "healthDetected";
+
     public const string AMMO_AVAILABLE = "ammoAvailable";
     public const string AMMO_DETECTED = "ammoDetected";
-    public const string AMMO_COLLECT = "ammoCollect";
-    public const string AMMO_SPECIAL_AMOUNT = "specialAmmoAmount";
-    public const string HEALTH_DETECTED = "healthDetected";
+    
     public const string HIDING_SPOT_DETECTED = "hiddingSpotDetected";
-    public const string HIDING = "hiding";
+
     public const string PATROL = "patrol";
 }
 
