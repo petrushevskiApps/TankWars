@@ -44,20 +44,19 @@ public class RunAway : MoveAction
 	{
 		base.EnterAction(Success, Fail, Reset);
 	}
-	/*
-	 * If the agent arrives at the target location and isn't
-	 * under attack action is completed. 
-	 * If the agent is still under attack get new
-	 * target location to run away.
-	 */
+	 
 	public override void ExecuteAction(GameObject agent)
 	{
 		if(this.agent.Memory.IsUnderAttack)
 		{
+			 // If the agent is still under attack get new
+			 // target location to run away.
 			RestartAction();
 		}
 		else
 		{
+			// If the agent arrives at the target location and isn't
+			// under attack action is completed. 
 			ExitAction(actionCompleted);
 		}
 	}
@@ -72,7 +71,9 @@ public class RunAway : MoveAction
 		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 	}
 
-	
+	// If agent is no more under attack and
+	// detects valid hiding spot complete action
+	// and re-plan
 	private void HidingSpotDetected()
 	{
 		if (agent.Memory.HidingSpots.IsAnyValidDetected() && !agent.Memory.IsUnderAttack)

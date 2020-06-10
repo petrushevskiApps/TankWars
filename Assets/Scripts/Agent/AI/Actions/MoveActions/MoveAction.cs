@@ -27,6 +27,9 @@ public abstract class MoveAction : GoapAction
 		ExitAction(actionCompleted);
 	}
 
+	// Restart Moving action without re-planning
+	// if it didn't found or detected anything
+	// while moving
 	public void RestartAction()
 	{
 		ResetAction();
@@ -38,8 +41,8 @@ public abstract class MoveAction : GoapAction
 	{
 		if(!isActionExited)
 		{
-			isActionExited = true;
 			RemoveListeners();
+			isActionExited = true;
 			IsActionDone = true;
 
 			ExitAction?.Invoke();
