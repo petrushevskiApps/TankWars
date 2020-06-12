@@ -1089,7 +1089,7 @@ MonoBehaviour:
   - {fileID: 375393497}
   worldLocations: {fileID: 1587118051}
   shellsParent: {fileID: 133099738}
-  agentsExplosions: {fileID: 1362242242}
+  destroyedAgents: {fileID: 1362242242}
   uiTank: {fileID: 8044540949314242759}
 --- !u!4 &179189151
 Transform:
@@ -7899,7 +7899,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1362242242}
   m_Layer: 0
-  m_Name: AgentsExplosions
+  m_Name: DestroyedAgents
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

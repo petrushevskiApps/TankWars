@@ -45,6 +45,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amount: 10
   capacity: 10
+  increaseTimeFactor: 1
+  decreaseTimeFactor: 2
 --- !u!1 &893525416378000290
 GameObject:
   m_ObjectHideFlags: 0
@@ -4956,6 +4958,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8518d601ac0ff0a40a9ef8334c48a1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyedAgentPrefab: {fileID: 4706593813742124158, guid: b3ab40f8832d57f46b70b33ec7889bd6,
+    type: 3}
   collectController: {fileID: 7989623322379019348}
   weaponController: {fileID: 5829359755463935598}
   inventorySystem: {fileID: 8529619185412311925}

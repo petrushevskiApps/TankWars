@@ -561,7 +561,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4998884739790430492
 Transform:
   m_ObjectHideFlags: 0
@@ -621,6 +621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9909141014511c4a9e61b534a04ee87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyedAgentPrefab: {fileID: 4706593813742124158, guid: b3ab40f8832d57f46b70b33ec7889bd6,
+    type: 3}
   collectController: {fileID: 3649931314146163526}
   weaponController: {fileID: 910284484475132284}
   inventorySystem: {fileID: 3033379204311405671}
@@ -10686,6 +10688,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5995114344663673869}
     m_Modifications:
+    - target: {fileID: 1437788400382292048, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1437788400382292048, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2976302307310695927, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}
       propertyPath: m_Name
@@ -10795,6 +10807,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218944908877533182, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218944908877533182, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 23e1051edc4e9994e93f112254d5e548, type: 3}

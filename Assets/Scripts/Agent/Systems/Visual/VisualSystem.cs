@@ -23,6 +23,13 @@ public class VisualSystem : MonoBehaviour
 
         RegisterListeners();
     }
+
+    // On Agent death replace tracker
+    // to new parent ( destroyed agent )
+    public void DropTracker(Transform parent)
+    {
+        cameraTracker.transform.parent = parent;
+    }
     private void OnDestroy()
     {
         UnregisterListeners();
@@ -30,10 +37,8 @@ public class VisualSystem : MonoBehaviour
 
     private void RegisterListeners()
     {
-        agent.OnAgentDeath.AddListener(Particles.ShowDeathParticles);
     }
     private void UnregisterListeners()
     {
-        agent.OnAgentDeath.RemoveListener(Particles.ShowDeathParticles);
     }
 }

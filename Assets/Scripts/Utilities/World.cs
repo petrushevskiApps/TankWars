@@ -15,7 +15,7 @@ public class World : Singleton<World>
 
     public Transform worldLocations;
     public Transform shellsParent;
-    public Transform agentsExplosions;
+    public Transform destroyedAgents;
     public GameObject uiTank;
     
     private new void Awake()
@@ -84,7 +84,7 @@ public class World : Singleton<World>
     {
         Clean(worldLocations);
         Clean(shellsParent);
-        Clean(agentsExplosions);
+        Clean(destroyedAgents);
     }
 
     public void Clean(Transform parent)

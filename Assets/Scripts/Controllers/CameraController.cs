@@ -76,11 +76,11 @@ public class CameraController : Singleton<CameraController>
         }
         else if (configuration.CameraMode == CameraMode.FollowOne)
         {
-            SetupFollowCamera(GetRandomTarget());
+            SetupFollowCamera(GetRandomTarget(), true);
         }
         else if (configuration.CameraMode == CameraMode.FollowPlayer)
         {
-            SetupFollowCamera(playerTarget);
+            SetupFollowCamera(playerTarget, false);
         }
         else
         {
@@ -114,9 +114,8 @@ public class CameraController : Singleton<CameraController>
         currentCamera = overviewCamera;
     }
 
-    private void SetupFollowCamera(Agent target)
+    private void SetupFollowCamera(Agent target, bool resetTracker)
     {
-
         target.GetComponent<AudioListener>().enabled = true;
 
         followCamera.Follow = target.VisualSystem.Tracker;
@@ -124,14 +123,17 @@ public class CameraController : Singleton<CameraController>
 
         currentCamera = followCamera;
 
-        target.GetComponent<IDestroyable>().RegisterOnDestroy(ResetTracker);
+        if(resetTracker)
+        {
+            target.GetComponent<IDestroyable>().RegisterOnDestroy(ResetTracker);
+        }
     }
 
     // Once the agent ( ai / player ) with camera tracker
     // is destroyed, set tracking random agent.
     private void ResetTracker(GameObject arg0)
     {
-        SetupFollowCamera(GetRandomTarget());
+        SetupFollowCamera(GetRandomTarget(), true);
     }
 
     private void ToggleUiCamera(bool status)

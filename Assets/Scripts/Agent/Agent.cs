@@ -5,6 +5,8 @@ using System;
 
 public class Agent : MonoBehaviour, IDestroyable
 {
+	[SerializeField] private GameObject destroyedAgentPrefab;
+
 	//Events
 	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
@@ -64,10 +66,18 @@ public class Agent : MonoBehaviour, IDestroyable
 		isDead = true;
 
 		OnAgentDeath.Invoke(gameObject);
-		
+
+		InstantiateDestroyed();
+
 		Destroy(gameObject);
 	}
-
+	private void InstantiateDestroyed()
+	{
+		GameObject destroyedAgent = Instantiate(destroyedAgentPrefab, transform.position, transform.rotation, World.Instance.destroyedAgents);
+		destroyedAgent.name = destroyedAgent.name.Replace("(Clone)", "( " + AgentName + " ) ");
+		visualSystem.DropTracker(destroyedAgent.transform);
+		destroyedAgent.SetActive(true);
+	}
 	public void RegisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
 	{
 		OnAgentDeath.AddListener(OnDestroyAction);
