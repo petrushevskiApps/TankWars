@@ -6,12 +6,15 @@ using UnityEngine.Events;
 [System.Serializable]
 public class InventorySystem : MonoBehaviour, ICollector
 {
-    [SerializeField] private InventoryHealth health;
-    [SerializeField] private InventoryAmmo ammo;
+    [SerializeField] private InventoryElement health;
+    [SerializeField] private InventoryElement ammo;
+	[SerializeField] private InventoryTime speedBoost;
 
-    public InventoryHealth Health { get => health; }
+	public InventoryElement Health { get => health; }
     
-    public InventoryAmmo Ammo { get => ammo; }
+    public InventoryElement Ammo { get => ammo; }
+
+	public InventoryTime SpeedBoost { get => speedBoost; }
 
 	public void PickableCollected(AmmoPack collected)
 	{
@@ -22,6 +25,4 @@ public class InventorySystem : MonoBehaviour, ICollector
 	{
 		Health.Increase(collected.amountToCollect);
 	}
-
-
 }

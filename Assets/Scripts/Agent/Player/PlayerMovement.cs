@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -7,10 +8,16 @@ namespace Complete
 {
     public class PlayerMovement : MonoBehaviour
     {
-        public float speed = 12f;                 // How fast the tank moves forward and back.
-        public float turnSpeed = 180f;            // How fast the tank turns in degrees per second.
+        public float originalSpeed = 3.5f;                // How fast the tank moves forward and back.
         
-        
+        public float turnSpeed = 130f;            // How fast the tank turns in degrees per second.
+
+        public float maxSpeed = 5f;               // Maxiumum speed that can be reached with boost
+        public float speedBostTime = 10f;          // Time before speed boost is depleted
+        public float speedBoostRefilTime = 10f;   // Time needed to refil speed boost when depleted
+        public float currentSpeed = 3.5f;
+        private float boostTimeout = 0;
+
         private Rigidbody rigidbody;              // Reference used to move the tank.
         private float movementInputValue;         // The current value of the movement input.
         private float turnInputValue;             // The current value of the turn input.
@@ -24,6 +31,7 @@ namespace Complete
         private void Awake ()
         {
             rigidbody = GetComponent<Rigidbody> ();
+            currentSpeed = originalSpeed;
         }
         private void OnEnable()
         {
@@ -45,17 +53,23 @@ namespace Complete
 
         private void RegisterListeners()
         {
-            InputController.OnMovementAxis.AddListener(UpdateMovement);
-            InputController.OnTurningAxis.AddListener(UpdateTurning);
+            
+            
         }
         private void UnregisterListeners()
         {
-            InputController.OnMovementAxis.RemoveListener(UpdateMovement);
-            InputController.OnTurningAxis.RemoveListener(UpdateTurning);
+            
+            
         }
 
-        
-
+        public void BoostSpeed()
+        {
+            currentSpeed = Mathf.Clamp(currentSpeed + 0.01f, originalSpeed, maxSpeed);
+        }
+        public void ResetSpeed()
+        {
+            currentSpeed = originalSpeed;
+        }
 
         private void FixedUpdate ()
         {
@@ -64,12 +78,12 @@ namespace Complete
             Turn();
         }
 
-        private void UpdateMovement(float axisValue)
+        public void UpdateMovement(float axisValue)
         {
             movementInputValue = axisValue;
             EngineAudio();
         }
-        private void UpdateTurning(float axisValue)
+        public void UpdateTurning(float axisValue)
         {
             turnInputValue = axisValue;
             EngineAudio();
@@ -78,7 +92,7 @@ namespace Complete
         private void Move ()
         {
             // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
-            Vector3 movement = transform.forward * movementInputValue * speed * Time.deltaTime;
+            Vector3 movement = transform.forward * movementInputValue * currentSpeed * Time.deltaTime;
 
             // Apply this movement to the rigidbody's position.
             rigidbody.MovePosition(rigidbody.position + movement);

@@ -1448,6 +1448,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -65}
   m_SizeDelta: {x: 0, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &226448699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 226448700}
+  m_Layer: 0
+  m_Name: StaticTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &226448700
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226448699}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 525854090}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &249292308
 GameObject:
   m_ObjectHideFlags: 0
@@ -2441,11 +2471,11 @@ MonoBehaviour:
     m_LegacyVelocityFilterStrength: -1
   m_HorizontalAxis:
     Value: 0
-    m_SpeedMode: 0
-    m_MaxSpeed: 300
+    m_SpeedMode: 1
+    m_MaxSpeed: 0.1
     m_AccelTime: 0.1
     m_DecelTime: 0.1
-    m_InputAxisName: 
+    m_InputAxisName: Horizontal
     m_InputAxisValue: 0
     m_InvertInput: 0
     m_MinValue: 0
@@ -2460,7 +2490,7 @@ MonoBehaviour:
   m_HorizontalRecentering:
     m_enabled: 1
     m_WaitTime: 0
-    m_RecenteringTime: 0.5
+    m_RecenteringTime: 0
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
 --- !u!114 &507948598
@@ -2482,14 +2512,14 @@ MonoBehaviour:
   m_YDamping: 1
   m_ZDamping: 1
   m_ScreenX: 0.5
-  m_ScreenY: 0.621
+  m_ScreenY: 0.6230121
   m_CameraDistance: 100
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.034
-  m_SoftZoneHeight: 0.061
+  m_SoftZoneWidth: 0.001
+  m_SoftZoneHeight: 0.001
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -2705,6 +2735,7 @@ MonoBehaviour:
   uiCamera: {fileID: 1295599294}
   overviewCamera: {fileID: 156048402}
   followCamera: {fileID: 1697942337}
+  staticTracker: {fileID: 226448699}
 --- !u!4 &525854090
 Transform:
   m_ObjectHideFlags: 0
@@ -2720,6 +2751,7 @@ Transform:
   - {fileID: 156048401}
   - {fileID: 1697942336}
   - {fileID: 1295599293}
+  - {fileID: 226448700}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

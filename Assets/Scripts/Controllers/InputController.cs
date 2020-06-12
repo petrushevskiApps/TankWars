@@ -5,20 +5,18 @@ using UnityEngine.Events;
 
 public class InputController : MonoBehaviour
 {
-    [HideInInspector]
     public static UnityEvent OnBackKey = new UnityEvent();
 
-    [HideInInspector]
     public static UnityEvent OnFirePressed = new UnityEvent();
 
-    [HideInInspector]
     public static AxisEvent OnMovementAxis = new AxisEvent();
     
-    [HideInInspector]
     public static AxisEvent OnTurningAxis = new AxisEvent();
 
-    [HideInInspector]
-    public static CollectEvent OnCollecting = new CollectEvent();
+    public static BoolEvent OnCollecting = new BoolEvent();
+
+    public static UnityEvent OnBoostStart = new UnityEvent();
+    public static UnityEvent OnBoostEnd = new UnityEvent();
 
     // Update is called once per frame
     void Update()
@@ -45,10 +43,20 @@ public class InputController : MonoBehaviour
 
         OnMovementAxis.Invoke(Input.GetAxis("Vertical"));
         OnTurningAxis.Invoke(Input.GetAxis("Horizontal"));
+
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+            OnBoostStart.Invoke();
+        }
+
+        if(Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            OnBoostEnd.Invoke();
+        }
     }
 
 
-    public class CollectEvent : UnityEvent<bool> { }
+    public class BoolEvent : UnityEvent<bool> { }
     public class AxisEvent : UnityEvent<float> { }
     
 }

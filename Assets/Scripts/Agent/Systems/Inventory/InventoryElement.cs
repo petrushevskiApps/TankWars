@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class InventoryElement : MonoBehaviour
+public class InventoryElement : MonoBehaviour
 {
+    public OnValueChange AmountChanged = new OnValueChange();
+
     [SerializeField] private float amount = 100;
     [SerializeField] private float capacity = 100;
 
@@ -21,19 +23,44 @@ public abstract class InventoryElement : MonoBehaviour
         protected set => capacity = value;
     }
 
-    [HideInInspector]
-    public OnValueChange AmountChanged = new OnValueChange();
-
     private void OnEnable()
     {
         SetStatus();
     }
+    public void Increase(float value)
+    {
+        Amount = Mathf.Clamp(Amount + value, 0, Capacity);
+        AmountChanged.Invoke(Amount);
+        SetStatus();
+    }
+    public void Decrease(float value)
+    {
+        Amount = Mathf.Clamp(Amount - value, 0, Capacity);
+        AmountChanged.Invoke(Amount);
+        SetStatus();
+    }
 
-    public abstract void Increase(float value);
+    protected void SetStatus()
+    {
+        float currentPercent = Amount / Capacity;
 
-    public abstract void Decrease(float value);
-
-    public abstract void SetStatus();
+        if (currentPercent <= 0)
+        {
+            Status = InventoryStatus.Empty;
+        }
+        else if (currentPercent > 0 && currentPercent < 0.5f)
+        {
+            Status = InventoryStatus.Low;
+        }
+        else if (currentPercent >= 0.5f && currentPercent < 1f)
+        {
+            Status = InventoryStatus.Medium;
+        }
+        else
+        {
+            Status = InventoryStatus.Full;
+        }
+    }
 
     public class OnValueChange : UnityEvent<float> { }
 }

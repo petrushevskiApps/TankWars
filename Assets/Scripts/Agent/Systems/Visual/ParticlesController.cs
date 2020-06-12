@@ -12,22 +12,24 @@ public class ParticlesController : MonoBehaviour
     {
         SetDeathParticles();
     }
-    private void OnEnable()
-    {
-        PlayDrivingParticles();
-    }
-    private void OnDisable()
-    {
-        StopDrivingParticles();
-    }
 
-    private void PlayDrivingParticles()
+    public void PlayDrivingParticles()
     {
-        drivingParticles.ForEach(ps => ps.Play());
+        drivingParticles.ForEach(ps => 
+        {
+            if (!ps.isPlaying) ps.Play();
+        });
     }
-    private void StopDrivingParticles()
+    public void StopDrivingParticles()
     {
-        drivingParticles.ForEach(ps => ps.Stop());
+        drivingParticles.ForEach(ps =>
+        {
+            if (ps.isPlaying)
+            {
+                ps.Stop();
+            }
+        });
+
     }
 
     private void SetDeathParticles()

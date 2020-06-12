@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1916907006
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1916907007}
+  - component: {fileID: 1916907008}
+  m_Layer: 9
+  m_Name: SpeedBoost
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1916907007
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916907006}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2161488569206035488}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1916907008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916907006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfac7b3b25ecf314e94755694da84aca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 10
+  capacity: 10
 --- !u!1 &893525416378000290
 GameObject:
   m_ObjectHideFlags: 0
@@ -4935,9 +4980,6 @@ MonoBehaviour:
   minRequiredRange: 1
   maxRequiredRange: 2
   requiresRange: 1
-  OnPatrolExecuted:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &5411017350211833471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4989,12 +5031,6 @@ MonoBehaviour:
   minRequiredRange: 1
   maxRequiredRange: 2
   requiresRange: 1
-  OnRunAwayEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  OnRunAwayExecuted:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &5209721476198099339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10539,7 +10575,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2097589946317209746}
-  - component: {fileID: 4358213387636788122}
+  - component: {fileID: 4999900316738219180}
   m_Layer: 9
   m_Name: Ammo
   m_TagString: Untagged
@@ -10561,7 +10597,7 @@ Transform:
   m_Father: {fileID: 2161488569206035488}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4358213387636788122
+--- !u!114 &4999900316738219180
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10570,7 +10606,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6375003955202890428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 486865a017dcdc548bdb449e916efe19, type: 3}
+  m_Script: {fileID: 11500000, guid: f2aca2198545cd94a855dee314b26b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   amount: 10
@@ -10854,6 +10890,7 @@ Transform:
   m_Children:
   - {fileID: 3332033834439867764}
   - {fileID: 2097589946317209746}
+  - {fileID: 1916907007}
   m_Father: {fileID: 2406014621032319886}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10869,8 +10906,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0eea124d40db2b44ad151e2e914165e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: {fileID: 8641004840908120008}
-  ammo: {fileID: 4358213387636788122}
+  health: {fileID: 5049352464479833389}
+  ammo: {fileID: 4999900316738219180}
+  speedBoost: {fileID: 1916907008}
 --- !u!1 &8605388357248397672
 GameObject:
   m_ObjectHideFlags: 0
@@ -10960,7 +10998,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3332033834439867764}
-  - component: {fileID: 8641004840908120008}
+  - component: {fileID: 5049352464479833389}
   m_Layer: 9
   m_Name: Health
   m_TagString: Untagged
@@ -10982,7 +11020,7 @@ Transform:
   m_Father: {fileID: 2161488569206035488}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8641004840908120008
+--- !u!114 &5049352464479833389
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10991,7 +11029,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9024691939421697795}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b78c12cc405a654c8fbfcdd2bb98570, type: 3}
+  m_Script: {fileID: 11500000, guid: f2aca2198545cd94a855dee314b26b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   amount: 100

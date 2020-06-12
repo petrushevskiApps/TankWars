@@ -13,6 +13,8 @@ public class CameraController : Singleton<CameraController>
     [SerializeField] private CinemachineVirtualCamera overviewCamera;
     [SerializeField] private CinemachineVirtualCamera followCamera;
 
+    [SerializeField] private GameObject staticTracker;
+
     private List<Agent> aiTargets;
     private Player playerTarget;
     private CinemachineVirtualCamera currentCamera;
@@ -27,13 +29,24 @@ public class CameraController : Singleton<CameraController>
 
         GameManager.OnMatchSetup.AddListener(SetupMatchCamera);
         GameManager.OnMatchStarted.AddListener(ActivateGameCamera);
+        GameManager.OnMatchEnded.AddListener(SetMatchEndedCamera);
         GameManager.OnMatchExited.AddListener(ResetCameraController);
     }
     private void OnDestroy()
     {
         GameManager.OnMatchSetup.RemoveListener(SetupMatchCamera);
         GameManager.OnMatchStarted.RemoveListener(ActivateGameCamera);
+        GameManager.OnMatchEnded.RemoveListener(SetMatchEndedCamera);
         GameManager.OnMatchExited.RemoveListener(ResetCameraController);
+    }
+
+    private void SetMatchEndedCamera()
+    {
+        if(currentCamera.Equals(followCamera) && currentCamera.Follow == null)
+        {
+            followCamera.Follow = staticTracker.transform;
+            followCamera.LookAt = staticTracker.transform;
+        }
     }
 
     private void ResetCameraController()
@@ -103,6 +116,7 @@ public class CameraController : Singleton<CameraController>
 
     private void SetupFollowCamera(Agent target)
     {
+
         target.GetComponent<AudioListener>().enabled = true;
 
         followCamera.Follow = target.VisualSystem.Tracker;
