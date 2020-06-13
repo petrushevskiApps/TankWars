@@ -5,6 +5,16 @@ using UnityEngine;
 public class RenderController : MonoBehaviour
 {
     [SerializeField] private List<Renderer> renderMaterials;
+    [SerializeField] private GameObject shieldDoom;
+
+    public void ShowShield()
+    {
+        shieldDoom.SetActive(true);
+    }
+    public void HideShield()
+    {
+        shieldDoom.SetActive(false);
+    }
 
     public void SetTeamColor(Material color)
     {

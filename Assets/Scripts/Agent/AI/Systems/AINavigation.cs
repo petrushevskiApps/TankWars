@@ -4,14 +4,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
-public class NavigationController : MonoBehaviour
+public class AINavigation : NavigationController
 {
-	// Events
-	[HideInInspector]
-	public UnityEvent OnAgentMoving = new UnityEvent();
-	
-	[HideInInspector]
-	public UnityEvent OnAgentIdling = new UnityEvent();
 
 	// Target can reference target location
 	// set by Action or Location pointer.
@@ -34,6 +28,12 @@ public class NavigationController : MonoBehaviour
 	private Coroutine LookAtCoroutine;
 	private Coroutine FollowCoroutine;
 
+	private bool isRotating = false;
+
+	private void Update()
+	{
+		OnMovement(navMeshAgent.velocity.magnitude > 0f || isRotating);
+	}
 	public void Initialize(GameObject agent, int agentID)
 	{
 		this.agent = agent;
@@ -76,6 +76,7 @@ public class NavigationController : MonoBehaviour
 		}
 		return true;
 	}
+	
 
 	private IEnumerator LookAt()
 	{
@@ -83,23 +84,22 @@ public class NavigationController : MonoBehaviour
 		{
 			while (!IsLookingAtTarget())
 			{
-				OnAgentMoving.Invoke();
-
 				Vector3 dir = Target.transform.position - agent.transform.position;
 				dir.y = 0; //This allows the object to only rotate on its y axis
 
 				if (!dir.Equals(Vector3.zero))
 				{
+					isRotating = true;
 					Quaternion rot = Quaternion.LookRotation(dir);
 					agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, rot, lookAtSpeed * Time.deltaTime);
 				}
 
 				yield return null;
 			}
+			isRotating = false;
 			yield return null;
 		}
 
-		OnAgentIdling.Invoke();
 	}
 
 	
@@ -108,8 +108,6 @@ public class NavigationController : MonoBehaviour
 	{
 		while (Target != null)
 		{
-			OnAgentMoving.Invoke();
-
 			Vector3 position = Target.transform.position;
 
 			if (Vector3.Distance(position, previousPosition) > followDifference)
@@ -121,7 +119,6 @@ public class NavigationController : MonoBehaviour
 
 			yield return null;
 		}
-		OnAgentIdling.Invoke();
 	}
 
 	public void Move(GoapAction action)
@@ -143,16 +140,10 @@ public class NavigationController : MonoBehaviour
 			if (navMeshAgent.remainingDistance <= action.maxRequiredRange)
 			{
 				action.IsInRange = true;
-				OnAgentIdling.Invoke();
-			}
-			else
-			{
-				OnAgentMoving.Invoke();
 			}
 		}
 		else
 		{
-			OnAgentIdling.Invoke();
 			InvalidateTarget();
 			action.InvalidTargetLocation();
 		}
@@ -164,7 +155,6 @@ public class NavigationController : MonoBehaviour
 		path = new NavMeshPath();
 		navMeshAgent.CalculatePath(destination, path);
 		navMeshAgent.stoppingDistance = stoppingDistance;
-		//navMeshAgent.updateRotation = true;
 	}
 
 	public void InvalidateTarget()

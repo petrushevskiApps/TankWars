@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class Player : Agent
 {
-    private PlayerMovement movementController;
+    private PlayerNavigation navigation;
 
     private new void Awake()
     {
         RegisterListeners();
         base.Awake();
 
-        movementController = GetComponent<PlayerMovement>();
+        navigation = (PlayerNavigation)navigationController;
     }
     private void OnDestroy()
     {
@@ -21,63 +21,39 @@ public class Player : Agent
     }
     private void RegisterListeners()
     {
-        InputController.OnMovementAxis.AddListener(OnMovement);
-        InputController.OnTurningAxis.AddListener(OnTurning);
+        InputController.OnMovementAxis.AddListener(OnMovementInput);
+        InputController.OnTurningAxis.AddListener(OnTurningInput);
 
         InputController.OnFirePressed.AddListener(Fire);
         InputController.OnCollecting.AddListener(collectController.CollectPickable);
 
         InputController.OnBoostStart.AddListener(BoostOn);
         InputController.OnBoostEnd.AddListener(BoostOff);
+
+        InputController.OnShieldToggle.AddListener(ToggleShield);
     }
     private void UnregisterListeners()
     {
-        InputController.OnMovementAxis.RemoveListener(OnMovement);
-        InputController.OnTurningAxis.RemoveListener(OnTurning);
+        InputController.OnMovementAxis.RemoveListener(OnMovementInput);
+        InputController.OnTurningAxis.RemoveListener(OnTurningInput);
 
         InputController.OnFirePressed.RemoveListener(Fire);
         InputController.OnCollecting.RemoveListener(collectController.CollectPickable);
 
         InputController.OnBoostStart.RemoveListener(BoostOn);
         InputController.OnBoostEnd.RemoveListener(BoostOff);
+
+        InputController.OnShieldToggle.RemoveListener(ToggleShield);
     }
 
-    private void OnMovement(float inputValue)
+    private void OnMovementInput(float inputValue)
     {
-        movementController.UpdateMovement(inputValue);
-
-        if(inputValue > 0)
-        {
-            VisualSystem.Particles.PlayDrivingParticles();
-        }
-        else
-        {
-            VisualSystem.Particles.StopDrivingParticles();
-        }
+        navigation.UpdateMovement(inputValue);
     }
 
-    private void OnTurning(float inputValue)
+    private void OnTurningInput(float inputValue)
     {
-        movementController.UpdateTurning(inputValue);
-    }
-
-    private void BoostOn()
-    {
-        if(Inventory.SpeedBoost.Amount > 0)
-        {
-            movementController.BoostSpeed();
-            VisualSystem.Particles.PlayDrivingParticles();
-            Inventory.SpeedBoost.DecreaseStart();
-        }
-        else
-        {
-            movementController.ResetSpeed();
-        }
-    }
-    private void BoostOff()
-    {
-        movementController.ResetSpeed();
-        Inventory.SpeedBoost.IncreaseStart();
+        navigation.UpdateTurning(inputValue);
     }
 
     private void Fire()

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AudioSystem : MonoBehaviour
+public class AudioSystem : MonoBehaviour
 {
     [SerializeField] protected AudioConfiguration configuration;
 
@@ -16,6 +16,10 @@ public abstract class AudioSystem : MonoBehaviour
     public float pitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
     private float originalPitch;              // The pitch of the audio source at the start of the scene.
 
+    private void Awake()
+    {
+        agent = transform.parent.GetComponent<Agent>();
+    }
     private void Start()
     {
         RegisterListeners();
@@ -30,14 +34,18 @@ public abstract class AudioSystem : MonoBehaviour
     protected virtual void RegisterListeners()
     {
         agent.Weapon.OnShooting.AddListener(PlayShooting);
+        agent.Navigation.OnAgentIdling.AddListener(PlayIdling);
+        agent.Navigation.OnAgentMoving.AddListener(PlayDriving);
     }
 
     protected virtual void UnregisterListeners()
     {
         agent.Weapon.OnShooting.RemoveListener(PlayShooting);
+        agent.Navigation.OnAgentIdling.RemoveListener(PlayIdling);
+        agent.Navigation.OnAgentMoving.AddListener(PlayDriving);
     }
 
-    protected void PlayDriving()
+    public void PlayDriving()
     {
         // if the tank is moving and if the idling clip is currently playing...
         if (drivingSource.clip == configuration.EngineIdle)
@@ -48,7 +56,7 @@ public abstract class AudioSystem : MonoBehaviour
             drivingSource.Play();
         }
     }
-    protected void PlayIdling()
+    public void PlayIdling()
     {
         // if the audio source is currently playing the driving clip...
         if (drivingSource.clip == configuration.EngineDriving)
@@ -59,7 +67,7 @@ public abstract class AudioSystem : MonoBehaviour
             drivingSource.Play();
         }
     }
-    protected void PlayShooting()
+    public void PlayShooting()
     {
         AudioClip clip = configuration.Shooting;
         sfxSource.clip = clip;

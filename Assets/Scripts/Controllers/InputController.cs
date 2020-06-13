@@ -18,6 +18,8 @@ public class InputController : MonoBehaviour
     public static UnityEvent OnBoostStart = new UnityEvent();
     public static UnityEvent OnBoostEnd = new UnityEvent();
 
+    public static UnityEvent OnShieldToggle = new UnityEvent();
+
     // Update is called once per frame
     void Update()
     {
@@ -52,6 +54,11 @@ public class InputController : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.LeftShift))
         {
             OnBoostEnd.Invoke();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            OnShieldToggle.Invoke();
         }
     }
 

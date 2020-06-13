@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 using System;
+using System.Collections;
 
 public class Agent : MonoBehaviour, IDestroyable
 {
@@ -13,19 +14,25 @@ public class Agent : MonoBehaviour, IDestroyable
 	[Header("Agent Controllers")]
 	[SerializeField] protected CollectController collectController;
 	[SerializeField] protected WeaponController weaponController;
+	[SerializeField] protected NavigationController navigationController;
 
 	[Header("Agent Systems")]
 	[SerializeField] protected InventorySystem inventorySystem;
 	[SerializeField] private VisualSystem visualSystem;
+	[SerializeField] private AudioSystem audioSystem;
+
 
 	public CollectController Collector { get => collectController; }
 	public WeaponController Weapon { get => weaponController; }
 	public InventorySystem Inventory { get => inventorySystem; }
 	public VisualSystem VisualSystem { get => visualSystem; }
+	public AudioSystem AudioSystem { get => audioSystem; }
+	public NavigationController Navigation { get => navigationController; }
 
 	public Team Team { get; private set; }
 	public string AgentName { get; private set; } = "tankName";
-	
+
+	public bool IsShieldOn { get; private set; } = false;
 
 	private bool isDead;
 	protected int agentId;
@@ -48,8 +55,11 @@ public class Agent : MonoBehaviour, IDestroyable
 
 	public void TakeDamage(float amount, Agent owner)
 	{
-		// Reduce current health by the amount of damage done.
-		inventorySystem.Health.Decrease(amount);
+		if(!IsShieldOn)
+		{
+			// Reduce current health by the amount of damage done.
+			inventorySystem.Health.Decrease(amount);
+		}
 
 		// If the current health is at or below zero
 		// and it has not yet been registered, call OnDeath.
@@ -81,6 +91,56 @@ public class Agent : MonoBehaviour, IDestroyable
 	public void RegisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
 	{
 		OnAgentDeath.AddListener(OnDestroyAction);
+	}
+
+	private Coroutine ShieldTimer;
+
+	protected void ToggleShield()
+	{
+		if(IsShieldOn)
+		{
+			IsShieldOn = false;
+			visualSystem.Renderer.HideShield();
+			
+			if(ShieldTimer != null)
+			{
+				StopCoroutine(ShieldTimer);
+				ShieldTimer = null;
+			}
+			Inventory.Shield.Refill();
+		}
+		else
+		{
+			IsShieldOn = true;
+			visualSystem.Renderer.ShowShield();
+			ShieldTimer = StartCoroutine(ShieldToggleTimer());
+		}
+	}
+
+	IEnumerator ShieldToggleTimer()
+	{
+		Inventory.Shield.Use();
+		yield return new WaitUntil(() => Inventory.Shield.Amount <= 0);
+		ToggleShield();
+		Inventory.Shield.Refill();
+	}
+
+	protected void BoostOn()
+	{
+		if (Inventory.SpeedBoost.Amount > 0)
+		{
+			navigationController.BoostSpeed();
+			Inventory.SpeedBoost.Use();
+		}
+		else
+		{
+			navigationController.ResetSpeed();
+		}
+	}
+	protected void BoostOff()
+	{
+		navigationController.ResetSpeed();
+		Inventory.SpeedBoost.Refill();
 	}
 
 	public class PlayerDeath : UnityEvent<GameObject> { }

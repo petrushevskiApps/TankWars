@@ -10,7 +10,7 @@ public class InventoryTime : InventoryElement
     private Coroutine IncreaseTimer;
     private Coroutine DecreaseTimer;
 
-    public void IncreaseStart()
+    public void Refill()
     {
         if (IncreaseTimer != null) return;
         DecreaseStop();
@@ -25,7 +25,7 @@ public class InventoryTime : InventoryElement
         }
     }
 
-    public void DecreaseStart()
+    public void Use()
     {
         if (DecreaseTimer != null) return;
         IncreaseStop();

@@ -8,6 +8,7 @@ public class AgentUIController : MonoBehaviour
 {
     [SerializeField] private UISlider healthBar;
     [SerializeField] private UISlider ammoBar;
+    [SerializeField] private UISlider speedBoostBar;
     [SerializeField] private TextMeshProUGUI agentNameText;
 
     public void Setup(Agent agent)
@@ -15,7 +16,11 @@ public class AgentUIController : MonoBehaviour
         SetName(agent.AgentName);
         SetHealthBar(agent.Inventory);
         SetAmmoBar(agent.Inventory);
+        SetSpeedBoost(agent.Inventory);
     }
+
+    
+
     private void SetName(string name)
     {
         agentNameText.text = name;
@@ -30,5 +35,8 @@ public class AgentUIController : MonoBehaviour
         ammoBar.Initialize(inventory.Ammo.Amount, inventory.Ammo.Capacity, inventory.Ammo.AmountChanged);
     }
 
-    
+    private void SetSpeedBoost(InventorySystem inventory)
+    {
+        speedBoostBar.Initialize(inventory.SpeedBoost.Amount, inventory.SpeedBoost.Capacity, inventory.SpeedBoost.AmountChanged);
+    }
 }

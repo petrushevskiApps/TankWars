@@ -8,13 +8,10 @@ public class AIAgent : Agent, IGoap
 {
 
 	[Header("AI Controllers")]
-	[SerializeField] private NavigationController navigation;
 	[SerializeField] private MemoryController memory;
+	[SerializeField] private SensorController sensors;	
 
-	[Header("AI Systems")]
-	[SerializeField] private SensorController sensors;
-
-	public NavigationController Navigation { get => navigation; }
+	public new AINavigation Navigation { get => (AINavigation) navigationController; }
 	public MemoryController Memory { get => memory; }
 	public SensorController Sensors { get => sensors; }
 

@@ -2,40 +2,26 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Animations;
 using UnityEngine.Events;
 
 namespace Complete
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerNavigation : NavigationController
     {
-        public float originalSpeed = 3.5f;                // How fast the tank moves forward and back.
-        
-        public float turnSpeed = 130f;            // How fast the tank turns in degrees per second.
-
-        public float maxSpeed = 5f;               // Maxiumum speed that can be reached with boost
-        public float speedBostTime = 10f;          // Time before speed boost is depleted
-        public float speedBoostRefilTime = 10f;   // Time needed to refil speed boost when depleted
-        public float currentSpeed = 3.5f;
-        private float boostTimeout = 0;
-
         private Rigidbody rigidbody;              // Reference used to move the tank.
+
         private float movementInputValue;         // The current value of the movement input.
         private float turnInputValue;             // The current value of the turn input.
 
-        [HideInInspector]
-        public UnityEvent OnAgentMoving = new UnityEvent();
-
-        [HideInInspector]
-        public UnityEvent OnAgentIdling = new UnityEvent();
-
-        private void Awake ()
+        
+        private new void Awake ()
         {
+            base.Awake();
             rigidbody = GetComponent<Rigidbody> ();
-            currentSpeed = originalSpeed;
         }
         private void OnEnable()
         {
-            RegisterListeners();
             // When the tank is turned on, make sure it's not kinematic.
             rigidbody.isKinematic = false;
 
@@ -46,29 +32,8 @@ namespace Complete
         }
         private void OnDisable()
         {
-            UnregisterListeners();
             // When the tank is turned off, set it to kinematic so it stops moving.
             rigidbody.isKinematic = true;
-        }
-
-        private void RegisterListeners()
-        {
-            
-            
-        }
-        private void UnregisterListeners()
-        {
-            
-            
-        }
-
-        public void BoostSpeed()
-        {
-            currentSpeed = Mathf.Clamp(currentSpeed + 0.01f, originalSpeed, maxSpeed);
-        }
-        public void ResetSpeed()
-        {
-            currentSpeed = originalSpeed;
         }
 
         private void FixedUpdate ()
@@ -80,15 +45,21 @@ namespace Complete
 
         public void UpdateMovement(float axisValue)
         {
+            OnMovement(IsMoving());
             movementInputValue = axisValue;
-            EngineAudio();
         }
         public void UpdateTurning(float axisValue)
         {
+            OnMovement(IsMoving());
             turnInputValue = axisValue;
-            EngineAudio();
         }
 
+        private bool IsMoving()
+        {
+            // Player is moving if either of the input values
+            // is different then zero.
+            return movementInputValue != 0 || turnInputValue != 0;
+        }
         private void Move ()
         {
             // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
@@ -110,21 +81,6 @@ namespace Complete
             // Apply this rotation to the rigidbody's rotation.
             rigidbody.MoveRotation (rigidbody.rotation * turnRotation);
         }
-
-
-        private void EngineAudio()
-        {
-            // If there is no input (the tank is stationary)...
-            if (Mathf.Abs(movementInputValue) < 0.1f && Mathf.Abs(turnInputValue) < 0.1f)
-            {
-                OnAgentIdling.Invoke();
-            }
-            else
-            {
-                OnAgentMoving.Invoke();
-            }
-        }
-        
 
         
     }
