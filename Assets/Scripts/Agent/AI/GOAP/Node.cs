@@ -10,38 +10,36 @@ namespace GOAP
 	public class Node : IEquatable<Node>, IComparable<Node>
     {
 		public Node parent;
-		public float StateCost => GetHeuristic() + runningCost;
+		public float StateCost => heuristic + RunningCost;
 
-		public float runningCost;
+		private float heuristic = 0;
+		public float RunningCost { get; private set; }
 
 		private Dictionary<string, bool> goalState;
-		public Dictionary<string, bool> state;
+		public Dictionary<string, bool> State { get; private set; }
 		public GoapAction action; 
 
 		public Node(Node parent, float runningCost, Dictionary<string, bool> state, GoapAction action, Dictionary<string, bool> goalState)
 		{
 			this.parent = parent;
-			this.runningCost = runningCost;
-			this.state = state;
+			this.RunningCost = runningCost;
+			this.State = state;
 			this.action = action;
 			this.goalState = goalState;
+			SetHeuristic();
 		}
-		private float GetHeuristic()
+		private void SetHeuristic()
 		{
-			float differences = 0;
-
-			foreach(KeyValuePair<string, bool> gState in goalState)
+			foreach(KeyValuePair<string, bool> gsPair in goalState)
 			{
-				foreach (KeyValuePair<string, bool> cState in state)
+				if(State.ContainsKey(gsPair.Key))
 				{
-					if(gState.Key.Equals(cState.Key) && gState.Value != cState.Value)
+					if(gsPair.Value != State[gsPair.Key])
 					{
-						differences++;
+						heuristic++;
 					}
 				}
 			}
-
-			return differences;
 		}
         public int CompareTo(Node other)
         {
@@ -55,13 +53,13 @@ namespace GOAP
             }
             else
             {
-                if(GetHeuristic() > other.GetHeuristic())
-				{
-					return 1;
-				}
-				else if(GetHeuristic() < other.GetHeuristic())
+				if (heuristic < other.heuristic)
 				{
 					return -1;
+				}
+				else if(heuristic > other.heuristic)
+				{
+					return 1;
 				}
 				else
 				{
@@ -73,41 +71,48 @@ namespace GOAP
 
         public bool Equals(Node other)
         {
-			if((state != null && other.state == null) || (state == null && other.state != null))
-			{
-				return false;
-			}
-			else if(other.state.Count != state.Count)
+			if(State == null || other.State == null)
 			{
 				return false;
 			}
 			else
 			{
-				foreach(KeyValuePair<string, bool> kvp in state)
+				if (State.Count != other.State.Count)
 				{
-					if (other.state.ContainsKey(kvp.Key))
-					{
-						bool otherValue = other.state[kvp.Key];
-						if (otherValue != kvp.Value)
-						{
-							return false;
-						}
-					}
-					else return false;
+					return false;
 				}
-				return true;
+				else
+				{
+					foreach (KeyValuePair<string, bool> kvp in State)
+					{
+						if (other.State.ContainsKey(kvp.Key))
+						{
+							bool otherValue = other.State[kvp.Key];
+
+							if (otherValue != kvp.Value)
+							{
+								return false;
+							}
+						}
+						else return false;
+					}
+					return true;
+				}
 			}
+			
         }
 
         public override string ToString()
 		{
 			if (parent != null)
 			{
-				return "(" + StateCost.ToString() + ")" + action.actionName.ToString();
+				return "(" + StateCost.ToString() + " = " + RunningCost + " + " + heuristic + ")"
+					+ action.actionName.ToString() + ": \n" + Utilities.PrintDictionary(State) + "\n";
 			}
 			else
 			{
-				return "root";
+				return "(" + StateCost.ToString() + " = " + RunningCost + " + " + heuristic + ")"
+					+ " root " + ": \n" + Utilities.PrintDictionary(State) + "\n";
 			}
 		}
 	}

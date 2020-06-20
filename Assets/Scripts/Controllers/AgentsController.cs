@@ -134,7 +134,7 @@ public class AgentsController : MonoBehaviour
     {
         foreach(Agent agent in team.Members)
         {
-            agent.Initialize(team, GetRandomName(agentNames), teamColors.GetTeamColor(team.ID), 0);
+            agent.Initialize(team, GetRandomName(agentNames), teamColors.GetTeamColor(team.ID), agentId++);
         }
 
         team.OnTeamEmpty.AddListener(OnTeamEmpty);

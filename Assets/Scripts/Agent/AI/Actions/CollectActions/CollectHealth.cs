@@ -12,13 +12,27 @@ public class CollectHealth : Collect
 	{
 		actionName = "CollectHealth";
 
-		AddPrecondition(StateKeys.HEALTH_AVAILABLE, false);
 		AddPrecondition(StateKeys.HEALTH_DETECTED, true);
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
-		AddEffect(StateKeys.HEALTH_AVAILABLE, true);
+		AddEffect(StateKeys.HEALTH_FULL, true);
 
 	}
+	public override bool CheckProceduralPreconditions()
+	{
+		// Check if the agent is not under attack at
+		// the moment of planning  and health is not full.
+		return !agent.Memory.IsUnderAttack && !agent.Memory.IsHealthFull();
+	}
+	public override float GetCost()
+	{
+		float TTE = timeToExecute;
+		float E = GetEnemyCost(agent.Memory.Enemies);
+		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
+
+		float cost = TTE + E - IH;
+		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+	}
+
 	private new void Start()
 	{
 		base.Start();
@@ -27,22 +41,22 @@ public class CollectHealth : Collect
 
 	protected override IEnumerator CollectPickable()
 	{
-		yield return new WaitUntil(() => agent.Memory.IsHealthAvailable());
+		yield return new WaitUntil(() => agent.Memory.IsHealthFull());
 		ExitAction(actionCompleted);
 	}
 
-	protected override void AddListeners()
-	{
-		base.AddListeners();
-		agent.Memory.HealthPacks.OnDetected.AddListener(OnNewDetected);
+	//protected override void AddListeners()
+	//{
+	//	base.AddListeners();
+	//	agent.Memory.HealthPacks.OnDetected.AddListener(OnNewDetected);
 		
-	}
-	protected override void RemoveListeners()
-	{
-		base.RemoveListeners();
-		agent.Memory.HealthPacks.OnDetected.RemoveListener(OnNewDetected);
+	//}
+	//protected override void RemoveListeners()
+	//{
+	//	base.RemoveListeners();
+	//	agent.Memory.HealthPacks.OnDetected.RemoveListener(OnNewDetected);
 		
-	}
+	//}
 
 	
 

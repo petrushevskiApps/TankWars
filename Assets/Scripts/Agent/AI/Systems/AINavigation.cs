@@ -11,12 +11,13 @@ public class AINavigation : NavigationController
 	// set by Action or Location pointer.
 	public GameObject Target { get; private set; }
 
-
 	[SerializeField] private float lookAtSpeed = 5f;
 	[SerializeField] private float lookAtAngle = 5f;
 	[SerializeField] private float followDifference = 0.5f;
 
 	private GameObject agent;
+	private AIAgent aiAgent;
+
 	private NavMeshAgent navMeshAgent;
 	private NavMeshPath path;
 
@@ -29,19 +30,56 @@ public class AINavigation : NavigationController
 	private Coroutine FollowCoroutine;
 
 	private bool isRotating = false;
+	private bool isBoostOn = false;
+
+	public void Initialize(GameObject agent, int agentID)
+	{
+		this.agent = agent;
+		aiAgent = agent.GetComponent<AIAgent>();
+		navMeshAgent = agent.GetComponent<NavMeshAgent>();
+		//navMeshAgent.avoidancePriority += agentID;
+		InstantiateLocationPointer();
+	}
+
+	public override void BoostSpeed()
+	{
+		base.BoostSpeed();
+		navMeshAgent.speed = currentSpeed;
+		isBoostOn = true;
+	}
+	public override void ResetSpeed()
+	{
+		base.ResetSpeed();
+		navMeshAgent.speed = currentSpeed;
+		isBoostOn = false;
+	}
 
 	private void Update()
 	{
 		OnMovement(navMeshAgent.velocity.magnitude > 0f || isRotating);
-	}
-	public void Initialize(GameObject agent, int agentID)
-	{
-		this.agent = agent;
-		navMeshAgent = agent.GetComponent<NavMeshAgent>();
-		navMeshAgent.avoidancePriority += agentID;
-		InstantiateLocationPointer();
+
+		if (isBoostOn)
+		{
+			if (aiAgent.Inventory.SpeedBoost.Amount > 0)
+			{
+				aiAgent.BoostOn();
+			}
+			else
+			{
+				aiAgent.BoostOff();
+			}
+		}
 	}
 
+
+	public bool IsLookingAtTarget()
+	{
+		if (Target != null)
+		{
+			return Utilities.GetAngle(agent, Target) < lookAtAngle;
+		}
+		return true;
+	}
 	public void LookAtTarget()
 	{
 		StopLookAt();
@@ -55,29 +93,6 @@ public class AINavigation : NavigationController
 			LookAtCoroutine = null;
 		}
 	}
-	public void FollowTarget(float maxRange)
-	{
-		StopFollow();
-		FollowCoroutine = StartCoroutine(Follow(maxRange));
-	}
-	public void StopFollow()
-	{
-		if (FollowCoroutine != null)
-		{
-			StopCoroutine(FollowCoroutine);
-			FollowCoroutine = null;
-		}
-	}
-	public bool IsLookingAtTarget()
-	{
-		if (Target != null)
-		{
-			return Utilities.GetAngle(agent, Target) < lookAtAngle;
-		}
-		return true;
-	}
-	
-
 	private IEnumerator LookAt()
 	{
 		while (Target != null)
@@ -102,8 +117,19 @@ public class AINavigation : NavigationController
 
 	}
 
-	
-
+	public void FollowTarget(float maxRange)
+	{
+		StopFollow();
+		FollowCoroutine = StartCoroutine(Follow(maxRange));
+	}
+	public void StopFollow()
+	{
+		if (FollowCoroutine != null)
+		{
+			StopCoroutine(FollowCoroutine);
+			FollowCoroutine = null;
+		}
+	}
 	private IEnumerator Follow(float maxRange)
 	{
 		while (Target != null)
@@ -220,7 +246,7 @@ public class AINavigation : NavigationController
 		Vector3 direction = (runFromTarget - agent.transform.position).normalized;
 
 		// Get opposite direction with magnitude
-		direction *= (-15);
+		direction *= (-Random.Range(15, 30));
 
 		// Find location in opposite direction of the attack
 		Vector3 runToLocation = direction + agent.transform.position;

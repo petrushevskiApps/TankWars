@@ -6,9 +6,15 @@ using System;
 [System.Serializable]
 public abstract class GoapAction : MonoBehaviour 
 {
+	private static int EMPTY_INV_COST = 6;
+	private static int LOW_INV_COST = 4;
+	private static int MEDIUM_INV_COST = 2;
+	private static int FULL_INV_COST = 0;
+
 	[HideInInspector] public new string actionName = "No Name";
 	
-	[SerializeField] protected float cost = 1f;
+	[SerializeField] protected float minimumCost = 1f;
+	[SerializeField] protected float timeToExecute = 0;
 
 	public float minRequiredRange = 10f;
 	public float maxRequiredRange = 15f;
@@ -32,7 +38,6 @@ public abstract class GoapAction : MonoBehaviour
 		set => inRange = value;
 	}
 
-	public float Cost { get => cost; }
 	public bool IsActionDone { get; set; } = false;
 
 	public GoapAction() 
@@ -72,6 +77,41 @@ public abstract class GoapAction : MonoBehaviour
 	public abstract void ExecuteAction(GameObject agent);
 
 	protected abstract void ExitAction(Action exitAction);
+
+	public abstract float GetCost();
+
+	protected float GetEnemyCost(DetectedHolder enemies)
+	{
+		// For each valid enemy - 1 cost
+		return enemies.GetValidDetectedCount();
+	}
+
+
+	/*
+	 * Get cost matching the inventory status
+	 * Normal Inventory cost means lower statuses
+	 * cost more, example Empty inventory has high cost
+	 * because it can not be used.
+	 * Inverted cost means that lower status cost less.
+	 */
+	protected float GetInventoryCost(InventoryStatus status, bool isInverted)
+	{
+		switch(status)
+		{
+			case InventoryStatus.Empty: return isInverted ? EMPTY_INV_COST - EMPTY_INV_COST : EMPTY_INV_COST;
+			case InventoryStatus.Low: return isInverted ? EMPTY_INV_COST - LOW_INV_COST : LOW_INV_COST;
+			case InventoryStatus.Medium: return isInverted ? EMPTY_INV_COST - MEDIUM_INV_COST : MEDIUM_INV_COST;
+			case InventoryStatus.Full: return isInverted ? EMPTY_INV_COST - FULL_INV_COST : FULL_INV_COST;
+			default: return 0;
+		}
+	}
+
+	protected float TimeToReachCost(Vector3 start, Vector3 destination, float speed)
+	{
+		float distance = Vector3.Distance(start, destination);
+		float timeCost = distance / speed;
+		return timeCost;
+	}
 
 	/* Action Preconditions & Effects */
 	public void AddPrecondition(string key, bool value)  

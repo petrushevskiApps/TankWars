@@ -54,16 +54,16 @@ public class MemoryController : MonoBehaviour
     private void SetStates()
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
-        worldState.Add(StateKeys.UNDER_ATTACK, () => IsUnderAttack);
 
-        worldState.Add(StateKeys.HEALTH_AVAILABLE, IsHealthAvailable);
+        worldState.Add(StateKeys.HEALTH_FULL, IsHealthFull);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.AMMO_AVAILABLE, IsAmmoAvailable);
+        worldState.Add(StateKeys.AMMO_FULL, IsAmmoFull);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
 
+        worldState.Add(StateKeys.PATROL, () => false);
     }
 
     private void SetGoals()
@@ -72,15 +72,16 @@ public class MemoryController : MonoBehaviour
         goals.Add(new Dictionary<string, bool>() 
         {
             { StateKeys.ENEMY_DETECTED, false },
-            { StateKeys.AMMO_AVAILABLE, true },
-            { StateKeys.HEALTH_AVAILABLE, true }, 
+            { StateKeys.AMMO_FULL, true },
+            { StateKeys.HEALTH_FULL, true },
+            { StateKeys.PATROL, true }
         });
 
         goals.Add(new Dictionary<string, bool>()
         {
             { StateKeys.PATROL, true },
         });
-        
+
     }
 
     private void RegisterEvents()
@@ -156,52 +157,30 @@ public class MemoryController : MonoBehaviour
 
     IEnumerator UnderAttack()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         UnderAttackTimer = null;
         IsUnderAttack = false;
         MissileDirection = Vector3.zero;
     }
 
-    public bool IsAmmoAvailable()
+    public bool IsAmmoFull()
     {
         InventoryStatus status = agent.Inventory.Ammo.Status;
 
-        if (status == InventoryStatus.Empty)
-        {
-            return false;
-        }
-        else if (status == InventoryStatus.Low || status == InventoryStatus.Medium)
-        {
-            if (Enemies.IsAnyValidDetected())
-            {
-                return true;
-            }
-            else return false;
-        }
-        else
+        if (status == InventoryStatus.Full)
         {
             return true;
         }
+        else return false;
     }
-    public bool IsHealthAvailable()
+    public bool IsHealthFull()
     {
         InventoryStatus status = agent.Inventory.Health.Status;
 
-        if (status == InventoryStatus.Low)
-        {
-            return false;
-        }
-        else if (status == InventoryStatus.Medium)
-        {
-            if (Enemies.IsAnyValidDetected())
-            {
-                return true;
-            }
-            else return false;
-        }
-        else
+        if (status == InventoryStatus.Full)
         {
             return true;
         }
+        else return false;
     }
 }

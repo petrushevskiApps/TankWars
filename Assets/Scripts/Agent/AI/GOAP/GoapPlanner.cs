@@ -21,7 +21,7 @@ namespace GOAP
 		 * Returns null if a plan could not be found, or a list of the actions
 		 * that must be performed, in order, to fulfill the goal.
 		 */
-		public Queue<GoapAction> Plan(GameObject agent, HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goals) 
+		public Queue<GoapAction> Plan(GameObject agent, HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goals, string planName) 
 		{
 			// reset the actions so we can start fresh with them
 			ResetActions(availableActions);
@@ -43,11 +43,11 @@ namespace GOAP
 			if (leaves.Count == 0)
 			{
 				Debug.Log("NO PLAN");
-				return null;
+				return new Queue<GoapAction>();
 			}
 			else
 			{
-				Utilities.PrintGOAPPlan(agent.name, leaves);
+				Utilities.PrintGOAPPlan(agent.name, leaves, planName);
 
 				Queue<GoapAction> actionQueue = new Queue<GoapAction>();
 
@@ -62,6 +62,8 @@ namespace GOAP
 
 		private List<Node> FindPlan(HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goal)
 		{
+			bool isPlanFound = false;
+
 			openListStates = new List<Node>();
 			closedListStates = new List<Node>();
 			adjacentStates = new List<Node>();
@@ -78,24 +80,25 @@ namespace GOAP
 				// add the current state to the closed list
 				closedListStates.Add(currentState);
 
+				// if we added the destination to the closed list, we've found a path
+				if (InState(goal, currentState.State))
+				{
+					isPlanFound = true;
+					break;
+				}
+
 				// Remove used action
 				availableActions.Remove(currentState.action);
 
 				// remove it from the open list
-				openListStates.Remove(currentState);
-
-				// if we added the destination to the closed list, we've found a path
-				if (InState(goal, currentState.state))
-				{
-					break;
-				}
-
+				//openListStates.Remove(currentState);
+				openListStates.Clear();
 				// Retrieve all states next possible
 				adjacentStates = GetAdjacentStates(currentState, availableActions, goal);
 
 				foreach(Node state in adjacentStates)
 				{
-					// if this adjacent square is already in the closed list ignore it
+					// if this adjacent state is already in the closed list ignore it
 					if (closedListStates.Contains(state))
 					{
 						continue;
@@ -109,11 +112,11 @@ namespace GOAP
 					// if its already in the open list
 					else
 					{
-						// test if using the current G score make the aSquare F score lower,
+						// test if using the current G score make the states F score lower,
 						// if yes update the parent because it means its a better path
 						int index = openListStates.IndexOf(state);
 						Node oldState = openListStates[index];
-
+						
 						if(state.StateCost < oldState.StateCost)
 						{
 							openListStates.RemoveAt(index);
@@ -124,7 +127,7 @@ namespace GOAP
 				}
 
 			}
-			return closedListStates;
+			return isPlanFound ? closedListStates : new List<Node>();
 		}
 		
 		private List<Node> GetAdjacentStates(Node parent, HashSet<GoapAction> availableActions, Dictionary<string, bool> goal)
@@ -137,17 +140,17 @@ namespace GOAP
 			{
 				// if the parent state has the conditions for this
 				// action's preconditions, we can use it here
-				if (InState(action.Preconditions, parent.state))
+				if (InState(action.Preconditions, parent.State))
 				{
 					// Check if the Procedural Preconditions
-					// are also matched ( These are usually OR conditions )
+					// are also matched ( These are OR conditions )
 					if(action.CheckProceduralPreconditions())
 					{
 						// apply the action's effects to the parent state
-						Dictionary<string, bool> state = UpdatedState(parent.state, action.Effects);
+						Dictionary<string, bool> state = UpdatedState(parent.State, action.Effects);
 
 						// Create new Node State
-						Node node = new Node(parent, parent.runningCost + action.Cost, state, action, goal);
+						Node node = new Node(parent, parent.RunningCost + action.GetCost(), state, action, goal);
 
 						// Add the new state to adjacent states
 						AddToListAndSort(adjacent, node);

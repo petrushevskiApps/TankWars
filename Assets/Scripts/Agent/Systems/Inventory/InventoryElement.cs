@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class InventoryElement : MonoBehaviour
 {
     public OnValueChange AmountChanged = new OnValueChange();
+    public OnStatusChangeEvent OnStatusChange = new OnStatusChangeEvent();
 
     [SerializeField] private float amount = 100;
     [SerializeField] private float capacity = 100;
@@ -43,6 +44,7 @@ public class InventoryElement : MonoBehaviour
     protected void SetStatus()
     {
         float currentPercent = Amount / Capacity;
+        InventoryStatus previousStatus = Status;
 
         if (currentPercent <= 0)
         {
@@ -60,7 +62,10 @@ public class InventoryElement : MonoBehaviour
         {
             Status = InventoryStatus.Full;
         }
+
+        if (previousStatus != Status) OnStatusChange.Invoke(Status);
     }
 
     public class OnValueChange : UnityEvent<float> { }
+    public class OnStatusChangeEvent : UnityEvent<InventoryStatus> { }
 }

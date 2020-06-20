@@ -44,14 +44,14 @@ namespace GOAP
 			else if (d1 > d2) return 1;
 			else return 0;
 		}
-		public static void PrintGOAPPlan(string agentName, List<Node> leaves)
+		public static void PrintGOAPPlan(string agentName, List<Node> leaves, string planName)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append($"{agentName} | GOAP Tree: \n");
+			sb.Append($"{agentName} | Plan Name: "+ planName + "\n | GOAP Tree: \n");
 
-			foreach (Node leaf in leaves)
+			foreach (Node node in leaves)
 			{
-				sb.Append(leaf.ToString());
+				sb.Append(node.ToString());
 				sb.Append("->");
 			}
 			sb.Append("Goal");
@@ -66,6 +66,16 @@ namespace GOAP
 				sb.Append(element);
 			}
 			//Debug.Log(setName + " Count: " + set.Count + " List:" + sb.ToString());
+		}
+		public static string PrintDictionary(Dictionary<string, bool> dictionary)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach(KeyValuePair<string, bool> entry in dictionary)
+			{
+				sb.Append(entry.Key + ": " + entry.Value);
+				sb.AppendLine();
+			}
+			return sb.ToString();
 		}
 		public static string GetCollectionString<T>(ICollection<T> set)
 		{

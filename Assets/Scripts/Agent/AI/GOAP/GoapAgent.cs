@@ -83,7 +83,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 
 		// Plan
-		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal);
+		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal, goalIndex == 0 ? "Survive" : "Patrol");
 
 
 		if (plan.Count > 0)
@@ -100,7 +100,7 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log("Failed Plan: " + goal);
+			Debug.Log("IdleState: Failed Plan | Goal Index:: " + goalIndex + "\n");
 			breadCrumbs.Append("IdleState: Failed Plan | Goal Index:: " + goalIndex +"\n");
 			agentImplementation.PlanFailed(goal);
 			
@@ -244,5 +244,4 @@ public sealed class GoapAgent : MonoBehaviour
 		}
 		return "No Action Selected";
 	}
-
 }

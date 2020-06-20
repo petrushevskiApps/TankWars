@@ -14,7 +14,7 @@ public abstract class Collect : GoapAction
     {
         agent = GetComponent<AIAgent>();
     }
-
+    
     public override void SetActionTarget()
     {
         if (detectedMemory.IsAnyValidDetected())
@@ -83,6 +83,8 @@ public abstract class Collect : GoapAction
     protected virtual void AddListeners()
     {
         agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+        
+        detectedMemory.OnDetected.AddListener(OnNewDetected);
 
         agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
@@ -92,6 +94,7 @@ public abstract class Collect : GoapAction
     protected virtual void RemoveListeners()
     {
         agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
+        detectedMemory.OnDetected.RemoveListener(OnNewDetected);
 
         agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
@@ -167,7 +170,7 @@ public abstract class Collect : GoapAction
     // action and re-plan.
     private void HidingSpotDetected()
     {
-        if (!agent.Memory.IsHealthAvailable() && !agent.Memory.IsAmmoAvailable())
+        if (!agent.Memory.IsHealthFull() && !agent.Memory.IsAmmoFull())
         {
             detectedMemory.InvalidateDetected(target);
             ExitAction(actionFailed);

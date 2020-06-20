@@ -125,7 +125,7 @@ public class Agent : MonoBehaviour, IDestroyable
 		Inventory.Shield.Refill();
 	}
 
-	protected void BoostOn()
+	public void BoostOn()
 	{
 		if (Inventory.SpeedBoost.Amount > 0)
 		{
@@ -137,7 +137,7 @@ public class Agent : MonoBehaviour, IDestroyable
 			navigationController.ResetSpeed();
 		}
 	}
-	protected void BoostOff()
+	public void BoostOff()
 	{
 		navigationController.ResetSpeed();
 		Inventory.SpeedBoost.Refill();

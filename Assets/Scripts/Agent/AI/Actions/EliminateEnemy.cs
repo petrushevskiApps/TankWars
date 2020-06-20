@@ -17,12 +17,24 @@ public class EliminateEnemy : GoapAction
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 
-		AddPrecondition(StateKeys.AMMO_AVAILABLE, true);
-		AddPrecondition(StateKeys.HEALTH_AVAILABLE, true);
-
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 
+		AddEffect(StateKeys.HEALTH_FULL, false);
+		AddEffect(StateKeys.AMMO_FULL, false);
+
 	}
+
+	public override float GetCost()
+	{
+		float E  = GetEnemyCost(agent.Memory.Enemies);
+		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
+		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, false);
+
+		float cost = (E*E) + IH + IA;
+
+		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+	}
+
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
@@ -40,6 +52,7 @@ public class EliminateEnemy : GoapAction
 			ExitAction(actionCompleted);
 		}
 	}
+
 	public override void InvalidTargetLocation()
 	{
 		ExitAction(actionReset);
@@ -94,7 +107,7 @@ public class EliminateEnemy : GoapAction
 	{
 		while (true)
 		{ 
-			if (agent.Memory.IsAmmoAvailable() && agent.Memory.IsHealthAvailable())
+			if (true)
 			{
 				if (target != null)
 				{
@@ -129,17 +142,41 @@ public class EliminateEnemy : GoapAction
 				break;
 			}
 		}
-		
 	}
 
 	private void AddListeners()
 	{
 		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
+		agent.Inventory.Health.OnStatusChange.AddListener(HealthStatusChange);
+		agent.Inventory.Ammo.OnStatusChange.AddListener(AmmoStatusChange);
 	}
 	private void RemoveListeners()
 	{
 		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
+		agent.Inventory.Health.OnStatusChange.RemoveListener(HealthStatusChange);
+		agent.Inventory.Ammo.OnStatusChange.RemoveListener(AmmoStatusChange);
 	}
+
+	private void HealthStatusChange(InventoryStatus status)
+	{
+		// If Health Inventory is low before enemy
+		// is destoryed action failed ( re - plan )
+		if (status == InventoryStatus.Low)
+		{
+			ExitAction(actionFailed);
+		}
+	}
+
+	private void AmmoStatusChange(InventoryStatus invStatus)
+	{
+		// If Ammo Inventory is empty before enemy
+		// is destoryed action failed ( re - plan )
+		if(invStatus == InventoryStatus.Empty )
+		{
+			ExitAction(actionFailed);
+		}
+	}
+
 
 	private void EnemyDetected()
 	{

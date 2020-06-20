@@ -18,16 +18,31 @@ public class HideAndRegenerate : GoapAction
 	{
 		actionName = "HideAndRegenerate";
 
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 		AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, true);
 
-		AddEffect(StateKeys.HEALTH_AVAILABLE, true);
-		AddEffect(StateKeys.AMMO_AVAILABLE, true);
+		AddEffect(StateKeys.HEALTH_FULL, true);
+		AddEffect(StateKeys.AMMO_FULL, true);
 	}
+
 	public override bool CheckProceduralPreconditions()
 	{
-		return !agent.Memory.IsHealthAvailable() || !agent.Memory.IsAmmoAvailable();
+		// Check if the agent is not under attack at
+		// the moment of planning 
+		return !agent.Memory.IsUnderAttack;
 	}
+
+	public override float GetCost()
+	{
+		float TTE = timeToExecute;
+		float E = GetEnemyCost(agent.Memory.Enemies);
+		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
+		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, false);
+
+		float cost = 4 + E - IH - IA;
+		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+	}
+
+	
 
 	private void Start()
 	{
@@ -200,7 +215,7 @@ public class HideAndRegenerate : GoapAction
 	// and re-plan accordingly
 	private void AmmoDetected()
 	{
-		if (agent.Memory.IsHealthAvailable() && target != null)
+		if (agent.Memory.IsHealthFull() && target != null)
 		{
 			detectedMemory.InvalidateDetected(target);
 			ExitAction(actionFailed);
@@ -212,7 +227,7 @@ public class HideAndRegenerate : GoapAction
 	// and re-plan accordingly
 	private void HealthDetected()
 	{
-		if (agent.Memory.IsAmmoAvailable() && target != null)
+		if (agent.Memory.IsAmmoFull() && target != null)
 		{
 			detectedMemory.InvalidateDetected(target);
 			ExitAction(actionFailed);

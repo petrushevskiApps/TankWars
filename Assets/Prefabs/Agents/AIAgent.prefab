@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amount: 10
   capacity: 10
-  increaseTimeFactor: 1
+  increaseTimeFactor: 0.3
   decreaseTimeFactor: 2
 --- !u!1 &1676465684604973305
 GameObject:
@@ -94,11 +94,12 @@ GameObject:
   - component: {fileID: 7481986568535156036}
   - component: {fileID: 5411017350211833471}
   - component: {fileID: 3826782306223753177}
-  - component: {fileID: 1047623510044223056}
   - component: {fileID: 5209721476198099339}
   - component: {fileID: 5659505048381754492}
+  - component: {fileID: 1047623510044223056}
   - component: {fileID: 690238159850750}
   - component: {fileID: 146958998523860671}
+  - component: {fileID: 2755334972545792248}
   m_Layer: 9
   m_Name: AIAgent
   m_TagString: Tank
@@ -223,7 +224,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Patrol
-  cost: 3
+  minimumCost: 1
+  timeToExecute: 10
   minRequiredRange: 1
   maxRequiredRange: 2
   requiresRange: 1
@@ -240,7 +242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: EliminateEnemy
-  cost: 1
+  minimumCost: 1
+  timeToExecute: 0
   minRequiredRange: 3
   maxRequiredRange: 10
   requiresRange: 1
@@ -257,26 +260,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: CollectAmmo
-  cost: 1
+  minimumCost: 1
+  timeToExecute: 2
   minRequiredRange: 1
   maxRequiredRange: 1
-  requiresRange: 1
---- !u!114 &1047623510044223056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2358564809531985286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c3a0c2b309d2ed45809e2db4218e606, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  actionName: RunAway
-  cost: 2
-  minRequiredRange: 1
-  maxRequiredRange: 2
   requiresRange: 1
 --- !u!114 &5209721476198099339
 MonoBehaviour:
@@ -291,7 +278,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: CollectHealth
-  cost: 1
+  minimumCost: 1
+  timeToExecute: 2
   minRequiredRange: 1
   maxRequiredRange: 1
   requiresRange: 1
@@ -308,7 +296,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Hide
-  cost: 1
+  minimumCost: 1
+  timeToExecute: 15
+  minRequiredRange: 1
+  maxRequiredRange: 2
+  requiresRange: 1
+--- !u!114 &1047623510044223056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2358564809531985286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c3a0c2b309d2ed45809e2db4218e606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: RunAway
+  minimumCost: 1
+  timeToExecute: 10
   minRequiredRange: 1
   maxRequiredRange: 2
   requiresRange: 1
@@ -339,6 +346,24 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2358564809531985286}
   m_Enabled: 1
+--- !u!114 &2755334972545792248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2358564809531985286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de4d856180068b944afa0e2e0e128c0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: ActivateShield
+  minimumCost: 1
+  timeToExecute: 0
+  minRequiredRange: 0
+  maxRequiredRange: 0
+  requiresRange: 0
 --- !u!1 &2594108402704307291
 GameObject:
   m_ObjectHideFlags: 0
@@ -6102,6 +6127,7 @@ MonoBehaviour:
   - {fileID: 9035803700521662693}
   - {fileID: 5713495176651103064}
   - {fileID: 8436370607823099420}
+  shieldDoom: {fileID: 0}
 --- !u!1 &7836536676205763114
 GameObject:
   m_ObjectHideFlags: 0
@@ -6208,6 +6234,7 @@ MonoBehaviour:
   health: {fileID: 5049352464479833389}
   ammo: {fileID: 4999900316738219180}
   speedBoost: {fileID: 1916907008}
+  shield: {fileID: 0}
 --- !u!1 &8605388357248397672
 GameObject:
   m_ObjectHideFlags: 0
@@ -11040,7 +11067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2aca2198545cd94a855dee314b26b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 20
+  amount: 100
   capacity: 100
 --- !u!1 &9116724750762873186
 GameObject:

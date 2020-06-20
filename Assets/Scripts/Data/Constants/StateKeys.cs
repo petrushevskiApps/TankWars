@@ -4,10 +4,10 @@ public class StateKeys
     public const string ENEMY_DETECTED = "enemyDetected";
     public const string UNDER_ATTACK = "isUnderAttack";
 
-    public const string HEALTH_AVAILABLE = "healthCount";
+    public const string HEALTH_FULL = "healthFull";
     public const string HEALTH_DETECTED = "healthDetected";
 
-    public const string AMMO_AVAILABLE = "ammoAvailable";
+    public const string AMMO_FULL = "ammoFull";
     public const string AMMO_DETECTED = "ammoDetected";
     
     public const string HIDING_SPOT_DETECTED = "hiddingSpotDetected";

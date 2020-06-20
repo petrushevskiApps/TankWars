@@ -37,7 +37,7 @@ public class UIMatchCard : MonoBehaviour
 
     private string GetDescriptionText()
     {
-        return ConstStrings.TeamVsTeamDescription;
+        return Constants.TeamVsTeamDescription;
     }
 
     private string GetSubtitleText()

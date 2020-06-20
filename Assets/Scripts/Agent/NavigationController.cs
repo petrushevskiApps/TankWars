@@ -16,21 +16,21 @@ public class NavigationController : MonoBehaviour
     public float turnSpeed = 130f;            // How fast the tank turns in degrees per second.
     public float maxSpeed = 5f;               // Maxiumum speed that can be reached with boost
 
+    private MoveStatus AgentMoveStatus;
+
     protected void Awake()
     {
         currentSpeed = originalSpeed;
     }
 
-    public void BoostSpeed()
+    public virtual void BoostSpeed()
     {
         currentSpeed = Mathf.Clamp(currentSpeed + 0.01f, originalSpeed, maxSpeed);
     }
-    public void ResetSpeed()
+    public virtual void ResetSpeed()
     {
         currentSpeed = originalSpeed;
     }
-
-    private MoveStatus AgentMoveStatus;
 
     protected void OnMovement(bool isMoving)
     {

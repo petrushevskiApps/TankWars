@@ -10,13 +10,25 @@ public class Patrol : MoveAction
 	{
 		actionName = "Patrol";
 
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
+		AddPrecondition(StateKeys.PATROL, false);
 
 		AddEffect(StateKeys.PATROL, true);
 	}
-	public override bool CheckProceduralPreconditions()
+	//public override bool CheckProceduralPreconditions()
+	//{
+	//	// Check if the agent is under attack at
+	//	// the moment of planning.
+	//	return !agent.Memory.IsUnderAttack;
+	//}
+	public override float GetCost()
 	{
-		return true;
+		float TTE = timeToExecute;
+		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
+		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, false);
+		float E = GetEnemyCost(agent.Memory.Enemies);
+
+		float cost = TTE + IH + IA + E;
+		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
 	public override void SetActionTarget()
@@ -38,6 +50,11 @@ public class Patrol : MoveAction
 	public override void ExecuteAction(GameObject agent)
 	{
 		RestartAction();
+	}
+
+	protected override void ExitAction(Action ExitAction)
+	{
+		base.ExitAction(ExitAction);
 	}
 
 	protected override void AddListeners()
@@ -72,7 +89,7 @@ public class Patrol : MoveAction
 
 	private void HealthDetected()
 	{
-		if (!agent.Memory.IsHealthAvailable())
+		if (!agent.Memory.IsHealthFull())
 		{
 			ExitAction(actionCompleted);
 		}
@@ -80,7 +97,7 @@ public class Patrol : MoveAction
 
 	private void AmmoDetected()
 	{
-		if (!agent.Memory.IsAmmoAvailable())
+		if (!agent.Memory.IsAmmoFull())
 		{
 			ExitAction(actionCompleted);
 		}
@@ -88,7 +105,7 @@ public class Patrol : MoveAction
 	
 	private void HidingSpotDetected()
 	{
-		if (!agent.Memory.IsHealthAvailable() || !agent.Memory.IsAmmoAvailable())
+		if (!agent.Memory.IsHealthFull() || !agent.Memory.IsAmmoFull())
 		{
 			ExitAction(actionCompleted);
 		}
