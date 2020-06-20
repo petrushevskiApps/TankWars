@@ -35,9 +35,9 @@ public class ActivateSpeedBoost : GoapAction
 	public override float GetCost()
 	{
 		float TTE = timeToExecute;
-		float IH = GetInventoryCost(agent.Inventory.Health.Status, true);
-		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, true);
-		float ISB = GetInventoryCost(agent.Inventory.SpeedBoost.Status, true);
+		float IH = agent.Inventory.Health.GetInvertedCost();
+		float IA = agent.Inventory.Ammo.GetInvertedCost();
+		float ISB = agent.Inventory.SpeedBoost.GetInvertedCost();
 
 		float cost = TTE + IH + IA - ISB;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);

@@ -25,13 +25,12 @@ public class CollectAmmo : Collect
 	public override float GetCost()
 	{
 		float TTE = timeToExecute;
-		float TTR = 0;
-			//TimeToReachCost(transform.position, agent.Memory.AmmoPacks.GetSortedDetected().transform.position, agent.Navigation.currentSpeed);
+		float TTR = TimeToReachCost(transform.position, agent.Memory.AmmoPacks.GetSortedDetected().transform.position, agent.Navigation.currentSpeed);
 		float E  =	GetEnemyCost(agent.Memory.Enemies);
-		float IA =	GetInventoryCost(agent.Inventory.Ammo.Status, false);
-		float IH =  GetInventoryCost(agent.Inventory.Health.Status, false);
+		float IA =  agent.Inventory.Ammo.GetCost();
+		float IH =  agent.Inventory.Health.GetCost();
 
-		float cost = TTE + TTR + E + IH - IA;
+		float cost = TTE + TTR + E + (IH * IH) - IA;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

@@ -27,10 +27,10 @@ public class EliminateEnemy : GoapAction
 	public override float GetCost()
 	{
 		float E  = GetEnemyCost(agent.Memory.Enemies);
-		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
-		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, false);
+		float IH = agent.Inventory.Health.GetCost();
+		float IA = agent.Inventory.Ammo.GetCost();
 
-		float cost = (E*E) + IH + IA;
+		float cost = E + (IH * IH) + IA;
 
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}

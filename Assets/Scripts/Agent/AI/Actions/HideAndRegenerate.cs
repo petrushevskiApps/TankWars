@@ -34,11 +34,12 @@ public class HideAndRegenerate : GoapAction
 	public override float GetCost()
 	{
 		float TTE = timeToExecute;
+		float TTR = TimeToReachCost(transform.position, agent.Memory.HidingSpots.GetSortedDetected().transform.position, agent.Navigation.currentSpeed);
 		float E = GetEnemyCost(agent.Memory.Enemies);
-		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
-		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, false);
+		float IH = agent.Inventory.Health.GetCost();
+		float IA = agent.Inventory.Ammo.GetCost();
 
-		float cost = 4 + E - IH - IA;
+		float cost = TTE + TTR + E - (IH * IH) - IA;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

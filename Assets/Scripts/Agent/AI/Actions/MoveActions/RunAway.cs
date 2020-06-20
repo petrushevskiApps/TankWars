@@ -23,12 +23,13 @@ public class RunAway : MoveAction
 
 	public override float GetCost()
 	{ 
-		float TTE = timeToExecute;
+		float TTE = 10 / agent.Navigation.currentSpeed;
+		float TTR = 10;
 		float E = GetEnemyCost(agent.Memory.Enemies);
-		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
-		float IA = GetInventoryCost(agent.Inventory.Ammo.Status, false);
+		float IH = agent.Inventory.Health.GetCost();
+		float IA = agent.Inventory.Ammo.GetCost();
 
-		float cost = TTE - E - IH - IA;
+		float cost = TTE + TTR - E - (IH * IH) - IA;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

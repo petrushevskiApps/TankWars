@@ -297,7 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Hide
   minimumCost: 1
-  timeToExecute: 15
+  timeToExecute: 4
   minRequiredRange: 1
   maxRequiredRange: 2
   requiresRange: 1

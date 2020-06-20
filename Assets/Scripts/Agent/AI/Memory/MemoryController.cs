@@ -76,11 +76,19 @@ public class MemoryController : MonoBehaviour
             { StateKeys.HEALTH_FULL, true },
             { StateKeys.PATROL, true }
         });
-
         goals.Add(new Dictionary<string, bool>()
         {
             { StateKeys.PATROL, true },
         });
+        //goals.Add(new Dictionary<string, bool>()
+        //{
+        //    { StateKeys.HEALTH_DETECTED, true },
+        //});
+
+        //goals.Add(new Dictionary<string, bool>()
+        //{
+        //    { StateKeys.AMMO_DETECTED, true },
+        //});
 
     }
 

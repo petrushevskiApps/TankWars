@@ -5,6 +5,11 @@ using UnityEngine.Events;
 
 public class InventoryElement : MonoBehaviour
 {
+    private static int EMPTY_INV_COST = 6;
+    private static int LOW_INV_COST = 4;
+    private static int MEDIUM_INV_COST = 2;
+    private static int FULL_INV_COST = 0;
+
     public OnValueChange AmountChanged = new OnValueChange();
     public OnStatusChangeEvent OnStatusChange = new OnStatusChangeEvent();
 
@@ -65,7 +70,40 @@ public class InventoryElement : MonoBehaviour
 
         if (previousStatus != Status) OnStatusChange.Invoke(Status);
     }
+    /*
+	 * Get cost matching the inventory status
+	 * Normal Inventory cost means lower statuses
+	 * cost more, example Empty inventory has high cost
+	 * because it can not be used.
+	 */
+    public float GetCost()
+    {
+        switch (Status)
+        {
+            case InventoryStatus.Empty:     return EMPTY_INV_COST;
+            case InventoryStatus.Low:       return LOW_INV_COST;
+            case InventoryStatus.Medium:    return MEDIUM_INV_COST;
+            case InventoryStatus.Full:      return FULL_INV_COST;
+            default: return 0;
+        }
+    }
 
+    /*
+	 * Get cost atching the inventory status.
+	 * Inverted Inventory cost means higher statuses
+	 * cost more, example Empty inventory has low cost
+	 */
+    public float GetInvertedCost()
+    {
+        switch (Status)
+        {
+            case InventoryStatus.Empty:     return EMPTY_INV_COST - EMPTY_INV_COST;
+            case InventoryStatus.Low:       return EMPTY_INV_COST - LOW_INV_COST;
+            case InventoryStatus.Medium:    return EMPTY_INV_COST - MEDIUM_INV_COST;
+            case InventoryStatus.Full:      return EMPTY_INV_COST - FULL_INV_COST;
+            default: return 0;
+        }
+    }
     public class OnValueChange : UnityEvent<float> { }
     public class OnStatusChangeEvent : UnityEvent<InventoryStatus> { }
 }

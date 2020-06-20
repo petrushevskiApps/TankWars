@@ -26,10 +26,11 @@ public class CollectHealth : Collect
 	public override float GetCost()
 	{
 		float TTE = timeToExecute;
-		float E = GetEnemyCost(agent.Memory.Enemies);
-		float IH = GetInventoryCost(agent.Inventory.Health.Status, false);
+		float TTR = TimeToReachCost(transform.position, agent.Memory.HealthPacks.GetSortedDetected().transform.position, agent.Navigation.currentSpeed);
+		float E =  GetEnemyCost(agent.Memory.Enemies);
+		float IH = agent.Inventory.Health.GetCost();
 
-		float cost = TTE + E - IH;
+		float cost = TTE + TTR + E - ( IH * IH );
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

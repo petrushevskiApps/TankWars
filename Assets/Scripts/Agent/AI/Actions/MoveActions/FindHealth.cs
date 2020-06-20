@@ -3,23 +3,23 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Patrol : MoveAction 
+public class FindHealth : MoveAction 
 {
 
-	public Patrol() 
+	public FindHealth() 
 	{
-		actionName = "Patrol";
+		actionName = "FindHealth";
 
-		AddPrecondition(StateKeys.PATROL, false);
+		AddPrecondition(StateKeys.HEALTH_DETECTED, false);
 
-		AddEffect(StateKeys.PATROL, true);
+		AddEffect(StateKeys.HEALTH_DETECTED, true);
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	// Check if the agent is under attack at
-	//	// the moment of planning.
-	//	return !agent.Memory.IsUnderAttack;
-	//}
+	public override bool CheckProceduralPreconditions()
+	{
+		// Check if the agent is under attack at
+		// the moment of planning.
+		return !agent.Memory.IsUnderAttack && !agent.Memory.IsHealthFull();
+	}
 	public override float GetCost()
 	{
 		float TTE = 30 / agent.Navigation.currentSpeed;

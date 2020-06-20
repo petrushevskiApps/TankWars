@@ -7,3 +7,4 @@ public enum InventoryStatus
     Medium,
     Full
 }
+ 

@@ -6,10 +6,7 @@ using System;
 [System.Serializable]
 public abstract class GoapAction : MonoBehaviour 
 {
-	private static int EMPTY_INV_COST = 6;
-	private static int LOW_INV_COST = 4;
-	private static int MEDIUM_INV_COST = 2;
-	private static int FULL_INV_COST = 0;
+	
 
 	[HideInInspector] public new string actionName = "No Name";
 	
@@ -83,28 +80,11 @@ public abstract class GoapAction : MonoBehaviour
 	protected float GetEnemyCost(DetectedHolder enemies)
 	{
 		// For each valid enemy - 1 cost
-		return enemies.GetValidDetectedCount();
+		return enemies.GetValidDetectedCount() * 3;
 	}
 
 
-	/*
-	 * Get cost matching the inventory status
-	 * Normal Inventory cost means lower statuses
-	 * cost more, example Empty inventory has high cost
-	 * because it can not be used.
-	 * Inverted cost means that lower status cost less.
-	 */
-	protected float GetInventoryCost(InventoryStatus status, bool isInverted)
-	{
-		switch(status)
-		{
-			case InventoryStatus.Empty: return isInverted ? EMPTY_INV_COST - EMPTY_INV_COST : EMPTY_INV_COST;
-			case InventoryStatus.Low: return isInverted ? EMPTY_INV_COST - LOW_INV_COST : LOW_INV_COST;
-			case InventoryStatus.Medium: return isInverted ? EMPTY_INV_COST - MEDIUM_INV_COST : MEDIUM_INV_COST;
-			case InventoryStatus.Full: return isInverted ? EMPTY_INV_COST - FULL_INV_COST : FULL_INV_COST;
-			default: return 0;
-		}
-	}
+	
 
 	protected float TimeToReachCost(Vector3 start, Vector3 destination, float speed)
 	{
