@@ -14661,7 +14661,7 @@ MonoBehaviour:
     m_Bits: 1536
   m_ExplosionParticles: {fileID: 19870274}
   m_ExplosionAudio: {fileID: 8204558}
-  m_MaxDamage: 5
+  m_MaxDamage: 10
   m_ExplosionForce: 1000
   m_MaxLifeTime: 2
   m_ExplosionRadius: 5

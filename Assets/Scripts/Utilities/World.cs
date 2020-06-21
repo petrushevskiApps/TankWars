@@ -69,6 +69,13 @@ public class World : Singleton<World>
         return new Vector3(x, corners[0].position.y, z);
     }
 
+    public Vector3 ClampToWorld(Vector3 location)
+    {
+        location.x = Mathf.Clamp(location.x, minX, maxX);
+        location.z = Mathf.Clamp(location.z, minZ, maxZ);
+        location.y = 0f;
+        return location;
+    }
     private void OnMatchStart(MatchConfiguration arg0)
     {
         uiTank.SetActive(false);

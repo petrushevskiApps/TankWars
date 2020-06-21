@@ -136,7 +136,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 2358564809531985286}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 2
+  m_Radius: 0.7
   m_Speed: 3.5
   m_Acceleration: 5
   avoidancePriority: 50
@@ -145,7 +145,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 1.5
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -321,8 +321,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumCost: 1
   timeToExecute: 0
-  minRequiredRange: 10
-  maxRequiredRange: 15
+  minRequiredRange: 0
+  maxRequiredRange: 10
   requiresRange: 1
   searchCost: 30
 --- !u!114 &3388299124342599523
@@ -339,8 +339,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumCost: 1
   timeToExecute: 0
-  minRequiredRange: 10
-  maxRequiredRange: 15
+  minRequiredRange: 0
+  maxRequiredRange: 10
   requiresRange: 1
   searchCost: 30
 --- !u!114 &3524309892406362379
@@ -357,8 +357,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumCost: 1
   timeToExecute: 0
-  minRequiredRange: 10
-  maxRequiredRange: 15
+  minRequiredRange: 0
+  maxRequiredRange: 10
   requiresRange: 1
   searchCost: 30
 --- !u!114 &356462177188117471
@@ -375,8 +375,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumCost: 1
   timeToExecute: 0
-  minRequiredRange: 10
-  maxRequiredRange: 15
+  minRequiredRange: 0
+  maxRequiredRange: 10
   requiresRange: 1
 --- !u!1 &2594108402704307291
 GameObject:
@@ -5947,8 +5947,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2aca2198545cd94a855dee314b26b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 20
-  capacity: 20
+  amount: 15
+  capacity: 10
 --- !u!1 &6506622361556980722
 GameObject:
   m_ObjectHideFlags: 0
@@ -11256,6 +11256,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747128567081623142, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747128567081623142, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6458384078543734408, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6458384078543734408, guid: 23e1051edc4e9994e93f112254d5e548,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8218944908877533182, guid: 23e1051edc4e9994e93f112254d5e548,
         type: 3}

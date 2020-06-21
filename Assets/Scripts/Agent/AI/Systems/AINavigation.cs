@@ -219,45 +219,48 @@ public class AINavigation : NavigationController
 		}
 	}
 
-	public void SetTarget()
+	public void SetSearchTarget()
 	{
 		if (!IsTargetValid() || !IsPathValid())
 		{
-			SetTargetLocation(World.Instance.GetRandomLocation());
+			// Find forward direction of agent
+			Vector3 direction = agent.transform.forward.normalized;
+
+			CreateLocation(direction);
 		}
 	}
 
-	public void SetTarget(Vector3 location, bool isRunAway)
+	public void SetRunAwayTarget(Vector3 runFromTarget)
 	{
 		if(!IsTargetValid() || !IsPathValid())
 		{
-			if(isRunAway)
-			{
-				CreateRunawayLocation(location);
-			}
-			else
-			{
-				SetTargetLocation(location);
-			}
+			// Find direction from where agent is attacked
+			Vector3 direction = (runFromTarget - agent.transform.position).normalized;
+
+			CreateLocation(direction);
 		}
 	}
-	
-	private void CreateRunawayLocation(Vector3 runFromTarget)
+	private void CreateLocation(Vector3 direction)
 	{
-		// Find direction from where agent is attacked
-		Vector3 direction = (runFromTarget - agent.transform.position).normalized;
+		// Add range to direction
+		direction *= Random.Range(10, 50);
 
-		// Get opposite direction with magnitude
-		direction *= (-Random.Range(15, 30));
+		// Find up direction of agent
+		Vector3 upDirection = agent.transform.up.normalized;
+
+		// Get side direction
+		Vector3 sideDirection = Vector3.Cross(direction, upDirection);
+
+		sideDirection *= Random.Range(0, 50) * (Random.Range(0f, 1f) <= 0.5 ? -1 : 1);
+
+		// Add side direction to forward
+		direction += sideDirection;
 
 		// Find location in opposite direction of the attack
 		Vector3 runToLocation = direction + agent.transform.position;
 
-		// Re-position run location on the plane in vertical space
-		runToLocation.y = 0f;
-
 		// Set run location
-		SetTargetLocation(runToLocation);
+		SetTargetLocation(World.Instance.ClampToWorld(runToLocation));
 	}
 
 	private void SetTargetLocation(Vector3 targetPosition)

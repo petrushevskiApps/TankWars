@@ -9,7 +9,7 @@ public abstract class SearchAction : MoveAction
 
 	public override void SetActionTarget()
 	{
-		agent.Navigation.SetTarget();
+		agent.Navigation.SetSearchTarget();
 		target = agent.Navigation.Target;
 	}
 

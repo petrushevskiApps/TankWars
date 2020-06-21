@@ -13,6 +13,8 @@ public class HideAndRegenerate : GoapAction
 	protected Coroutine UpdateCoroutine;
 
 	private const float REGENERATE_INTERVAL = 1f;
+	private const float HEALTH_PER_SECOND = 10;
+	private const int AMMO_PER_SECOND = 3;
 
 	public HideAndRegenerate() 
 	{
@@ -96,12 +98,12 @@ public class HideAndRegenerate : GoapAction
 
 		while(agent.Inventory.Health.Status != InventoryStatus.Full)
 		{
-			agent.Inventory.Health.Increase(10);
+			agent.Inventory.Health.Increase(HEALTH_PER_SECOND);
 			yield return new WaitForSeconds(REGENERATE_INTERVAL);
 		}
 		while(agent.Inventory.Ammo.Status != InventoryStatus.Full)
 		{
-			agent.Inventory.Ammo.Increase(4);
+			agent.Inventory.Ammo.Increase(AMMO_PER_SECOND);
 			yield return new WaitForSeconds(REGENERATE_INTERVAL);
 		}
 		

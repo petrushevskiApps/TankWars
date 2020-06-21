@@ -32,16 +32,14 @@ public class RunAway : MoveAction
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
-	
-
 	public override void SetActionTarget()
 	{
 		//Vector3 missileDirection = agent.Memory.MissileDirection;
 		GameObject enemy = agent.Memory.Enemies.GetSortedDetected();
 
-		if(enemy != null && enemy.transform.position != Vector3.zero)
+		if(enemy != null)
 		{
-			agent.Navigation.SetTarget(enemy.transform.position, true);
+			agent.Navigation.SetRunAwayTarget(enemy.transform.position);
 			target = agent.Navigation.Target;
 		}
 		else
