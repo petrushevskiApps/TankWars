@@ -38,29 +38,23 @@ namespace GOAP
 			// build up the tree and record the leaf nodes that provide a solution to the goal.
 			List<Node> leaves = new List<Node>();
 
-			leaves = FindPlan(usableActions, worldState, goals);
-			
-			if (leaves.Count == 0)
+			Plan plan = FindPlan(usableActions, worldState, goals, agent.name);
+			Debug.Log(plan);
+
+			if (!plan.isPlanSuccessful)
 			{
-				Debug.Log("NO PLAN");
 				return new Queue<GoapAction>();
 			}
 			else
 			{
-				Utilities.PrintGOAPPlan(agent.name, leaves, planName);
-
-				Queue<GoapAction> actionQueue = new Queue<GoapAction>();
-
-				leaves.ForEach(x => { if (x.action != null) actionQueue.Enqueue(x.action); });
-
-				return actionQueue;
+				return plan.GetPlanActions();
 			}
 
 		}
 
 		
 
-		private List<Node> FindPlan(HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goal)
+		private Plan FindPlan(HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goal, string agentName)
 		{
 			bool isPlanFound = false;
 
@@ -127,7 +121,7 @@ namespace GOAP
 				}
 
 			}
-			return isPlanFound ? closedListStates : new List<Node>();
+			return new Plan(closedListStates, isPlanFound, agentName);
 		}
 		
 		private List<Node> GetAdjacentStates(Node parent, HashSet<GoapAction> availableActions, Dictionary<string, bool> goal)
@@ -237,6 +231,51 @@ namespace GOAP
 			Utilities.PrintCollection("Updated State", updatedState);
 			
 			return updatedState;
+		}
+
+	}
+
+	public class Plan
+	{
+		string agentName = "NoName";
+
+		public List<Node> plan = new List<Node>();
+		public bool isPlanSuccessful = false;
+
+		public Plan(List<Node> plan, bool isPlanSuccessful, string agentName)
+		{
+			this.plan = plan;
+			this.isPlanSuccessful = isPlanSuccessful;
+			this.agentName = agentName;
+		}
+
+		public Queue<GoapAction> GetPlanActions()
+		{
+			Queue<GoapAction> actionQueue = new Queue<GoapAction>();
+
+			plan.ForEach(x => { if (x.action != null) actionQueue.Enqueue(x.action); });
+
+			return actionQueue;
+		}
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append(isPlanSuccessful ? "<color=green>Successful</color>" : "<color=red>Failed</color>");
+			sb.AppendLine();
+			sb.Append(agentName);
+			sb.AppendLine();
+			sb.Append("GOAP Tree:");
+			sb.AppendLine();
+
+			foreach (Node node in plan)
+			{
+				sb.Append(node.ToString());
+				sb.Append("->");
+			}
+			sb.Append("Goal");
+
+			return sb.ToString();
 		}
 
 	}

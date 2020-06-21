@@ -12,7 +12,7 @@ public class StateKeys
     
     public const string HIDING_SPOT_DETECTED = "hiddingSpotDetected";
 
-    public const string PATROL = "patrol";
+    public const string ENEMY_KILLED = "enemyKilled";
 }
 
 public class FSMKeys

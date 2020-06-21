@@ -258,11 +258,11 @@ MonoBehaviour:
   ammoPackPrefab: {fileID: 6606727550952868652, guid: f05115efc3b7be04d96f2b77cfc2aa75,
     type: 3}
   navMeshTest: {fileID: 64427508}
-  hpMapLimit: 3
-  ammoMapLimit: 3
+  hpMapLimit: 5
+  ammoMapLimit: 5
   minProximity: 10
   minRelocationTime: 30
-  maxRelocationTime: 120
+  maxRelocationTime: 60
   pickables: []
 --- !u!1 &64427506
 GameObject:

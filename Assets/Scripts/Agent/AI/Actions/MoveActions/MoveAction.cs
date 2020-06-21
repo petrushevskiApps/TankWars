@@ -14,6 +14,7 @@ public abstract class MoveAction : GoapAction
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
 		isActionExited = false;
+		IsActionDone = false;
 		actionCompleted = Success;
 		actionFailed = Fail;
 		actionReset = Reset;
@@ -22,7 +23,7 @@ public abstract class MoveAction : GoapAction
 		AddListeners();
 
 	}
-	public override void ExecuteAction(GameObject agent)
+	public override void ExecuteAction()
 	{
 		ExitAction(actionCompleted);
 	}

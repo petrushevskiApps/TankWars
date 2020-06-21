@@ -54,6 +54,7 @@ public class MemoryController : MonoBehaviour
     private void SetStates()
     {
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
+        worldState.Add(StateKeys.ENEMY_KILLED, () => false);
 
         worldState.Add(StateKeys.HEALTH_FULL, IsHealthFull);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
@@ -63,7 +64,7 @@ public class MemoryController : MonoBehaviour
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.PATROL, () => false);
+        worldState.Add(StateKeys.UNDER_ATTACK, () => IsUnderAttack);
     }
 
     private void SetGoals()
@@ -71,25 +72,10 @@ public class MemoryController : MonoBehaviour
         // Survive
         goals.Add(new Dictionary<string, bool>() 
         {
-            { StateKeys.ENEMY_DETECTED, false },
+            { StateKeys.ENEMY_KILLED, true },
             { StateKeys.AMMO_FULL, true },
             { StateKeys.HEALTH_FULL, true },
-            { StateKeys.PATROL, true }
         });
-        goals.Add(new Dictionary<string, bool>()
-        {
-            { StateKeys.PATROL, true },
-        });
-        //goals.Add(new Dictionary<string, bool>()
-        //{
-        //    { StateKeys.HEALTH_DETECTED, true },
-        //});
-
-        //goals.Add(new Dictionary<string, bool>()
-        //{
-        //    { StateKeys.AMMO_DETECTED, true },
-        //});
-
     }
 
     private void RegisterEvents()

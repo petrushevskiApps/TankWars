@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34cf7b98930183f4e96fae7e0c1a55ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amountToCollect: 10
+  amountToCollect: 20
   canvas: {fileID: 2197655938696571922}
   collectingProgress: {fileID: 8565760258531554070}
   timeToCollect: 2

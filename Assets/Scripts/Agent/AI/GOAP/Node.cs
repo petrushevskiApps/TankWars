@@ -107,7 +107,7 @@ namespace GOAP
 			if (parent != null)
 			{
 				return "(" + StateCost.ToString() + " = " + RunningCost + " + " + heuristic + ")"
-					+ action.actionName.ToString() + ": \n" + Utilities.PrintDictionary(State) + "\n";
+					+ action.GetType().ToString() + ": \n" + Utilities.PrintDictionary(State) + "\n";
 			}
 			else
 			{

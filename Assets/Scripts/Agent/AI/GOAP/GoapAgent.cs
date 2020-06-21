@@ -134,7 +134,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 		GoapAction action = currentActions.Peek();
 
-		breadCrumbs.Append("MoveTo State: Action:" + action.actionName + "\n");
+		breadCrumbs.Append("MoveTo State: Action:" + action.ActionName + "\n");
 
 		if(currentAction.IsInRange)
 		{
@@ -183,7 +183,7 @@ public sealed class GoapAgent : MonoBehaviour
 			if (currentAction.IsInRange)
 			{
 				// we are in range, so perform the action
-				currentAction.ExecuteAction(gameObject);
+				currentAction.ExecuteAction();
 			}
 			else
 			{
@@ -240,7 +240,7 @@ public sealed class GoapAgent : MonoBehaviour
 	{
 		if(currentAction != null)
 		{
-			return currentAction.actionName;
+			return currentAction.ActionName;
 		}
 		return "No Action Selected";
 	}

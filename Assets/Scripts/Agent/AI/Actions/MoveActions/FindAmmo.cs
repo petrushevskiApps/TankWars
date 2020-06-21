@@ -3,16 +3,16 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class FindHealth : SearchAction 
+public class FindAmmo : SearchAction 
 {
 
-	public FindHealth() 
+	public FindAmmo()
 	{
-		AddPrecondition(StateKeys.HEALTH_DETECTED, false);
-		AddPrecondition(StateKeys.HEALTH_FULL, false);
+		AddPrecondition(StateKeys.AMMO_DETECTED, false);
+		AddPrecondition(StateKeys.AMMO_FULL, false);
 		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
-		AddEffect(StateKeys.HEALTH_DETECTED, true);
+		AddEffect(StateKeys.AMMO_DETECTED, true);
 	}
 	//public override bool CheckProceduralPreconditions()
 	//{
@@ -21,30 +21,33 @@ public class FindHealth : SearchAction
 	//	return !agent.Memory.IsUnderAttack;
 	//}
 
-	// Searching for health refills cost should be affected
-	// by the static search cost ( this is coast of uncertantiy )
-	// and how many enemies are detected nearby, minus the agents
-	// health inventory status.
+	// Searching for ammo refills cost should be affected
+	// by the static search cost ( this is coast of uncertainty )
+	// plus how many enemies are detected nearby and the agents
+	// health inventory status, plus the agents ammo inventory status.
 	public override float GetCost()
 	{
 		float IH = agent.Inventory.Health.GetCost();
-		float E  = GetEnemyCost(agent.Memory.Enemies);
+		float IA = agent.Inventory.Ammo.GetCost();
+		float E = GetEnemyCost(agent.Memory.Enemies);
 
-		float cost = searchCost + E - (IH * IH);
+		float cost = searchCost + E + IH - (IA * IA);
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
 	protected override void AddListeners()
 	{
-		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
 		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+
 		agent.Sensors.OnUnderAttack.AddListener(UnderAttack);
 	}
 	
 	protected override void RemoveListeners()
 	{
-		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
 		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
+
 		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);
 	}
 
@@ -53,11 +56,11 @@ public class FindHealth : SearchAction
 		ExitAction(actionFailed);
 	}
 
-	private void HealthDetected()
+	private void AmmoDetected()
 	{
 		ExitAction(actionCompleted);
 	}
-
+	
 	private void HidingSpotDetected()
 	{
 		ExitAction(actionFailed);

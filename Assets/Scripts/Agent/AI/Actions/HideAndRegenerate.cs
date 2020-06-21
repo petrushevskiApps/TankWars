@@ -16,8 +16,6 @@ public class HideAndRegenerate : GoapAction
 
 	public HideAndRegenerate() 
 	{
-		actionName = "HideAndRegenerate";
-
 		AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, true);
 
 		AddEffect(StateKeys.HEALTH_FULL, true);
@@ -34,7 +32,7 @@ public class HideAndRegenerate : GoapAction
 	public override float GetCost()
 	{
 		float TTE = timeToExecute;
-		float TTR = TimeToReachCost(transform.position, agent.Memory.HidingSpots.GetSortedDetected().transform.position, agent.Navigation.currentSpeed);
+		float TTR = TimeToReachCost(transform.position, agent.Memory.HidingSpots.GetSortedDetected(), agent.Navigation.currentSpeed);
 		float E = GetEnemyCost(agent.Memory.Enemies);
 		float IH = agent.Inventory.Health.GetCost();
 		float IA = agent.Inventory.Ammo.GetCost();
@@ -81,7 +79,7 @@ public class HideAndRegenerate : GoapAction
 
 		AddListeners();
 	}
-	public override void ExecuteAction(GameObject agent)
+	public override void ExecuteAction()
 	{
 		if (!detectedMemory.IsDetectedValid(target))
 		{
@@ -103,7 +101,7 @@ public class HideAndRegenerate : GoapAction
 		}
 		while(agent.Inventory.Ammo.Status != InventoryStatus.Full)
 		{
-			agent.Inventory.Ammo.Increase(2);
+			agent.Inventory.Ammo.Increase(4);
 			yield return new WaitForSeconds(REGENERATE_INTERVAL);
 		}
 		
@@ -169,7 +167,7 @@ public class HideAndRegenerate : GoapAction
 		{
 			GoapAgent gaOther = agent.GetComponent<GoapAgent>();
 
-			if (gaOther != null && gaOther.GetCurrentAction().Equals(actionName))
+			if (gaOther != null && gaOther.GetCurrentAction().Equals(ActionName))
 			{
 				CompareDistanceToPacket(agent);
 			}

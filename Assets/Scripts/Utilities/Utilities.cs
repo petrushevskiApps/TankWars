@@ -44,19 +44,7 @@ namespace GOAP
 			else if (d1 > d2) return 1;
 			else return 0;
 		}
-		public static void PrintGOAPPlan(string agentName, List<Node> leaves, string planName)
-		{
-			StringBuilder sb = new StringBuilder();
-			sb.Append($"{agentName} | Plan Name: "+ planName + "\n | GOAP Tree: \n");
-
-			foreach (Node node in leaves)
-			{
-				sb.Append(node.ToString());
-				sb.Append("->");
-			}
-			sb.Append("Goal");
-			Debug.Log(sb.ToString());
-		}
+		
 
 		public static void PrintCollection<T>(string setName, ICollection<T> set)
 		{

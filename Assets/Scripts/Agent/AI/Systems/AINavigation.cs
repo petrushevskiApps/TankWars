@@ -45,12 +45,14 @@ public class AINavigation : NavigationController
 	{
 		base.BoostSpeed();
 		navMeshAgent.speed = currentSpeed;
+		navMeshAgent.avoidancePriority -= 10;
 		isBoostOn = true;
 	}
 	public override void ResetSpeed()
 	{
 		base.ResetSpeed();
 		navMeshAgent.speed = currentSpeed;
+		navMeshAgent.avoidancePriority += 10;
 		isBoostOn = false;
 	}
 

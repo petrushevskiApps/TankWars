@@ -8,8 +8,8 @@ public abstract class GoapAction : MonoBehaviour
 {
 	
 
-	[HideInInspector] public new string actionName = "No Name";
-	
+	public string ActionName { get => GetType().ToString(); }
+
 	[SerializeField] protected float minimumCost = 1f;
 	[SerializeField] protected float timeToExecute = 0;
 
@@ -71,7 +71,7 @@ public abstract class GoapAction : MonoBehaviour
 
 	public abstract void EnterAction(Action Success, Action Fail, Action Reset);
 
-	public abstract void ExecuteAction(GameObject agent);
+	public abstract void ExecuteAction();
 
 	protected abstract void ExitAction(Action exitAction);
 
@@ -86,11 +86,17 @@ public abstract class GoapAction : MonoBehaviour
 
 	
 
-	protected float TimeToReachCost(Vector3 start, Vector3 destination, float speed)
+	protected float TimeToReachCost(Vector3 start, GameObject target, float speed)
 	{
-		float distance = Vector3.Distance(start, destination);
-		float timeCost = distance / speed;
-		return timeCost;
+		if (target != null)
+		{
+			Vector3 destination = target.transform.position;
+			float distance = Vector3.Distance(start, destination);
+			float timeCost = distance / speed;
+			return timeCost;
+		}
+		else return 20;
+		
 	}
 
 	/* Action Preconditions & Effects */

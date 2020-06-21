@@ -44,7 +44,7 @@ public abstract class Collect : GoapAction
         AddListeners();
     }
 
-    public override void ExecuteAction(GameObject agent)
+    public override void ExecuteAction()
     {
         CollectController collector = agent.GetComponent<Agent>().Collector;
 
@@ -88,6 +88,7 @@ public abstract class Collect : GoapAction
 
         agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
+
         agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
     }
 
@@ -98,10 +99,11 @@ public abstract class Collect : GoapAction
 
         agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
+
         agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
     }
 
-    // When attacked abort current action and
+    // When attacked abort collecting and
     // re-plan accordingly
     private void OnUnderAttack(GameObject arg0)
     {
@@ -110,51 +112,6 @@ public abstract class Collect : GoapAction
             detectedMemory.InvalidateDetected(target);
         }
         ExitAction(actionFailed);
-    }
-
-    // On agent detected, check if the agent is
-    // executing same action. If it does, check
-    // is it closer to target and abort and re-plan
-    // otherwise continue
-    private void OnAgentDetected(GameObject agent)
-    {
-        if (target != null && agent != null)
-        {
-            GoapAgent gaOther = agent.GetComponent<GoapAgent>();
-
-            if (gaOther != null && gaOther.GetCurrentAction().Equals(actionName))
-            {
-                CompareDistanceToPacket(agent);
-            }
-        }
-    }
-
-
-    private void CompareDistanceToPacket(GameObject otherAgent)
-    {
-        float otherDistanceToPacket = GetDistanceToCollectible(otherAgent);
-        float distanceToPacket = GetDistanceToCollectible(gameObject);
-
-        if (distanceToPacket > otherDistanceToPacket)
-        {
-            if (distanceToPacket < 20)
-            {
-                detectedMemory.InvalidateDetected(target);
-                ExitAction(actionFailed);
-            }
-        }
-    }
-
-    public float GetDistanceToCollectible(GameObject agent)
-    {
-        if(agent != null && target != null)
-        {
-            return Vector3.Distance(agent.transform.position, target.transform.position);
-        }
-        else
-        {
-            return Mathf.Infinity;
-        }
     }
 
     // When new pickable is detected
@@ -174,6 +131,50 @@ public abstract class Collect : GoapAction
         {
             detectedMemory.InvalidateDetected(target);
             ExitAction(actionFailed);
+        }
+    }
+
+    // On agent detected, check if the agent is
+    // executing same action. If it does, check
+    // is it closer to target and abort and re-plan
+    // otherwise continue
+    private void OnAgentDetected(GameObject agent)
+    {
+        if (target != null && agent != null)
+        {
+            GoapAgent gaOther = agent.GetComponent<GoapAgent>();
+
+            if (gaOther != null && gaOther.GetCurrentAction().Equals(ActionName))
+            {
+                CompareDistanceToPacket(agent);
+            }
+        }
+    }
+
+    private void CompareDistanceToPacket(GameObject otherAgent)
+    {
+        float otherDistanceToPacket = GetDistanceToCollectible(otherAgent);
+        float distanceToPacket = GetDistanceToCollectible(gameObject);
+
+        if (distanceToPacket > otherDistanceToPacket)
+        {
+            if (distanceToPacket < 20)
+            {
+                detectedMemory.InvalidateDetected(target);
+                ExitAction(actionFailed);
+            }
+        }
+    }
+
+    public float GetDistanceToCollectible(GameObject agent)
+    {
+        if (agent != null && target != null)
+        {
+            return Vector3.Distance(agent.transform.position, target.transform.position);
+        }
+        else
+        {
+            return Mathf.Infinity;
         }
     }
 }

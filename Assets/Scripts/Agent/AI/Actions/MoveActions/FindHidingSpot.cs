@@ -3,34 +3,33 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class FindHealth : SearchAction 
+public class FindHidingSpot : SearchAction 
 {
 
-	public FindHealth() 
+	public FindHidingSpot() 
 	{
-		AddPrecondition(StateKeys.HEALTH_DETECTED, false);
-		AddPrecondition(StateKeys.HEALTH_FULL, false);
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
+		AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, false);
 
-		AddEffect(StateKeys.HEALTH_DETECTED, true);
+		AddEffect(StateKeys.HIDING_SPOT_DETECTED, true);
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	// Check if the agent is under attack at
-	//	// the moment of planning.
-	//	return !agent.Memory.IsUnderAttack;
-	//}
+	public override bool CheckProceduralPreconditions()
+	{
+		// Check if the agent is under attack at
+		// the moment of planning.
+		return !agent.Memory.IsUnderAttack && ( !agent.Memory.IsHealthFull() || !agent.Memory.IsAmmoFull() );
+	}
 
 	// Searching for health refills cost should be affected
 	// by the static search cost ( this is coast of uncertantiy )
 	// and how many enemies are detected nearby, minus the agents
-	// health inventory status.
+	// health and ammo inventory status.
 	public override float GetCost()
 	{
 		float IH = agent.Inventory.Health.GetCost();
+		float IA = agent.Inventory.Ammo.GetCost();
 		float E  = GetEnemyCost(agent.Memory.Enemies);
 
-		float cost = searchCost + E - (IH * IH);
+		float cost = searchCost + E - IH - IA;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
@@ -60,7 +59,7 @@ public class FindHealth : SearchAction
 
 	private void HidingSpotDetected()
 	{
-		ExitAction(actionFailed);
+		ExitAction(actionCompleted);
 	}
 
 }

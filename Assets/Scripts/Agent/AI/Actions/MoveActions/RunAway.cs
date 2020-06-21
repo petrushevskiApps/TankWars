@@ -9,12 +9,11 @@ public class RunAway : MoveAction
 {
 	public RunAway() 
 	{
-		actionName = "RunAway";
-
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
+		AddPrecondition(StateKeys.UNDER_ATTACK, true);
 
+		AddEffect(StateKeys.UNDER_ATTACK, false);
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
-
 	}
 	//public override bool CheckProceduralPreconditions()
 	//{
@@ -62,7 +61,7 @@ public class RunAway : MoveAction
 	}
 	
 
-	public override void ExecuteAction(GameObject agent)
+	public override void ExecuteAction()
 	{
 		if(this.agent.Memory.IsUnderAttack)
 		{

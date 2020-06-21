@@ -10,18 +10,15 @@ public class EliminateEnemy : GoapAction
 	private AIAgent agent;
 
 	private Coroutine FireCoroutine;
+	private bool isActionExited = false;
 
 	public EliminateEnemy()
 	{
-		actionName = "EliminateEnemy";
+		//actionName = "KillEnemy";
 
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 
-		AddEffect(StateKeys.ENEMY_DETECTED, false);
-
-		AddEffect(StateKeys.HEALTH_FULL, false);
-		AddEffect(StateKeys.AMMO_FULL, false);
-
+		AddEffect(StateKeys.ENEMY_KILLED, true);
 	}
 
 	public override float GetCost()
@@ -68,6 +65,9 @@ public class EliminateEnemy : GoapAction
 	}
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
+		isActionExited = false;
+		IsActionDone = false;
+
 		actionCompleted = Success;
 		actionFailed = Fail;
 		actionReset = Reset;
@@ -76,7 +76,7 @@ public class EliminateEnemy : GoapAction
 		AddListeners();
 	}
 
-	public override void ExecuteAction(GameObject agent)
+	public override void ExecuteAction()
 	{
 		this.agent.Navigation.LookAtTarget();
 		this.agent.Navigation.FollowTarget(maxRequiredRange);
@@ -85,60 +85,65 @@ public class EliminateEnemy : GoapAction
 
 	protected override void ExitAction(Action ExitAction)
 	{
-		RemoveListeners();
-		agent.Navigation.StopLookAt();
-		agent.Navigation.StopFollow();
-
-		if (FireCoroutine != null)
+		if(!isActionExited)
 		{
-			StopCoroutine(FireCoroutine);
-			FireCoroutine = null;
+			isActionExited = true;
+
+			RemoveListeners();
+			agent.Navigation.StopLookAt();
+			agent.Navigation.StopFollow();
+
+			if (FireCoroutine != null)
+			{
+				StopCoroutine(FireCoroutine);
+				FireCoroutine = null;
+			}
+
+			IsActionDone = true;
+
+			ExitAction?.Invoke();
+			target = null;
+			agent.Navigation.InvalidateTarget();
 		}
-
-		IsActionDone = true;
-
-		ExitAction?.Invoke();
-		target = null;
-		agent.Navigation.InvalidateTarget();
 	}
 
 	
 	IEnumerator Fire()
 	{
 		while (true)
-		{ 
-			if (true)
+		{
+			if (target != null)
 			{
-				if (target != null)
+				if (CheckActionRange() == FireRangeStatus.ToClose)
 				{
-					if(CheckActionRange() == FireRangeStatus.ToClose)
-					{
-						agent.Memory.Enemies.InvalidateDetected(target, 2f);
-						ExitAction(actionFailed);
-						break;
-					}
+					agent.Memory.Enemies.InvalidateDetected(target, 2f);
+					ExitAction(actionFailed);
+					break;
+				}
 
-					if (CheckActionRange() == FireRangeStatus.InRange)
+				if (CheckActionRange() == FireRangeStatus.InRange)
+				{
+					if (agent.Navigation.IsLookingAtTarget())
 					{
-						if (agent.Navigation.IsLookingAtTarget())
+						if(agent.Inventory.Ammo.Amount > 0)
 						{
 							agent.Weapon.FireBullet();
 							yield return new WaitForSeconds(0.5f);
 						}
+						else
+						{
+							ExitAction(actionFailed);
+							break;
+						}
 					}
+				}
 
-					yield return new WaitForSeconds(0.01f);
-				}
-				else
-				{
-					agent.Memory.Enemies.RemoveDetected(target);
-					ExitAction(actionCompleted);
-					break;
-				}
+				yield return new WaitForSeconds(0.01f);
 			}
 			else
 			{
-				ExitAction(actionFailed);
+				agent.Memory.Enemies.RemoveDetected(target);
+				ExitAction(actionCompleted);
 				break;
 			}
 		}
@@ -180,7 +185,7 @@ public class EliminateEnemy : GoapAction
 
 	private void EnemyDetected()
 	{
-		ExitAction(actionReset);
+		ExitAction(actionFailed);
 	}
 	
 

@@ -11,14 +11,10 @@ public class ActivateSpeedBoost : GoapAction
 
 	public ActivateSpeedBoost() 
 	{
-		actionName = "ActivateSpeedBoost";
+		AddPrecondition(StateKeys.UNDER_ATTACK, true);
 
-		//AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, true);
+		AddEffect(StateKeys.UNDER_ATTACK, false);
 
-		//AddEffect(StateKeys.HEALTH_FULL, true);
-		//AddEffect(StateKeys.AMMO_FULL, true);
-
-		
 	}
 	private void Start()
 	{
@@ -34,12 +30,11 @@ public class ActivateSpeedBoost : GoapAction
 
 	public override float GetCost()
 	{
-		float TTE = timeToExecute;
-		float IH = agent.Inventory.Health.GetInvertedCost();
-		float IA = agent.Inventory.Ammo.GetInvertedCost();
+		float IH = agent.Inventory.Health.GetCost();
+		float IA = agent.Inventory.Ammo.GetCost();
 		float ISB = agent.Inventory.SpeedBoost.GetInvertedCost();
 
-		float cost = TTE + IH + IA - ISB;
+		float cost = ISB - IH - IA;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
@@ -58,15 +53,18 @@ public class ActivateSpeedBoost : GoapAction
 		actionCompleted = Success;
 		actionFailed = Fail;
 		actionReset = Reset;
-
-		IsInRange = true;
 	}
 
-	public override void ExecuteAction(GameObject agent)
+	public override void ExecuteAction()
 	{
 		if(this.agent.Inventory.SpeedBoost.Amount > 0)
 		{
 			this.agent.BoostOn();
+			ExitAction(actionCompleted);
+		}
+		else
+		{
+			ExitAction(actionFailed);
 		}
 	}
 

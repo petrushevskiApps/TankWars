@@ -1,32 +1,27 @@
-﻿using GOAP;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.PlayerLoop;
 
 public class CollectHealth : Collect 
 {
 	public CollectHealth() 
 	{
-		actionName = "CollectHealth";
-
 		AddPrecondition(StateKeys.HEALTH_DETECTED, true);
+		AddPrecondition(StateKeys.HEALTH_FULL, false);
+		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
 		AddEffect(StateKeys.HEALTH_FULL, true);
 
 	}
-	public override bool CheckProceduralPreconditions()
-	{
-		// Check if the agent is not under attack at
-		// the moment of planning  and health is not full.
-		return !agent.Memory.IsUnderAttack && !agent.Memory.IsHealthFull();
-	}
+	//public override bool CheckProceduralPreconditions()
+	//{
+	//	// Check if the agent is not under attack at
+	//	// the moment of planning  and health is not full.
+	//	return !agent.Memory.IsUnderAttack;
+	//}
 	public override float GetCost()
 	{
 		float TTE = timeToExecute;
-		float TTR = TimeToReachCost(transform.position, agent.Memory.HealthPacks.GetSortedDetected().transform.position, agent.Navigation.currentSpeed);
+		float TTR = TimeToReachCost(transform.position, agent.Memory.HealthPacks.GetSortedDetected(), agent.Navigation.currentSpeed);
 		float E =  GetEnemyCost(agent.Memory.Enemies);
 		float IH = agent.Inventory.Health.GetCost();
 
@@ -45,21 +40,4 @@ public class CollectHealth : Collect
 		yield return new WaitUntil(() => agent.Memory.IsHealthFull());
 		ExitAction(actionCompleted);
 	}
-
-	//protected override void AddListeners()
-	//{
-	//	base.AddListeners();
-	//	agent.Memory.HealthPacks.OnDetected.AddListener(OnNewDetected);
-		
-	//}
-	//protected override void RemoveListeners()
-	//{
-	//	base.RemoveListeners();
-	//	agent.Memory.HealthPacks.OnDetected.RemoveListener(OnNewDetected);
-		
-	//}
-
-	
-
-	
 }
