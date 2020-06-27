@@ -9,33 +9,49 @@ public class EliminateEnemy : GoapAction
 {
 	private AIAgent agent;
 
-	private Coroutine FireCoroutine;
 	private bool isActionExited = false;
+	private Coroutine FireCoroutine;
+	private Coroutine TimedAbort;
+
+	private void Awake()
+	{
+		agent = GetComponent<AIAgent>();
+	}
 
 	public EliminateEnemy()
 	{
-		//actionName = "KillEnemy";
-
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
 
 		AddEffect(StateKeys.ENEMY_KILLED, true);
+		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
 
 	public override float GetCost()
 	{
-		float E  = GetEnemyCost(agent.Memory.Enemies);
-		float IH = agent.Inventory.Health.GetCost();
-		float IA = agent.Inventory.Ammo.GetCost();
+		Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
 
-		float cost = E + (IH * IH) + IA;
+		// Default case no enemy detected during planning phase,
+		// count enemy health and ammo as full.
+		float enemyHealthTime = (agent.Inventory.Health.Capacity / 10) * 0.5f;
+		float enemyAmmoTime = agent.Inventory.Ammo.Capacity * 0.5f;
+
+		if (enemy != null)
+		{
+			// In case enemy is detected during planning phase,
+			// count real enemy health and ammo.
+			enemyHealthTime = (enemy.Inventory.Health.Amount / 10) * 0.5f;
+			enemyAmmoTime = enemy.Inventory.Ammo.Amount * 0.5f;
+		}
+
+		float agentHealthTime = (agent.Inventory.Health.Amount / 10) * 0.5f;
+		float agentAmmoTime = agent.Inventory.Ammo.Amount * 0.5f;
+		
+		float cost = (enemyHealthTime - agentAmmoTime) + (enemyAmmoTime - agentHealthTime) + ( 5 - agentAmmoTime );
 
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
-	private void Start()
-	{
-		agent = GetComponent<AIAgent>();
-	}
+	
 
 	public override void SetActionTarget()
 	{
@@ -55,14 +71,14 @@ public class EliminateEnemy : GoapAction
 		ExitAction(actionReset);
 	}
 
-	private FireRangeStatus CheckActionRange()
+	private FireRangeStatus InFireRange()
 	{
 		float fireRange = Vector3.Distance(transform.position, target.transform.position);
 
-		if (fireRange > maxRequiredRange) return FireRangeStatus.Follow;
-		else if (fireRange < minRequiredRange) return FireRangeStatus.ToClose;
-		else return FireRangeStatus.InRange;
+		return fireRange < minRequiredRange ? FireRangeStatus.ToClose : FireRangeStatus.InRange;
+
 	}
+
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
 		isActionExited = false;
@@ -78,8 +94,8 @@ public class EliminateEnemy : GoapAction
 
 	public override void ExecuteAction()
 	{
-		this.agent.Navigation.LookAtTarget();
-		this.agent.Navigation.FollowTarget(maxRequiredRange);
+		agent.Navigation.LookAtTarget();
+		agent.Navigation.FollowTarget(maxRequiredRange);
 		FireCoroutine = StartCoroutine(Fire());
 	}
 
@@ -102,91 +118,83 @@ public class EliminateEnemy : GoapAction
 			IsActionDone = true;
 
 			ExitAction?.Invoke();
-			target = null;
+			
+			if(target != null)
+			{
+				target = null;
+			}
 			agent.Navigation.InvalidateTarget();
 		}
 	}
 
 	
+
 	IEnumerator Fire()
 	{
-		while (true)
+		while (target != null)
 		{
-			if (target != null)
+			if (InFireRange() == FireRangeStatus.ToClose)
 			{
-				if (CheckActionRange() == FireRangeStatus.ToClose)
+				if (TimedAbort == null)
 				{
-					agent.Memory.Enemies.InvalidateDetected(target, 2f);
-					ExitAction(actionFailed);
-					break;
+					TimedAbort = StartCoroutine(StartTimedAbort(1f));
 				}
+			}
+			else if (InFireRange() == FireRangeStatus.InRange)
+			{
+				StopTimedAbort();
 
-				if (CheckActionRange() == FireRangeStatus.InRange)
+				if (agent.Navigation.IsLookingAtTarget())
 				{
-					if (agent.Navigation.IsLookingAtTarget())
+					if (agent.Inventory.Ammo.Amount > 0)
 					{
-						if(agent.Inventory.Ammo.Amount > 0)
-						{
-							agent.Weapon.FireBullet();
-							yield return new WaitForSeconds(0.5f);
-						}
-						else
-						{
-							ExitAction(actionFailed);
-							break;
-						}
+						agent.Weapon.FireBullet();
+					}
+					else
+					{
+						agent.Memory.Enemies.InvalidateDetected(target, 4f);
+						ExitAction(actionFailed);
 					}
 				}
+			}
 
-				yield return new WaitForSeconds(0.01f);
-			}
-			else
-			{
-				agent.Memory.Enemies.RemoveDetected(target);
-				ExitAction(actionCompleted);
-				break;
-			}
+			yield return new WaitForSeconds(0.01f);
+		}
+		
+		agent.Memory.Enemies.RemoveDetected(target);
+		ExitAction(actionCompleted);
+	}
+	IEnumerator StartTimedAbort(float time)
+	{
+		yield return new WaitForSeconds(time);
+		agent.Memory.Enemies.InvalidateDetected(target, 4f);
+		ExitAction(actionFailed);
+	}
+	private void StopTimedAbort()
+	{
+		if(TimedAbort != null)
+		{
+			StopCoroutine(TimedAbort);
+			TimedAbort = null;
 		}
 	}
 
 	private void AddListeners()
 	{
-		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
-		agent.Inventory.Health.OnStatusChange.AddListener(HealthStatusChange);
-		agent.Inventory.Ammo.OnStatusChange.AddListener(AmmoStatusChange);
+		agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
+		agent.Inventory.Health.OnStatusChange.AddListener(AbortAction);
+		agent.Inventory.Ammo.OnStatusChange.AddListener(AbortAction);
 	}
+	
 	private void RemoveListeners()
 	{
-		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
-		agent.Inventory.Health.OnStatusChange.RemoveListener(HealthStatusChange);
-		agent.Inventory.Ammo.OnStatusChange.RemoveListener(AmmoStatusChange);
+		agent.Memory.Enemies.OnDetected.RemoveListener(AbortAction);
+		agent.Inventory.Health.OnStatusChange.RemoveListener(AbortAction);
+		agent.Inventory.Ammo.OnStatusChange.RemoveListener(AbortAction);
 	}
-
-	private void HealthStatusChange(InventoryStatus status)
-	{
-		// If Health Inventory is low before enemy
-		// is destoryed action failed ( re - plan )
-		if (status == InventoryStatus.Low)
-		{
-			ExitAction(actionFailed);
-		}
-	}
-
-	private void AmmoStatusChange(InventoryStatus invStatus)
-	{
-		// If Ammo Inventory is empty before enemy
-		// is destoryed action failed ( re - plan )
-		if(invStatus == InventoryStatus.Empty )
-		{
-			ExitAction(actionFailed);
-		}
-	}
-
-
-	private void EnemyDetected()
+	
+	private void AbortAction()
 	{
 		ExitAction(actionFailed);
 	}
-	
-
 }

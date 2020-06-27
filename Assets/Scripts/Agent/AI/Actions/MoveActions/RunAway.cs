@@ -10,31 +10,44 @@ public class RunAway : MoveAction
 	public RunAway() 
 	{
 		AddPrecondition(StateKeys.ENEMY_DETECTED, true);
-		AddPrecondition(StateKeys.UNDER_ATTACK, true);
+		AddPrecondition(StateKeys.HEALTH_FULL, false);
+		AddPrecondition(StateKeys.AMMO_FULL, false);
 
-		AddEffect(StateKeys.UNDER_ATTACK, false);
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	return !agent.Memory.IsAmmoAvailable() || !agent.Memory.IsHealthAvailable();
-	//}
 
 	public override float GetCost()
-	{ 
-		float TTE = 10 / agent.Navigation.currentSpeed;
-		float TTR = 10;
-		float E = GetEnemyCost(agent.Memory.Enemies);
-		float IH = agent.Inventory.Health.GetCost();
-		float IA = agent.Inventory.Ammo.GetCost();
+	{
+		Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
+		
+		float enemyHealthTime = 0;
+		float enemyAmmoTime = 0;
+		
+		if (enemy != null)
+		{
+			// If enemy is detected we count cost with function
+			enemyHealthTime = (enemy.Inventory.Health.Amount / 10) * 0.5f;
+			enemyAmmoTime   = enemy.Inventory.Ammo.Amount * 0.5f;
+		}
+		else
+		{
+			// If enemy is not yet detected we count cost as maximum possible
+			// by taking the capacity values from agent.
+			enemyHealthTime = (agent.Inventory.Health.Capacity / 10) * 0.5f;
+			enemyAmmoTime = agent.Inventory.Ammo.Capacity * 0.5f;
+		}
+		
+		float agentAmmoTime = agent.Inventory.Ammo.Amount * 0.5f;
+		float agentHealthTime = (agent.Inventory.Health.Amount / 10) * 0.5f;
+		float shieldTime = agent.Inventory.Shield.Amount;
 
-		float cost = TTE + TTR - E - (IH * IH) - IA;
+		float cost = shieldTime + ((agentAmmoTime - enemyHealthTime) + (agentHealthTime - enemyAmmoTime));
+
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
 	public override void SetActionTarget()
 	{
-		//Vector3 missileDirection = agent.Memory.MissileDirection;
 		GameObject enemy = agent.Memory.Enemies.GetSortedDetected();
 
 		if(enemy != null)

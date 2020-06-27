@@ -10,16 +10,9 @@ public class FindAmmo : SearchAction
 	{
 		AddPrecondition(StateKeys.AMMO_DETECTED, false);
 		AddPrecondition(StateKeys.AMMO_FULL, false);
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
 		AddEffect(StateKeys.AMMO_DETECTED, true);
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	// Check if the agent is under attack at
-	//	// the moment of planning.
-	//	return !agent.Memory.IsUnderAttack;
-	//}
 
 	// Searching for ammo refills cost should be affected
 	// by the static search cost ( this is coast of uncertainty )
@@ -27,11 +20,14 @@ public class FindAmmo : SearchAction
 	// health inventory status, plus the agents ammo inventory status.
 	public override float GetCost()
 	{
-		float IH = agent.Inventory.Health.GetCost();
-		float IA = agent.Inventory.Ammo.GetCost();
-		float E = GetEnemyCost(agent.Memory.Enemies);
+		float TTR = (agent.Memory.IsUnderAttack ? 200 : 50) / agent.Navigation.currentSpeed;
 
-		float cost = searchCost + E + IH - (IA * IA);
+		float ammoLimit = agent.Inventory.Ammo.GetInvertedCost();
+		float healthLimit = agent.Inventory.Health.GetInvertedCost();
+
+		float time = Mathf.Clamp((TTR - ammoLimit + healthLimit), 0, Mathf.Infinity);
+
+		float cost = Mathf.Clamp(time * time, 1, Mathf.Infinity);
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

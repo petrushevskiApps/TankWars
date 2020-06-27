@@ -95,7 +95,7 @@ public class Agent : MonoBehaviour, IDestroyable
 
 	private Coroutine ShieldTimer;
 
-	protected void ToggleShield()
+	public void ToggleShield()
 	{
 		if(IsShieldOn)
 		{

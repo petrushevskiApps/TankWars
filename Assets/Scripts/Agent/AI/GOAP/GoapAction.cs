@@ -83,20 +83,17 @@ public abstract class GoapAction : MonoBehaviour
 		return enemies.GetValidDetectedCount() * 3;
 	}
 
-
-	
-
-	protected float TimeToReachCost(Vector3 start, GameObject target, float speed)
+	// Time to reach at target position counted in seconds
+	protected float TimeToReach(Vector3 start, GameObject target, float speed)
 	{
 		if (target != null)
 		{
 			Vector3 destination = target.transform.position;
 			float distance = Vector3.Distance(start, destination);
-			float timeCost = distance / speed;
-			return timeCost;
+			return distance / speed;
 		}
 		else return 20;
-		
+
 	}
 
 	/* Action Preconditions & Effects */

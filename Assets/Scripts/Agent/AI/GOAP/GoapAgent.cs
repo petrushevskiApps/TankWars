@@ -83,7 +83,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 
 		// Plan
-		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal, goalIndex == 0 ? "Survive" : "Patrol");
+		Queue<GoapAction> plan = planner.Plan(gameObject, availableActions, worldState, goal, goalIndex == 0 ? "Eliminate" : "Find Enemy");
 
 
 		if (plan.Count > 0)

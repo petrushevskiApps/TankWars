@@ -5,36 +5,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ActivateSpeedBoost : GoapAction 
+public class ActivateShield : GoapAction 
 {
 	protected AIAgent agent;
 
-	public ActivateSpeedBoost() 
+	public ActivateShield() 
 	{
 		AddPrecondition(StateKeys.UNDER_ATTACK, true);
 
 		AddEffect(StateKeys.UNDER_ATTACK, false);
-
 	}
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
 	}
-	public override bool CheckProceduralPreconditions()
-	{
-		// Check if the agent is under attack at
-		// the moment of planning 
-		//return agent.Memory.IsUnderAttack;
-		return true;
-	}
 
 	public override float GetCost()
 	{
-		float IH = agent.Inventory.Health.GetCost();
-		float IA = agent.Inventory.Ammo.GetCost();
-		float ISB = agent.Inventory.SpeedBoost.GetInvertedCost();
+		Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
 
-		float cost = ISB - IH - IA;
+		float enemyAmmoTime = 0;
+
+		//if (enemy != null)
+		//{
+		//	// If enemy is detected we count cost with function
+		//	enemyAmmoTime = enemy.Inventory.Ammo.Amount * 0.5f;
+		//}
+		//else
+		//{
+		//	enemyAmmoTime = 
+		//}
+
+		enemyAmmoTime = enemy.Inventory.Ammo.Amount * 0.5f;
+
+		float agentHealthTime = (agent.Inventory.Health.Amount / 10) * 0.5f;
+
+		float invertedShieldTime = 10 - agent.Inventory.Shield.Amount;
+
+		float cost = invertedShieldTime + (agentHealthTime - enemyAmmoTime);
+
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
@@ -57,9 +66,9 @@ public class ActivateSpeedBoost : GoapAction
 
 	public override void ExecuteAction()
 	{
-		if(this.agent.Inventory.SpeedBoost.Amount > 0)
+		if(agent.Inventory.Shield.Amount > 3)
 		{
-			this.agent.BoostOn();
+			agent.ToggleShield();
 			ExitAction(actionCompleted);
 		}
 		else

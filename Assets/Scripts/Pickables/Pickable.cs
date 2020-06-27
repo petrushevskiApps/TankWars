@@ -6,12 +6,13 @@ using UnityEngine.UI;
 public class Pickable : MonoBehaviour, IDestroyable
 {
     public float amountToCollect = 0;
+    public float timeToCollect = 2f;
 
     public OnCollectedEvent OnCollected = new OnCollectedEvent();
 
     [SerializeField] private GameObject canvas;
     [SerializeField] private Image collectingProgress;
-    [SerializeField] private float timeToCollect = 2f;
+    
 
     private ICollector collector;
     private Coroutine CollectingCo;

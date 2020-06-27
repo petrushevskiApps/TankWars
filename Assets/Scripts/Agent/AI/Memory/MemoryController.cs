@@ -76,6 +76,7 @@ public class MemoryController : MonoBehaviour
             { StateKeys.AMMO_FULL, true },
             { StateKeys.HEALTH_FULL, true },
         });
+
     }
 
     private void RegisterEvents()

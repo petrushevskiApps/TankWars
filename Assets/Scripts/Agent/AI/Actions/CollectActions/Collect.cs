@@ -10,11 +10,65 @@ public abstract class Collect : GoapAction
 
     protected Coroutine UpdateCoroutine;
 
+    private bool isActionExited = false;
+
     protected void Start()
     {
         agent = GetComponent<AIAgent>();
     }
-    
+
+    public override bool CheckProceduralPreconditions()
+    {
+        GameObject pickable = detectedMemory.GetSortedDetected();
+
+        Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
+
+        // Enemy in sight
+        if (enemy != null && pickable != null)
+        {
+            // How many seconds until agent reaches pickable
+            float timeToPickable = TimeToReach(transform.position, pickable, agent.Navigation.currentSpeed);
+
+            // Total seconds until agent collects pickable
+            float timeAgentToExecute = timeToPickable + pickable.GetComponent<Pickable>().timeToCollect;
+
+            // How many seconds until agent reaches agent
+            float timeToEnemy = TimeToReach(transform.position, enemy.gameObject, enemy.Navigation.currentSpeed);
+            // How many seconds until enemy fires all ammo
+            float timeToFullDamage = enemy.Inventory.Ammo.Amount * 0.5f;
+            // Total time until enemy reaches agent and fires all ammo
+            float timeToEnemyExecute = timeToEnemy + timeToFullDamage;
+
+            // How many seconds can agent sustain damage
+            float timeToDeath = (agent.Inventory.Health.Amount / 10) * 0.5f;
+
+            if (timeAgentToExecute > timeToEnemyExecute)
+            {
+                return true;
+            }
+            else
+            {
+                // Agent can survive the attack
+                if (timeToDeath - timeToFullDamage > 0)
+                {
+                    return true;
+                }
+                // Agent can not survive attack
+                else
+                {
+                    detectedMemory.InvalidateDetected(pickable, 4f);
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            // No enemies in sight
+            return true;
+        }
+    }
+
+
     public override void SetActionTarget()
     {
         if (detectedMemory.IsAnyValidDetected())
@@ -35,6 +89,8 @@ public abstract class Collect : GoapAction
 
     public override void EnterAction(Action Success, Action Fail, Action Reset)
     {
+        isActionExited = false;
+
         actionCompleted = Success;
         actionFailed = Fail;
         actionReset = Reset;
@@ -48,7 +104,7 @@ public abstract class Collect : GoapAction
     {
         CollectController collector = agent.GetComponent<Agent>().Collector;
 
-        if (collector!= null && collector.IsPickableReady)
+        if (collector != null && collector.IsPickableReady)
         {
             collector.CollectPickable(true);
             UpdateCoroutine = StartCoroutine(CollectPickable());
@@ -65,19 +121,29 @@ public abstract class Collect : GoapAction
 
     protected override void ExitAction(Action ExitAction)
     {
-        RemoveListeners();
-        IsActionDone = true;
-
-        if (UpdateCoroutine != null)
+        if(!isActionExited)
         {
-            StopCoroutine(UpdateCoroutine);
-            UpdateCoroutine = null;
+            isActionExited = true;
+            IsActionDone = true;
+
+            RemoveListeners();
+
+            if (UpdateCoroutine != null)
+            {
+                StopCoroutine(UpdateCoroutine);
+                UpdateCoroutine = null;
+            }
+
+            if (target != null)
+            {
+                detectedMemory.InvalidateDetected(target);
+                target = null;
+            }
+            agent.Navigation.InvalidateTarget();
+
+            ExitAction?.Invoke();
         }
-
-        target = null;
-        agent.Navigation.InvalidateTarget();
-
-        ExitAction?.Invoke();
+        
     }
 
     protected virtual void AddListeners()
@@ -107,10 +173,6 @@ public abstract class Collect : GoapAction
     // re-plan accordingly
     private void OnUnderAttack(GameObject arg0)
     {
-        if (target != null)
-        {
-            detectedMemory.InvalidateDetected(target);
-        }
         ExitAction(actionFailed);
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class CollectHealth : Collect 
@@ -7,25 +8,26 @@ public class CollectHealth : Collect
 	{
 		AddPrecondition(StateKeys.HEALTH_DETECTED, true);
 		AddPrecondition(StateKeys.HEALTH_FULL, false);
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
 		AddEffect(StateKeys.HEALTH_FULL, true);
 
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	// Check if the agent is not under attack at
-	//	// the moment of planning  and health is not full.
-	//	return !agent.Memory.IsUnderAttack;
-	//}
+	
 	public override float GetCost()
 	{
-		float TTE = timeToExecute;
-		float TTR = TimeToReachCost(transform.position, agent.Memory.HealthPacks.GetSortedDetected(), agent.Navigation.currentSpeed);
-		float E =  GetEnemyCost(agent.Memory.Enemies);
-		float IH = agent.Inventory.Health.GetCost();
+		GameObject healthPack = agent.Memory.HealthPacks.GetSortedDetected();
+		float time = 0;
 
-		float cost = TTE + TTR + E - ( IH * IH );
+		if(healthPack != null)
+		{
+			time = TimeToReach(transform.position, healthPack, agent.Navigation.currentSpeed);
+		}
+		
+		float healthLimit = agent.Inventory.Health.GetCost();
+
+		float healthLimitedCost = Mathf.Clamp((time - healthLimit), 0, Mathf.Infinity);
+		float cost = healthLimitedCost * healthLimitedCost;
+
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

@@ -119,6 +119,8 @@ public class AINavigation : NavigationController
 
 	}
 
+	public bool IsFollowing { get; private set; } = false;
+
 	public void FollowTarget(float maxRange)
 	{
 		StopFollow();
@@ -128,6 +130,7 @@ public class AINavigation : NavigationController
 	{
 		if (FollowCoroutine != null)
 		{
+			IsFollowing = false;
 			StopCoroutine(FollowCoroutine);
 			FollowCoroutine = null;
 		}
@@ -136,6 +139,7 @@ public class AINavigation : NavigationController
 	{
 		while (Target != null)
 		{
+			IsFollowing = true;
 			Vector3 position = Target.transform.position;
 
 			if (Vector3.Distance(position, previousPosition) > followDifference)

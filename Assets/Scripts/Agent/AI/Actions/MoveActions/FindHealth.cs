@@ -10,16 +10,9 @@ public class FindHealth : SearchAction
 	{
 		AddPrecondition(StateKeys.HEALTH_DETECTED, false);
 		AddPrecondition(StateKeys.HEALTH_FULL, false);
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
 		AddEffect(StateKeys.HEALTH_DETECTED, true);
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	// Check if the agent is under attack at
-	//	// the moment of planning.
-	//	return !agent.Memory.IsUnderAttack;
-	//}
 
 	// Searching for health refills cost should be affected
 	// by the static search cost ( this is coast of uncertantiy )
@@ -27,10 +20,12 @@ public class FindHealth : SearchAction
 	// health inventory status.
 	public override float GetCost()
 	{
-		float IH = agent.Inventory.Health.GetCost();
-		float E  = GetEnemyCost(agent.Memory.Enemies);
 
-		float cost = searchCost + E - (IH * IH);
+		float TTR = (agent.Memory.IsUnderAttack ? 200 : 50) / agent.Navigation.currentSpeed;
+		float IH = agent.Inventory.Health.GetCost();
+
+		float time = TTR - IH;
+		float cost = Mathf.Clamp(time * time, 1, Mathf.Infinity);
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 

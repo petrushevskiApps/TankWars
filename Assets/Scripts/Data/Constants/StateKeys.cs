@@ -13,6 +13,10 @@ public class StateKeys
     public const string HIDING_SPOT_DETECTED = "hiddingSpotDetected";
 
     public const string ENEMY_KILLED = "enemyKilled";
+
+    public static string SHIELD_FULL = "shieldFull";
+
+    internal static string PATROL = "patrol";
 }
 
 public class FSMKeys

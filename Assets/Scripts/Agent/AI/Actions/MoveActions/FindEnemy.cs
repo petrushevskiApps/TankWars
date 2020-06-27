@@ -8,19 +8,18 @@ public class FindEnemy : SearchAction
 	public FindEnemy()
 	{
 		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
+		AddPrecondition(StateKeys.HEALTH_FULL, true);
+		AddPrecondition(StateKeys.AMMO_FULL, true);
 
 		AddEffect(StateKeys.ENEMY_DETECTED, true);
 	}
 
-	// Searching for enemies cost should be determined
-	// by agents inventory status of health and ammo
+	// For agent to search for enemies it should be
+	// ready for fight.( health and ammo full ) So 
+	// the cost for executing this action will be 1 always.
 	public override float GetCost()
 	{
-		float IH = agent.Inventory.Health.GetCost();
-		float IA = agent.Inventory.Ammo.GetCost();
-
-		float cost = searchCost + (IH * IH) + IA;
-		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+		return 1;
 	}
 
 	protected override void AddListeners()

@@ -11,26 +11,26 @@ public class CollectAmmo : Collect
 	{
 		AddPrecondition(StateKeys.AMMO_DETECTED, true);
 		AddPrecondition(StateKeys.AMMO_FULL, false);
-		AddPrecondition(StateKeys.UNDER_ATTACK, false);
 
 		AddEffect(StateKeys.AMMO_FULL, true);
-
 	}
-	//public override bool CheckProceduralPreconditions()
-	//{
-	//	// Check if the agent is not under attack at
-	//	// the moment of planning and ammo is not full.
-	//	return !agent.Memory.IsUnderAttack;
-	//}
+
 	public override float GetCost()
 	{
-		float TTE = timeToExecute;
-		float TTR = TimeToReachCost(transform.position, agent.Memory.AmmoPacks.GetSortedDetected(), agent.Navigation.currentSpeed);
-		float E  =	GetEnemyCost(agent.Memory.Enemies);
-		float IA =  agent.Inventory.Ammo.GetCost();
-		float IH =  agent.Inventory.Health.GetCost();
+		GameObject ammoPack = agent.Memory.AmmoPacks.GetSortedDetected();
+		float time = 0;
 
-		float cost = TTE + TTR + E + (IH * IH) - IA;
+		if (ammoPack != null)
+		{
+			time = TimeToReach(transform.position, ammoPack, agent.Navigation.currentSpeed);
+		}
+		
+		float ammoLimit = agent.Inventory.Ammo.GetInvertedCost();
+		float healthLimit = agent.Inventory.Health.GetInvertedCost();
+
+		float ammoLimitedCost = Mathf.Clamp((time - ammoLimit + healthLimit), 0, Mathf.Infinity);
+		float cost = (ammoLimitedCost * ammoLimitedCost) + 2;
+
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
@@ -42,19 +42,7 @@ public class CollectAmmo : Collect
 
 	protected override IEnumerator CollectPickable()
 	{
-		yield return new WaitUntil(() => agent.Memory.IsAmmoFull());
+		yield return new WaitUntil(() => agent.Memory.IsAmmoFull() || (target == null));
 		ExitAction(actionCompleted);
 	}
-
-	//protected override void AddListeners()
-	//{
-	//	base.AddListeners();
-	//	agent.Memory.AmmoPacks.OnDetected.AddListener(OnNewDetected);
-	//}
-	//protected override void RemoveListeners()
-	//{
-	//	base.RemoveListeners();
-	//	agent.Memory.AmmoPacks.OnDetected.RemoveListener(OnNewDetected);
-	//}
-
 }

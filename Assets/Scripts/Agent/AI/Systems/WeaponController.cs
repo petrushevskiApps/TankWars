@@ -14,6 +14,7 @@ public class WeaponController : MonoBehaviour
 	public UnityEvent OnShooting = new UnityEvent();
 
 	private Agent agent;
+	private bool fireLock = false;
 
 	public void Initialize(Agent agent)
 	{
@@ -22,8 +23,11 @@ public class WeaponController : MonoBehaviour
 
 	public void FireBullet()
 	{
-		if(agent.Inventory.Ammo.Amount > 0)
+		if(agent.Inventory.Ammo.Amount > 0 && !fireLock)
 		{
+			// Start Fire Rate Timer 
+			StartCoroutine(Timer());
+
 			// Create an instance of the shell
 			InstantiateBullet();
 
@@ -32,6 +36,13 @@ public class WeaponController : MonoBehaviour
 			agent.Inventory.Ammo.Decrease(1);
 		}
 		
+	}
+
+	IEnumerator Timer()
+	{
+		fireLock = true;
+		yield return new WaitForSeconds(0.5f);
+		fireLock = false;
 	}
 
 	private void InstantiateBullet()

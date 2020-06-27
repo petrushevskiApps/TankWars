@@ -5,6 +5,7 @@ public enum InventoryStatus
     VeryLow,
     Low,
     Medium,
-    Full
+    High,
+    Full,
 }
  

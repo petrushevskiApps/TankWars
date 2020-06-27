@@ -14,7 +14,7 @@ public class NavigationController : MonoBehaviour
     public float originalSpeed = 3.5f;                // How fast the tank moves forward and back.
     public float currentSpeed = 3.5f;
     public float turnSpeed = 130f;            // How fast the tank turns in degrees per second.
-    public float maxSpeed = 5f;               // Maxiumum speed that can be reached with boost
+    public float maxSpeed = 8f;               // Maxiumum speed that can be reached with boost
 
     private MoveStatus AgentMoveStatus;
 

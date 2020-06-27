@@ -34,10 +34,18 @@ namespace GOAP
 			{
 				if(State.ContainsKey(gsPair.Key))
 				{
-					if(gsPair.Value != State[gsPair.Key])
+					// Increase heuristic cost if condition
+					// is found in state but with different value
+					if (gsPair.Value != State[gsPair.Key])
 					{
 						heuristic++;
 					}
+				}
+				else
+				{
+					// Increase heuristic cost if condition
+					// is not found in state
+					heuristic++;
 				}
 			}
 		}

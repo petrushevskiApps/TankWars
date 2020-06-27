@@ -26,20 +26,59 @@ public class HideAndRegenerate : GoapAction
 
 	public override bool CheckProceduralPreconditions()
 	{
-		// Check if the agent is not under attack at
-		// the moment of planning 
-		return !agent.Memory.IsUnderAttack;
+		GameObject hidingSpot = agent.Memory.HidingSpots.GetSortedDetected();
+
+		Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
+
+		// Enemy in sight
+		if (enemy != null)
+		{
+			// How many seconds until agent reaches pickable
+			float timeToPickable = TimeToReach(transform.position, hidingSpot, agent.Navigation.currentSpeed);
+
+			// Total seconds until agent collects pickable
+			float timeAgentToExecute = timeToPickable + 15f;
+
+			// How many seconds until agent reaches agent
+			float timeToEnemy = TimeToReach(transform.position, enemy.gameObject, enemy.Navigation.currentSpeed);
+			// How many seconds until enemy fires all ammo
+			float timeToFullDamage = enemy.Inventory.Ammo.Amount * 0.5f;
+			// Total time until enemy reaches agent and fires all ammo
+			float timeToEnemyExecute = timeToEnemy + timeToFullDamage;
+
+			// How many seconds can agent sustain damage
+			float timeToDeath = (agent.Inventory.Health.Amount / 10) * 0.5f;
+
+			if (timeAgentToExecute > timeToEnemyExecute)
+			{
+				return true;
+			}
+			else
+			{
+				// Agent can survive the attack
+				if (timeToDeath - timeToFullDamage > 0)
+				{
+					return true;
+				}
+				// Agent can not survive attack
+				else return false;
+			}
+		}
+		else
+		{
+			// No enemies in sight
+			return true;
+		}
 	}
 
 	public override float GetCost()
 	{
-		float TTE = timeToExecute;
-		float TTR = TimeToReachCost(transform.position, agent.Memory.HidingSpots.GetSortedDetected(), agent.Navigation.currentSpeed);
-		float E = GetEnemyCost(agent.Memory.Enemies);
+		float TTR = TimeToReach(transform.position, agent.Memory.HidingSpots.GetSortedDetected(), agent.Navigation.currentSpeed);
 		float IH = agent.Inventory.Health.GetCost();
 		float IA = agent.Inventory.Ammo.GetCost();
 
-		float cost = TTE + TTR + E - (IH * IH) - IA;
+		float time = Mathf.Clamp(TTR - (IH + IA), 0f, Mathf.Infinity);
+		float cost = time * time;
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
@@ -189,7 +228,6 @@ public class HideAndRegenerate : GoapAction
 			}
 		}
 	}
-
 	public float GetDistanceToCollectible(GameObject player)
 	{
 		if (player != null && target != null)

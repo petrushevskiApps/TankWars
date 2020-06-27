@@ -34,11 +34,7 @@ namespace GOAP
 				usableActions.Add(action);
 			}
 
-			// we now have all actions that can run, stored in usableActions
-			// build up the tree and record the leaf nodes that provide a solution to the goal.
-			List<Node> leaves = new List<Node>();
-
-			Plan plan = FindPlan(usableActions, worldState, goals, agent.name);
+			Plan plan = FindPlan(usableActions, worldState, goals, agent.name, planName);
 			Debug.Log(plan);
 
 			if (!plan.isPlanSuccessful)
@@ -54,7 +50,7 @@ namespace GOAP
 
 		
 
-		private Plan FindPlan(HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goal, string agentName)
+		private Plan FindPlan(HashSet<GoapAction> availableActions, Dictionary<string, bool> worldState, Dictionary<string, bool> goal, string agentName, string planName)
 		{
 			bool isPlanFound = false;
 
@@ -121,7 +117,7 @@ namespace GOAP
 				}
 
 			}
-			return new Plan(closedListStates, isPlanFound, agentName);
+			return new Plan(closedListStates, isPlanFound, agentName, planName);
 		}
 		
 		private List<Node> GetAdjacentStates(Node parent, HashSet<GoapAction> availableActions, Dictionary<string, bool> goal)
@@ -238,13 +234,15 @@ namespace GOAP
 	public class Plan
 	{
 		string agentName = "NoName";
+		string planName = "NoName";
 
 		public List<Node> plan = new List<Node>();
 		public bool isPlanSuccessful = false;
 
-		public Plan(List<Node> plan, bool isPlanSuccessful, string agentName)
+		public Plan(List<Node> plan, bool isPlanSuccessful, string agentName, string planName)
 		{
 			this.plan = plan;
+			this.planName = planName;
 			this.isPlanSuccessful = isPlanSuccessful;
 			this.agentName = agentName;
 		}
@@ -261,7 +259,8 @@ namespace GOAP
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append(isPlanSuccessful ? "<color=green>Successful</color>" : "<color=red>Failed</color>");
+			sb.Append(isPlanSuccessful ? "<color=green>Successful" : "<color=red>Failed");
+			sb.Append(" Plan Name: " + planName + "</color>");
 			sb.AppendLine();
 			sb.Append(agentName);
 			sb.AppendLine();
