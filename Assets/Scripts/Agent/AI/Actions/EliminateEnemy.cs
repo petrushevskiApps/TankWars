@@ -9,7 +9,6 @@ public class EliminateEnemy : GoapAction
 {
 	private AIAgent agent;
 
-	private bool isActionExited = false;
 	private Coroutine FireCoroutine;
 	private Coroutine TimedAbort;
 
@@ -25,6 +24,10 @@ public class EliminateEnemy : GoapAction
 		AddEffect(StateKeys.ENEMY_KILLED, true);
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
+	public override bool CheckProceduralPreconditions()
+	{
+		return true;
+	}
 
 	public override float GetCost()
 	{
@@ -32,21 +35,21 @@ public class EliminateEnemy : GoapAction
 
 		// Default case no enemy detected during planning phase,
 		// count enemy health and ammo as full.
-		float enemyHealthTime = (agent.Inventory.Health.Capacity / 10) * 0.5f;
-		float enemyAmmoTime = agent.Inventory.Ammo.Capacity * 0.5f;
+		float enemyHealth = agent.Inventory.Health.Capacity;
+		float enemyAmmo = agent.Inventory.Ammo.Capacity * 10;
 
 		if (enemy != null)
 		{
 			// In case enemy is detected during planning phase,
 			// count real enemy health and ammo.
-			enemyHealthTime = (enemy.Inventory.Health.Amount / 10) * 0.5f;
-			enemyAmmoTime = enemy.Inventory.Ammo.Amount * 0.5f;
+			enemyHealth = enemy.Inventory.Health.Amount;
+			enemyAmmo = enemy.Inventory.Ammo.Amount * 10f;
 		}
 
-		float agentHealthTime = (agent.Inventory.Health.Amount / 10) * 0.5f;
-		float agentAmmoTime = agent.Inventory.Ammo.Amount * 0.5f;
+		float agentHealth = agent.Inventory.Health.Amount;
+		float agentAmmo = agent.Inventory.Ammo.Amount * 10;
 		
-		float cost = (enemyHealthTime - agentAmmoTime) + (enemyAmmoTime - agentHealthTime) + ( 5 - agentAmmoTime );
+		float cost = (enemyHealth - agentAmmo) + (enemyAmmo - agentHealth);
 
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
@@ -76,12 +79,11 @@ public class EliminateEnemy : GoapAction
 		float fireRange = Vector3.Distance(transform.position, target.transform.position);
 
 		return fireRange < minRequiredRange ? FireRangeStatus.ToClose : FireRangeStatus.InRange;
-
 	}
 
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
-		isActionExited = false;
+		IsActionExited = false;
 		IsActionDone = false;
 
 		actionCompleted = Success;
@@ -101,11 +103,13 @@ public class EliminateEnemy : GoapAction
 
 	protected override void ExitAction(Action ExitAction)
 	{
-		if(!isActionExited)
+		if(!IsActionExited)
 		{
-			isActionExited = true;
-
 			RemoveListeners();
+
+			IsActionExited = true;
+			IsActionDone = true;
+			
 			agent.Navigation.StopLookAt();
 			agent.Navigation.StopFollow();
 
@@ -115,15 +119,8 @@ public class EliminateEnemy : GoapAction
 				FireCoroutine = null;
 			}
 
-			IsActionDone = true;
-
-			ExitAction?.Invoke();
-			
-			if(target != null)
-			{
-				target = null;
-			}
 			agent.Navigation.InvalidateTarget();
+			ExitAction?.Invoke();
 		}
 	}
 
@@ -137,7 +134,7 @@ public class EliminateEnemy : GoapAction
 			{
 				if (TimedAbort == null)
 				{
-					TimedAbort = StartCoroutine(StartTimedAbort(1f));
+					TimedAbort = StartCoroutine(StartTimedAbort(2f));
 				}
 			}
 			else if (InFireRange() == FireRangeStatus.InRange)
@@ -152,23 +149,24 @@ public class EliminateEnemy : GoapAction
 					}
 					else
 					{
-						agent.Memory.Enemies.InvalidateDetected(target, 4f);
-						ExitAction(actionFailed);
+						InvalidateAndAbort();
 					}
 				}
+			}
+			else
+			{
+				StopTimedAbort();
 			}
 
 			yield return new WaitForSeconds(0.01f);
 		}
 		
-		agent.Memory.Enemies.RemoveDetected(target);
-		ExitAction(actionCompleted);
+		
 	}
 	IEnumerator StartTimedAbort(float time)
 	{
 		yield return new WaitForSeconds(time);
-		agent.Memory.Enemies.InvalidateDetected(target, 4f);
-		ExitAction(actionFailed);
+		InvalidateAndAbort();
 	}
 	private void StopTimedAbort()
 	{
@@ -181,6 +179,10 @@ public class EliminateEnemy : GoapAction
 
 	private void AddListeners()
 	{
+		if(target != null)
+		{
+			target.GetComponent<IDestroyable>()?.RegisterOnDestroy(EnemyKilled);
+		}
 		agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
 		agent.Inventory.Health.OnStatusChange.AddListener(AbortAction);
 		agent.Inventory.Ammo.OnStatusChange.AddListener(AbortAction);
@@ -192,7 +194,23 @@ public class EliminateEnemy : GoapAction
 		agent.Inventory.Health.OnStatusChange.RemoveListener(AbortAction);
 		agent.Inventory.Ammo.OnStatusChange.RemoveListener(AbortAction);
 	}
-	
+
+	private void EnemyKilled(GameObject arg0)
+	{
+		agent.Memory.Enemies.RemoveDetected(target);
+		ExitAction(actionCompleted);
+	}
+
+	private void InvalidateAndAbort()
+	{
+		if (target != null)
+		{
+			target.GetComponent<IDestroyable>()?.UnregisterOnDestroy(EnemyKilled);
+			agent.Memory.Enemies.InvalidateDetected(target, 4f);
+			target = null;
+		}
+		AbortAction();
+	}
 	private void AbortAction()
 	{
 		ExitAction(actionFailed);

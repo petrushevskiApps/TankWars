@@ -3,22 +3,18 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-[System.Serializable]
 public abstract class GoapAction : MonoBehaviour 
 {
-	
-
 	public string ActionName { get => GetType().ToString(); }
 
 	[SerializeField] protected float minimumCost = 1f;
-	[SerializeField] protected float timeToExecute = 0;
 
 	public float minRequiredRange = 10f;
 	public float maxRequiredRange = 15f;
 	public bool requiresRange = false;
 
-	public Dictionary<string, bool> Preconditions { get; }
-	public Dictionary<string, bool> Effects { get; }
+	public Dictionary<string, bool> Preconditions { get; private set; }
+	public Dictionary<string, bool> Effects { get; private set; }
 
 	
 	protected Action actionCompleted;
@@ -35,7 +31,14 @@ public abstract class GoapAction : MonoBehaviour
 		set => inRange = value;
 	}
 
+	// Used by Goap Agent to know if action has target
+	public bool IsTargetAcquired => target != null;
+
+	// Used by Goap Agent to know when action is done
 	public bool IsActionDone { get; set; } = false;
+
+	// Prevent exiting action multiple times by events
+	public bool IsActionExited { get; set; } = false;
 
 	public GoapAction() 
 	{
@@ -43,31 +46,32 @@ public abstract class GoapAction : MonoBehaviour
 		Effects = new Dictionary<string, bool>();
 	}
 
-	/**
-	 * Reset any variables that need to be reset 
-	 * before planning happens again.
-	 */
+	 // Reset any variables that need to be reset 
+	 // before planning happens again.
 	public virtual void ResetAction() 
 	{
 		target = null;
 		IsInRange = false;
 		IsActionDone = false;
+		IsActionExited = false;
 	}
 
-	public abstract void SetActionTarget();
-
-	public abstract void InvalidTargetLocation();
-
-	public bool IsTargetAcquired()
+	/* Action Preconditions & Effects */
+	public void AddPrecondition(string key, bool value)
 	{
-		return target != null;
+		Preconditions.Add(key, value);
 	}
+
+	public void AddEffect(string key, bool value)
+	{
+		Effects.Add(key, value);
+	}
+
+
 
 	/* Action Lifecycle */
-	public virtual bool CheckProceduralPreconditions()
-	{
-		return true;
-	}
+	public abstract float GetCost();
+	public abstract bool CheckProceduralPreconditions();
 
 	public abstract void EnterAction(Action Success, Action Fail, Action Reset);
 
@@ -75,61 +79,10 @@ public abstract class GoapAction : MonoBehaviour
 
 	protected abstract void ExitAction(Action exitAction);
 
-	public abstract float GetCost();
+	public abstract void SetActionTarget();
 
-	protected float GetEnemyCost(DetectedHolder enemies)
-	{
-		// For each valid enemy - 1 cost
-		return enemies.GetValidDetectedCount() * 3;
-	}
-
-	// Time to reach at target position counted in seconds
-	protected float TimeToReach(Vector3 start, GameObject target, float speed)
-	{
-		if (target != null)
-		{
-			Vector3 destination = target.transform.position;
-			float distance = Vector3.Distance(start, destination);
-			return distance / speed;
-		}
-		else return 20;
-
-	}
-
-	/* Action Preconditions & Effects */
-	public void AddPrecondition(string key, bool value)  
-	{
-		Preconditions.Add (key, value);
-	}
-
-	public void RemovePrecondition(string key)  
-	{
-		try
-		{
-			Preconditions.Remove(key);
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"Key: {key} not found in Preconditions dictionary");
-		}
-	}
-
-	public void AddEffect(string key, bool value)  
-	{
-		Effects.Add (key, value);
-	}
-
-	public void RemoveEffect(string key)  
-	{
-		try
-		{
-			Effects.Remove(key);
-		}
-		catch(Exception e)
-		{
-			Debug.LogError($"Key: {key} not found in Effects dictionary");
-		}
-	}
+	public abstract void InvalidTargetLocation();
 
 	
+
 }

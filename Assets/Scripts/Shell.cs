@@ -61,11 +61,11 @@ namespace Complete
                 if(agent.Team.ID != owner.Team.ID)
                 {
                     // Calculate the amount of damage the target should take based on it's distance from the shell.
-                    float damage = CalculateDamage(targetRigidbody.position);
+                    //float damage = CalculateDamage(targetRigidbody.position);
 
                     
                     // Deal this damage to the tank.
-                    agent.TakeDamage(damage, owner);
+                    agent.TakeDamage(m_MaxDamage, owner);
                 }
             }
 

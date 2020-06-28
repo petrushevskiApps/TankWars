@@ -1,6 +1,6 @@
-﻿using System;
+﻿using GOAP;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Collect : GoapAction
@@ -9,8 +9,6 @@ public abstract class Collect : GoapAction
     protected DetectedHolder detectedMemory;
 
     protected Coroutine UpdateCoroutine;
-
-    private bool isActionExited = false;
 
     protected void Start()
     {
@@ -27,13 +25,13 @@ public abstract class Collect : GoapAction
         if (enemy != null && pickable != null)
         {
             // How many seconds until agent reaches pickable
-            float timeToPickable = TimeToReach(transform.position, pickable, agent.Navigation.currentSpeed);
+            float timeToPickable = Utilities.TimeToReach(transform.position, pickable, agent.Navigation.currentSpeed);
 
             // Total seconds until agent collects pickable
             float timeAgentToExecute = timeToPickable + pickable.GetComponent<Pickable>().timeToCollect;
 
             // How many seconds until agent reaches agent
-            float timeToEnemy = TimeToReach(transform.position, enemy.gameObject, enemy.Navigation.currentSpeed);
+            float timeToEnemy = Utilities.TimeToReach(transform.position, enemy.gameObject, enemy.Navigation.currentSpeed);
             // How many seconds until enemy fires all ammo
             float timeToFullDamage = enemy.Inventory.Ammo.Amount * 0.5f;
             // Total time until enemy reaches agent and fires all ammo
@@ -81,6 +79,7 @@ public abstract class Collect : GoapAction
             ExitAction(actionFailed);
         }
     }
+
     public override void InvalidTargetLocation()
     {
         detectedMemory.InvalidateDetected(target);
@@ -89,7 +88,8 @@ public abstract class Collect : GoapAction
 
     public override void EnterAction(Action Success, Action Fail, Action Reset)
     {
-        isActionExited = false;
+        IsActionExited = false;
+        IsActionDone = false;
 
         actionCompleted = Success;
         actionFailed = Fail;
@@ -121,9 +121,9 @@ public abstract class Collect : GoapAction
 
     protected override void ExitAction(Action ExitAction)
     {
-        if(!isActionExited)
+        if(!IsActionExited)
         {
-            isActionExited = true;
+            IsActionExited = true;
             IsActionDone = true;
 
             RemoveListeners();
@@ -148,30 +148,32 @@ public abstract class Collect : GoapAction
 
     protected virtual void AddListeners()
     {
-        agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
-        
-        detectedMemory.OnDetected.AddListener(OnNewDetected);
-
+        agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
         agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
-
         agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
+        
+        detectedMemory.OnDetected.AddListener(OnNewDetected);
+        agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
     }
 
     protected virtual void RemoveListeners()
     {
-        agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
-        detectedMemory.OnDetected.RemoveListener(OnNewDetected);
-
+        agent.Memory.Enemies.OnDetected.RemoveListener(AbortAction);
         agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
-
         agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
+
+        detectedMemory.OnDetected.RemoveListener(OnNewDetected);
+        agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
     }
 
-    // When attacked abort collecting and
-    // re-plan accordingly
+    // When attacked  re-plan
     private void OnUnderAttack(GameObject arg0)
+    {
+        AbortAction();
+    }
+    private void AbortAction()
     {
         ExitAction(actionFailed);
     }
@@ -184,17 +186,6 @@ public abstract class Collect : GoapAction
         SetActionTarget();
     }
 
-    // When hidding spot is detected and
-    // both health and ammo are low, abort
-    // action and re-plan.
-    private void HidingSpotDetected()
-    {
-        if (!agent.Memory.IsHealthFull() && !agent.Memory.IsAmmoFull())
-        {
-            detectedMemory.InvalidateDetected(target);
-            ExitAction(actionFailed);
-        }
-    }
 
     // On agent detected, check if the agent is
     // executing same action. If it does, check
@@ -208,35 +199,22 @@ public abstract class Collect : GoapAction
 
             if (gaOther != null && gaOther.GetCurrentAction().Equals(ActionName))
             {
-                CompareDistanceToPacket(agent);
+                CompareDistanceToTarget(agent);
             }
         }
     }
 
-    private void CompareDistanceToPacket(GameObject otherAgent)
+    private void CompareDistanceToTarget(GameObject otherAgent)
     {
-        float otherDistanceToPacket = GetDistanceToCollectible(otherAgent);
-        float distanceToPacket = GetDistanceToCollectible(gameObject);
+        float otherToTargetDistance = Utilities.GetDistance(otherAgent, target);
+        float agentToTargetDistance = Utilities.GetDistance(gameObject, target);
 
-        if (distanceToPacket > otherDistanceToPacket)
+        if (agentToTargetDistance > otherToTargetDistance)
         {
-            if (distanceToPacket < 20)
+            if (agentToTargetDistance < maxRequiredRange)
             {
-                detectedMemory.InvalidateDetected(target);
                 ExitAction(actionFailed);
             }
-        }
-    }
-
-    public float GetDistanceToCollectible(GameObject agent)
-    {
-        if (agent != null && target != null)
-        {
-            return Vector3.Distance(agent.transform.position, target.transform.position);
-        }
-        else
-        {
-            return Mathf.Infinity;
         }
     }
 }

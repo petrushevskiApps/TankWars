@@ -22,7 +22,7 @@ public class CollectAmmo : Collect
 
 		if (ammoPack != null)
 		{
-			time = TimeToReach(transform.position, ammoPack, agent.Navigation.currentSpeed);
+			time = Utilities.TimeToReach(transform.position, ammoPack, agent.Navigation.currentSpeed);
 		}
 		
 		float ammoLimit = agent.Inventory.Ammo.GetInvertedCost();

@@ -13,16 +13,16 @@ namespace GOAP
 		{
 			return Vector3.Angle(caller.forward, GetDirection(caller, target));
 		}
+		public static float GetAngle(GameObject caller, GameObject target)
+		{
+			return Vector3.Angle(caller.transform.forward, GetDirection(caller, target));
+		}
+
 		public static Vector3 GetDirection(Transform caller, Vector3 target)
 		{
 			Vector3 heading = (target - caller.position);
 			float distance = heading.magnitude;
 			return heading / distance;
-		}
-
-		public static float GetAngle(GameObject caller, GameObject target)
-		{
-			return Vector3.Angle(caller.transform.forward, GetDirection(caller, target));
 		}
 
 		public static Vector3 GetDirection(GameObject caller, GameObject target)
@@ -35,6 +35,16 @@ namespace GOAP
 			}
 			return Vector3.forward;
 		}
+
+		public static float GetDistance(GameObject start, GameObject end)
+		{
+			if (start != null && end != null)
+			{
+				return Vector3.Distance(start.transform.position, end.transform.position);
+			}
+			else return Mathf.Infinity;
+		}
+
 		public static int CompareDistances(Vector3 position, Vector3 targetPostion1, Vector3 targetPostion2)
 		{
 			float d1 = Vector3.Distance(position, targetPostion1);
@@ -53,8 +63,8 @@ namespace GOAP
 			{
 				sb.Append(element);
 			}
-			//Debug.Log(setName + " Count: " + set.Count + " List:" + sb.ToString());
 		}
+
 		public static string PrintDictionary(Dictionary<string, bool> dictionary)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -65,6 +75,7 @@ namespace GOAP
 			}
 			return sb.ToString();
 		}
+
 		public static string GetCollectionString<T>(ICollection<T> set)
 		{
 			set.Reverse<T>();
@@ -78,6 +89,17 @@ namespace GOAP
 			}
 			return sb.ToString();
 		}
-		
+
+		// Time to reach the target position counted in seconds
+		public static float TimeToReach(Vector3 start, GameObject target, float speed)
+		{
+			if (target != null)
+			{
+				Vector3 destination = target.transform.position;
+				float distance = Vector3.Distance(start, destination);
+				return distance / speed;
+			}
+			else return 20;
+		}
 	}
 }

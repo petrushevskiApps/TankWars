@@ -33,6 +33,7 @@ public class FindAmmo : SearchAction
 
 	protected override void AddListeners()
 	{
+		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
 		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
 		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
 
@@ -41,10 +42,15 @@ public class FindAmmo : SearchAction
 	
 	protected override void RemoveListeners()
 	{
+		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
 		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
 		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 
 		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);
+	}
+	private void EnemyDetected()
+	{
+		ExitAction(actionFailed);
 	}
 
 	private void UnderAttack(GameObject arg0)

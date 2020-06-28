@@ -92,7 +92,10 @@ public class Agent : MonoBehaviour, IDestroyable
 	{
 		OnAgentDeath.AddListener(OnDestroyAction);
 	}
-
+	public void UnregisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
+	{
+		OnAgentDeath.RemoveListener(OnDestroyAction);
+	}
 	private Coroutine ShieldTimer;
 
 	public void ToggleShield()
@@ -142,6 +145,8 @@ public class Agent : MonoBehaviour, IDestroyable
 		navigationController.ResetSpeed();
 		Inventory.SpeedBoost.Refill();
 	}
+
+	
 
 	public class PlayerDeath : UnityEvent<GameObject> { }
 }

@@ -13,6 +13,7 @@ public class FindHealth : SearchAction
 
 		AddEffect(StateKeys.HEALTH_DETECTED, true);
 	}
+	
 
 	// Searching for health refills cost should be affected
 	// by the static search cost ( this is coast of uncertantiy )
@@ -31,6 +32,7 @@ public class FindHealth : SearchAction
 
 	protected override void AddListeners()
 	{
+		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
 		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
 		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
 		agent.Sensors.OnUnderAttack.AddListener(UnderAttack);
@@ -38,12 +40,23 @@ public class FindHealth : SearchAction
 	
 	protected override void RemoveListeners()
 	{
+		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
 		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
 		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);
 	}
 
+	private void EnemyDetected()
+	{
+		ExitAction(actionFailed);
+	}
+
 	private void UnderAttack(GameObject arg0)
+	{
+		ExitAction(actionFailed);
+	}
+
+	private void HidingSpotDetected()
 	{
 		ExitAction(actionFailed);
 	}
@@ -52,10 +65,4 @@ public class FindHealth : SearchAction
 	{
 		ExitAction(actionCompleted);
 	}
-
-	private void HidingSpotDetected()
-	{
-		ExitAction(actionFailed);
-	}
-
 }

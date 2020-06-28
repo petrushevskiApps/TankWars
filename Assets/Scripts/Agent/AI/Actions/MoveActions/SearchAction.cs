@@ -5,7 +5,6 @@ using UnityEngine;
 
 public abstract class SearchAction : MoveAction 
 {
-	[SerializeField] protected int searchCost = 30;
 
 	public override void SetActionTarget()
 	{

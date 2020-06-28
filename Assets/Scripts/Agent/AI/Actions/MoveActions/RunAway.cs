@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Events;
 
 public class RunAway : MoveAction 
 {
@@ -15,35 +11,32 @@ public class RunAway : MoveAction
 
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
-
+	
 	public override float GetCost()
 	{
 		Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
-		
-		float enemyHealthTime = 0;
-		float enemyAmmoTime = 0;
+
 		
 		if (enemy != null)
 		{
 			// If enemy is detected we count cost with function
-			enemyHealthTime = (enemy.Inventory.Health.Amount / 10) * 0.5f;
-			enemyAmmoTime   = enemy.Inventory.Ammo.Amount * 0.5f;
+			float enemyHealth = enemy.Inventory.Health.Amount;
+			float enemyAmmo = enemy.Inventory.Ammo.Amount * 10;
+
+			float agentHealth = agent.Inventory.Health.Amount;
+			float agentAmmo = agent.Inventory.Ammo.Amount * 10;
+			
+
+			float cost = (agentAmmo - enemyHealth) + (agentHealth - enemyAmmo);
+
+			return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 		}
 		else
 		{
-			// If enemy is not yet detected we count cost as maximum possible
-			// by taking the capacity values from agent.
-			enemyHealthTime = (agent.Inventory.Health.Capacity / 10) * 0.5f;
-			enemyAmmoTime = agent.Inventory.Ammo.Capacity * 0.5f;
+			return Mathf.Infinity;
 		}
 		
-		float agentAmmoTime = agent.Inventory.Ammo.Amount * 0.5f;
-		float agentHealthTime = (agent.Inventory.Health.Amount / 10) * 0.5f;
-		float shieldTime = agent.Inventory.Shield.Amount;
-
-		float cost = shieldTime + ((agentAmmoTime - enemyHealthTime) + (agentHealthTime - enemyAmmoTime));
-
-		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+		
 	}
 
 	public override void SetActionTarget()
@@ -74,7 +67,7 @@ public class RunAway : MoveAction
 
 	public override void ExecuteAction()
 	{
-		if(this.agent.Memory.IsUnderAttack)
+		if(agent.Memory.IsUnderAttack)
 		{
 			 // If the agent is still under attack get new
 			 // target location to run away.
@@ -92,20 +85,30 @@ public class RunAway : MoveAction
 		base.ExitAction(ExitAction);
 		agent.BoostOff();
 	}
+
 	protected override void AddListeners()
 	{
+		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
+		agent.Memory.Enemies.OnRemoved.AddListener(EnemyLost);
+
 		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
 		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
 		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
-		agent.Memory.Enemies.OnRemoved.AddListener(EnemyLost);
-
 	}
+
 	protected override void RemoveListeners()
 	{
+		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
+		agent.Memory.Enemies.OnRemoved.RemoveListener(EnemyLost);
+
 		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
 		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
 		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
-		agent.Memory.Enemies.OnRemoved.RemoveListener(EnemyLost);
+	}
+
+	private void EnemyDetected()
+	{
+		ExitAction(actionFailed);
 	}
 
 	private void EnemyLost()
@@ -121,36 +124,20 @@ public class RunAway : MoveAction
 
 	private void HealthDetected()
 	{
-		if(!agent.Memory.IsUnderAttack && agent.Memory.Enemies.GetValidDetectedCount() == 0)
-		{
-			if(!agent.Memory.IsHealthFull())
-			{
-				ExitAction(actionCompleted);
-			}
-		}
+		ExitAction(actionFailed);
 	}
 
 	private void AmmoDetected()
 	{
-		if (!agent.Memory.IsUnderAttack && agent.Memory.Enemies.GetValidDetectedCount() == 0)
-		{
-			if (!agent.Memory.IsAmmoFull())
-			{
-				ExitAction(actionCompleted);
-			}
-		}
+		ExitAction(actionFailed);
 	}
 
 	// If agent is no more under attack and
-	// detects valid hiding spot complete action
-	// and re-plan
+	// detects valid hiding spot re-plan
 	private void HidingSpotDetected()
 	{
-		if (agent.Memory.HidingSpots.IsAnyValidDetected() && !agent.Memory.IsUnderAttack)
-		{
-			ExitAction(actionCompleted);
-		}
-		
+		ExitAction(actionFailed);
 	}
 
+	
 }

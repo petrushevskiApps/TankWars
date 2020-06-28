@@ -146,7 +146,7 @@ public sealed class GoapAgent : MonoBehaviour
 		{
 			breadCrumbs.Append("MoveTo State: Moving Start!!\n");
 
-			if (!action.IsTargetAcquired())
+			if (!action.IsTargetAcquired)
 			{
 				breadCrumbs.Append($"Fatal error:{gameObject.name} | {action.name} target missing!\n");
 				breadCrumbs.Append("MoveTo State: Target not Acquired, Go to IDLE State!!\n");

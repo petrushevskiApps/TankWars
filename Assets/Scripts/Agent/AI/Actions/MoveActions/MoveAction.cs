@@ -4,25 +4,29 @@ using UnityEngine;
 public abstract class MoveAction : GoapAction
 {
 	protected AIAgent agent;
-	protected bool isActionExited = false;
 
 	private void Start()
 	{
 		agent = GetComponent<AIAgent>();
 	}
-	
+	public override bool CheckProceduralPreconditions()
+	{
+		return true;
+	}
+
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
-		isActionExited = false;
+		IsActionExited = false;
 		IsActionDone = false;
+
 		actionCompleted = Success;
 		actionFailed = Fail;
 		actionReset = Reset;
 
 		SetActionTarget();
 		AddListeners();
-
 	}
+
 	public override void ExecuteAction()
 	{
 		ExitAction(actionCompleted);
@@ -40,10 +44,10 @@ public abstract class MoveAction : GoapAction
 
 	protected override void ExitAction(Action ExitAction)
 	{
-		if(!isActionExited)
+		if(!IsActionExited)
 		{
 			RemoveListeners();
-			isActionExited = true;
+			IsActionExited = true;
 			IsActionDone = true;
 
 			ExitAction?.Invoke();

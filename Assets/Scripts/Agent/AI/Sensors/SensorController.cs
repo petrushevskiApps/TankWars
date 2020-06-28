@@ -25,7 +25,7 @@ public class SensorController : MonoBehaviour
     public HiddingSpot OnHidingSpotDetected = new HiddingSpot();
     public HiddingSpot OnHidingSpotLost = new HiddingSpot();
 
-    public MissileEvent OnUnderAttack = new MissileEvent();
+    public MissileEvent OnUnderAttack { get; private set; } = new MissileEvent();
 
     private Color ENEMY_VISIBLE_RAY_COLOR = Color.red;
     private Color ENEMY_RADAR_RAY_COLOR = Color.gray;

@@ -82,6 +82,9 @@ public class Pickable : MonoBehaviour, IDestroyable
     {
         OnCollected.AddListener(OnDestroyAction);
     }
-
+    public void UnregisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
+    {
+        OnCollected.RemoveListener(OnDestroyAction);
+    }
     public class OnCollectedEvent : UnityEvent<GameObject> { }
 }
