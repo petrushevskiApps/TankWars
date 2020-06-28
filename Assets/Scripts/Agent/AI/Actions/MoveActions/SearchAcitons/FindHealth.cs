@@ -30,35 +30,24 @@ public class FindHealth : SearchAction
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
-	protected override void AddListeners()
+	protected override void RegisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
+		base.RegisterListeners();
+		agent.Sensors.OnUnderAttack.AddListener(AbortAction);
+
+		agent.Memory.AmmoPacks.OnDetected.AddListener(AbortAction);
 		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
-		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
-		agent.Sensors.OnUnderAttack.AddListener(UnderAttack);
+		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+
 	}
-	
-	protected override void RemoveListeners()
+	protected override void UnregisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
+		base.UnregisterListeners();
+		agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
+
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AbortAction);
 		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
-		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);
-	}
-
-	private void EnemyDetected()
-	{
-		ExitAction(actionFailed);
-	}
-
-	private void UnderAttack(GameObject arg0)
-	{
-		ExitAction(actionFailed);
-	}
-
-	private void HidingSpotDetected()
-	{
-		ExitAction(actionFailed);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
 	}
 
 	private void HealthDetected()

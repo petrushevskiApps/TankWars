@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class HideAndRegenerate : GoapAction 
 {
-	protected AIAgent agent;
 	protected DetectedHolder detectedMemory;
 	protected Coroutine UpdateCoroutine;
 
@@ -15,7 +14,6 @@ public class HideAndRegenerate : GoapAction
 	
 	private void Start()
 	{
-		agent = GetComponent<AIAgent>();
 		detectedMemory = agent.Memory.HidingSpots;
 	}
 
@@ -27,6 +25,7 @@ public class HideAndRegenerate : GoapAction
 		AddEffect(StateKeys.AMMO_FULL, true);
 	}
 
+	/* PLANINING PHASE */
 	public override bool CheckProceduralPreconditions()
 	{
 		GameObject hidingSpot = agent.Memory.HidingSpots.GetSortedDetected();
@@ -86,7 +85,9 @@ public class HideAndRegenerate : GoapAction
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
+	/* LIFECYCLE PHASE */
 	
+
 	public override void SetActionTarget()
 	{
 		if (detectedMemory.IsAnyValidDetected())
@@ -99,21 +100,13 @@ public class HideAndRegenerate : GoapAction
 			ExitAction(actionFailed);
 		}
 	}
-	public override void InvalidTargetLocation()
+	public override void ResetTarget()
 	{
 		detectedMemory.InvalidateDetected(target);
 		SetActionTarget();
 	}
 
-	public override void EnterAction(Action Success, Action Fail, Action Reset)
-	{
-		actionCompleted = Success;
-		actionFailed = Fail;
-		actionReset = Reset;
-
-		SetActionTarget();
-		AddListeners();
-	}
+	
 	public override void ExecuteAction()
 	{
 		if (!detectedMemory.IsDetectedValid(target))
@@ -125,6 +118,7 @@ public class HideAndRegenerate : GoapAction
 			UpdateCoroutine = StartCoroutine(ActionUpdate());
 		}
 	}
+	
 	protected IEnumerator ActionUpdate()
 	{
 		if (!detectedMemory.IsDetectedValid(target)) AbortAction();
@@ -150,7 +144,7 @@ public class HideAndRegenerate : GoapAction
 			IsActionExited = true;
 			IsActionDone = true;
 
-			RemoveListeners();
+			UnregisterListeners();
 
 			if (UpdateCoroutine != null)
 			{
@@ -170,45 +164,29 @@ public class HideAndRegenerate : GoapAction
 		}
 	}
 
-	protected void AddListeners()
+	protected override void RegisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
+		base.RegisterListeners();
+
+		agent.Sensors.OnUnderAttack.AddListener(AbortAction);
 		agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
 		agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
-		agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
 
 		agent.Memory.HealthPacks.OnDetected.AddListener(AbortAction);
 		agent.Memory.AmmoPacks.OnDetected.AddListener(AbortAction);
-		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
+		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
 	}
-	protected void RemoveListeners()
+	protected override void UnregisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.RemoveListener(AbortAction);
+		base.UnregisterListeners();
+
+		agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
 		agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
 		agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
-		agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
 
 		agent.Memory.HealthPacks.OnDetected.RemoveListener(AbortAction);
 		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AbortAction);
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
-	}
-
-	private void OnUnderAttack(GameObject missile)
-	{
-		AbortAction();
-	}
-
-	private void AbortAction()
-	{
-		ExitAction(actionFailed);
-	}
-
-	// On new hiding spot detected
-	// resetting target will re-sort detected
-	// spots and update target to the closest one
-	private void HidingSpotDetected()
-	{
-		SetActionTarget();
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
 	}
 
 	// On agent detected, check if the agent is
@@ -242,9 +220,4 @@ public class HideAndRegenerate : GoapAction
 		}
 	}
 
-	
-
-	
-
-	
 }

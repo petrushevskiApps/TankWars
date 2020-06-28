@@ -259,7 +259,7 @@ MonoBehaviour:
     type: 3}
   navMeshTest: {fileID: 64427508}
   hpMapLimit: 3
-  ammoMapLimit: 5
+  ammoMapLimit: 3
   minProximity: 10
   minRelocationTime: 30
   maxRelocationTime: 60

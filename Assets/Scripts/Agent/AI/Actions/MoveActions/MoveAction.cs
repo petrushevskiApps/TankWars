@@ -3,28 +3,13 @@ using UnityEngine;
 
 public abstract class MoveAction : GoapAction
 {
-	protected AIAgent agent;
-
-	private void Start()
-	{
-		agent = GetComponent<AIAgent>();
-	}
 	public override bool CheckProceduralPreconditions()
 	{
 		return true;
 	}
-
-	public override void EnterAction(Action Success, Action Fail, Action Reset)
+	public override void ResetTarget()
 	{
-		IsActionExited = false;
-		IsActionDone = false;
-
-		actionCompleted = Success;
-		actionFailed = Fail;
-		actionReset = Reset;
-
 		SetActionTarget();
-		AddListeners();
 	}
 
 	public override void ExecuteAction()
@@ -46,7 +31,7 @@ public abstract class MoveAction : GoapAction
 	{
 		if(!IsActionExited)
 		{
-			RemoveListeners();
+			UnregisterListeners();
 			IsActionExited = true;
 			IsActionDone = true;
 
@@ -58,6 +43,4 @@ public abstract class MoveAction : GoapAction
 		
 	}
 
-	protected abstract void AddListeners();
-	protected abstract void RemoveListeners();
 }

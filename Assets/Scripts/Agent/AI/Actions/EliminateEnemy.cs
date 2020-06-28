@@ -1,21 +1,11 @@
-﻿using Complete;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class EliminateEnemy : GoapAction
 {
-	private AIAgent agent;
-
 	private Coroutine FireCoroutine;
 	private Coroutine TimedAbort;
-
-	private void Awake()
-	{
-		agent = GetComponent<AIAgent>();
-	}
 
 	public EliminateEnemy()
 	{
@@ -24,6 +14,8 @@ public class EliminateEnemy : GoapAction
 		AddEffect(StateKeys.ENEMY_KILLED, true);
 		AddEffect(StateKeys.ENEMY_DETECTED, false);
 	}
+
+	/* PLANINING PHASE */
 	public override bool CheckProceduralPreconditions()
 	{
 		return true;
@@ -54,8 +46,7 @@ public class EliminateEnemy : GoapAction
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
 	}
 
-	
-
+	/* LIFECYCLE PHASE */
 	public override void SetActionTarget()
 	{
 		if (agent.Memory.Enemies.IsAnyValidDetected())
@@ -69,7 +60,7 @@ public class EliminateEnemy : GoapAction
 		}
 	}
 
-	public override void InvalidTargetLocation()
+	public override void ResetTarget()
 	{
 		ExitAction(actionReset);
 	}
@@ -79,19 +70,6 @@ public class EliminateEnemy : GoapAction
 		float fireRange = Vector3.Distance(transform.position, target.transform.position);
 
 		return fireRange < minRequiredRange ? FireRangeStatus.ToClose : FireRangeStatus.InRange;
-	}
-
-	public override void EnterAction(Action Success, Action Fail, Action Reset)
-	{
-		IsActionExited = false;
-		IsActionDone = false;
-
-		actionCompleted = Success;
-		actionFailed = Fail;
-		actionReset = Reset;
-
-		SetActionTarget();
-		AddListeners();
 	}
 
 	public override void ExecuteAction()
@@ -105,7 +83,7 @@ public class EliminateEnemy : GoapAction
 	{
 		if(!IsActionExited)
 		{
-			RemoveListeners();
+			UnregisterListeners();
 
 			IsActionExited = true;
 			IsActionDone = true;
@@ -177,20 +155,24 @@ public class EliminateEnemy : GoapAction
 		}
 	}
 
-	private void AddListeners()
+	protected override void RegisterListeners()
 	{
-		if(target != null)
+		base.RegisterListeners();
+
+		if (target != null)
 		{
 			target.GetComponent<IDestroyable>()?.RegisterOnDestroy(EnemyKilled);
 		}
-		agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
+		//agent.Sensors.OnUnderAttack.AddListener(AbortAction);
 		agent.Inventory.Health.OnStatusChange.AddListener(AbortAction);
 		agent.Inventory.Ammo.OnStatusChange.AddListener(AbortAction);
 	}
-	
-	private void RemoveListeners()
+
+	protected override void UnregisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.RemoveListener(AbortAction);
+		base.UnregisterListeners();
+
+		//agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
 		agent.Inventory.Health.OnStatusChange.RemoveListener(AbortAction);
 		agent.Inventory.Ammo.OnStatusChange.RemoveListener(AbortAction);
 	}
@@ -210,9 +192,5 @@ public class EliminateEnemy : GoapAction
 			target = null;
 		}
 		AbortAction();
-	}
-	private void AbortAction()
-	{
-		ExitAction(actionFailed);
 	}
 }

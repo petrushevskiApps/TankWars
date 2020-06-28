@@ -14,6 +14,10 @@ public class CollectAmmo : Collect
 
 		AddEffect(StateKeys.AMMO_FULL, true);
 	}
+	private void Start()
+	{
+		detectedMemory = agent.Memory.AmmoPacks;
+	}
 
 	public override float GetCost()
 	{
@@ -32,12 +36,6 @@ public class CollectAmmo : Collect
 		float cost = (ammoLimitedCost * ammoLimitedCost) + 2;
 
 		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
-	}
-
-	private new void Start()
-	{
-		base.Start();
-		detectedMemory = agent.Memory.AmmoPacks;
 	}
 
 	protected override IEnumerator CollectPickable()

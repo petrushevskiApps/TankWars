@@ -22,13 +22,13 @@ public class FindEnemy : SearchAction
 		return 1;
 	}
 
-	protected override void AddListeners()
+	protected override void RegisterListeners()
 	{
 		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
 		agent.Sensors.OnUnderAttack.AddListener(UnderAttack);
 	}
-	
-	protected override void RemoveListeners()
+
+	protected override void UnregisterListeners()
 	{
 		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
 		agent.Sensors.OnUnderAttack.RemoveListener(UnderAttack);

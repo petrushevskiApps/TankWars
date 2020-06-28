@@ -5,16 +5,11 @@ using UnityEngine;
 
 public abstract class Collect : GoapAction
 {
-    protected AIAgent agent;
     protected DetectedHolder detectedMemory;
 
     protected Coroutine UpdateCoroutine;
 
-    protected void Start()
-    {
-        agent = GetComponent<AIAgent>();
-    }
-
+    /* PLANINING PHASE */
     public override bool CheckProceduralPreconditions()
     {
         GameObject pickable = detectedMemory.GetSortedDetected();
@@ -66,7 +61,7 @@ public abstract class Collect : GoapAction
         }
     }
 
-
+    /* LIFECYCLE PHASE */
     public override void SetActionTarget()
     {
         if (detectedMemory.IsAnyValidDetected())
@@ -80,24 +75,10 @@ public abstract class Collect : GoapAction
         }
     }
 
-    public override void InvalidTargetLocation()
+    public override void ResetTarget()
     {
         detectedMemory.InvalidateDetected(target);
         SetActionTarget();
-    }
-
-    public override void EnterAction(Action Success, Action Fail, Action Reset)
-    {
-        IsActionExited = false;
-        IsActionDone = false;
-
-        actionCompleted = Success;
-        actionFailed = Fail;
-        actionReset = Reset;
-
-        SetActionTarget();
-
-        AddListeners();
     }
 
     public override void ExecuteAction()
@@ -126,7 +107,7 @@ public abstract class Collect : GoapAction
             IsActionExited = true;
             IsActionDone = true;
 
-            RemoveListeners();
+            UnregisterListeners();
 
             if (UpdateCoroutine != null)
             {
@@ -146,38 +127,30 @@ public abstract class Collect : GoapAction
         
     }
 
-    protected virtual void AddListeners()
+    protected override void RegisterListeners()
     {
-        agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
-        agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
-        agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
-        agent.Sensors.OnUnderAttack.AddListener(OnUnderAttack);
+        base.RegisterListeners();
         
         detectedMemory.OnDetected.AddListener(OnNewDetected);
         agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+
+        agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
+        agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
+        agent.Sensors.OnUnderAttack.AddListener(AbortAction);
     }
 
-    protected virtual void RemoveListeners()
+    protected override void UnregisterListeners()
     {
-        agent.Memory.Enemies.OnDetected.RemoveListener(AbortAction);
-        agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
-        agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
-        agent.Sensors.OnUnderAttack.RemoveListener(OnUnderAttack);
-
+        base.UnregisterListeners();
+        
         detectedMemory.OnDetected.RemoveListener(OnNewDetected);
         agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
-    }
 
-    // When attacked  re-plan
-    private void OnUnderAttack(GameObject arg0)
-    {
-        AbortAction();
+        agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
+        agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
+        agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
     }
-    private void AbortAction()
-    {
-        ExitAction(actionFailed);
-    }
-
+   
     // When new pickable is detected
     // resetting target will re-sort detected
     // pickables and update target to the closest one
@@ -185,7 +158,6 @@ public abstract class Collect : GoapAction
     {
         SetActionTarget();
     }
-
 
     // On agent detected, check if the agent is
     // executing same action. If it does, check

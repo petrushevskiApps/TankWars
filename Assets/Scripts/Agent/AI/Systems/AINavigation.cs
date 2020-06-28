@@ -61,6 +61,18 @@ public class AINavigation : NavigationController
 	private void Update()
 	{
 		OnMovement(navMeshAgent.velocity.magnitude > 0f || isRotating);
+
+		if (isBoostOn)
+		{
+			if (aiAgent.Inventory.SpeedBoost.Amount > 0)
+			{
+				aiAgent.BoostOn();
+			}
+			else
+			{
+				aiAgent.BoostOff();
+			}
+		}
 	}
 
 
@@ -168,7 +180,7 @@ public class AINavigation : NavigationController
 		else
 		{
 			InvalidateTarget();
-			action.InvalidTargetLocation();
+			action.ResetTarget();
 		}
 	}
 

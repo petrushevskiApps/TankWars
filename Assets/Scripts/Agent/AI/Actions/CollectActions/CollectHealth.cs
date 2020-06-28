@@ -5,18 +5,17 @@ using UnityEngine;
 
 public class CollectHealth : Collect 
 {
-	private new void Start()
-	{
-		base.Start();
-		detectedMemory = agent.Memory.HealthPacks;
-	}
-
-	public CollectHealth() 
+	public CollectHealth()
 	{
 		AddPrecondition(StateKeys.HEALTH_DETECTED, true);
 		AddPrecondition(StateKeys.HEALTH_FULL, false);
 
 		AddEffect(StateKeys.HEALTH_FULL, true);
+	}
+
+	private void Start()
+	{
+		detectedMemory = agent.Memory.HealthPacks;
 	}
 	
 	public override float GetCost()

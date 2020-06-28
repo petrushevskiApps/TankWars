@@ -53,18 +53,14 @@ public class RunAway : MoveAction
 			ExitAction(actionCompleted);
 		}
 	}
-	public override void InvalidTargetLocation()
-	{
-		SetActionTarget();
-	}
+	
+	
 
 	public override void EnterAction(Action Success, Action Fail, Action Reset)
 	{
 		base.EnterAction(Success, Fail, Reset);
 		agent.BoostOn();
 	}
-	
-
 	public override void ExecuteAction()
 	{
 		if(agent.Memory.IsUnderAttack)
@@ -86,30 +82,29 @@ public class RunAway : MoveAction
 		agent.BoostOff();
 	}
 
-	protected override void AddListeners()
+
+	protected override void RegisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.AddListener(EnemyDetected);
+		base.RegisterListeners();
+
 		agent.Memory.Enemies.OnRemoved.AddListener(EnemyLost);
 
-		agent.Memory.HidingSpots.OnDetected.AddListener(HidingSpotDetected);
-		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
-		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
+		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+		agent.Memory.HealthPacks.OnDetected.AddListener(AbortAction);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(AbortAction);
 	}
 
-	protected override void RemoveListeners()
+	protected override void UnregisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.RemoveListener(EnemyDetected);
+		base.UnregisterListeners();
+
 		agent.Memory.Enemies.OnRemoved.RemoveListener(EnemyLost);
 
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(HidingSpotDetected);
-		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
-		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(AbortAction);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AbortAction);
 	}
 
-	private void EnemyDetected()
-	{
-		ExitAction(actionFailed);
-	}
 
 	private void EnemyLost()
 	{
@@ -120,23 +115,6 @@ public class RunAway : MoveAction
 				ExitAction(actionCompleted);
 			}
 		}
-	}
-
-	private void HealthDetected()
-	{
-		ExitAction(actionFailed);
-	}
-
-	private void AmmoDetected()
-	{
-		ExitAction(actionFailed);
-	}
-
-	// If agent is no more under attack and
-	// detects valid hiding spot re-plan
-	private void HidingSpotDetected()
-	{
-		ExitAction(actionFailed);
 	}
 
 	
