@@ -7,7 +7,7 @@
  */
 public class EnemyComparator : IComparator
 {
-    public float healthDifferenceThreshold = 2f;
+    public float healthDifferenceThreshold = 10f;
 
     public int CompareDetected(Detected d1, Detected d2)
     {

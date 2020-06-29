@@ -169,9 +169,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfac7b3b25ecf314e94755694da84aca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 10
-  capacity: 10
-  increaseTimeFactor: 1
+  amount: 20
+  capacity: 20
+  increaseTimeFactor: 0.5
   decreaseTimeFactor: 2
 --- !u!1 &435683363398208736
 GameObject:

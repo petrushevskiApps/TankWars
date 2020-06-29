@@ -60,34 +60,33 @@ public class AIDebuggerWindow : EditorWindow
     {
         if (team.Count > 0)
         {
-            foreach(AIAgent tank in team)
+            foreach(AIAgent agent in team)
             {
-                if(tank != null)
+                if(agent != null)
                 {
-                    GameObject agentGO = tank.gameObject;
-                    GoapAgent agent = agentGO.GetComponent<GoapAgent>();
+                    GoapAgent goapAgent = agent.gameObject.GetComponent<GoapAgent>();
 
                     
 
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    if (agent != null)
+                    if (goapAgent != null)
                     {
-                        if(IsSelected(agentGO))
+                        if(IsSelected(agent.gameObject))
                         {
-                            GUILayout.Label("Agent Name: " + agent.name, selectedText);
+                            GUILayout.Label("Agent Name: " + goapAgent.name, selectedText);
                         }
                         else
                         {
-                            GUILayout.Label("Agent Name: " + agent.name);
+                            GUILayout.Label("Agent Name: " + goapAgent.name);
                         }
 
-                        GUILayout.Label("    Plan: " + agent.CurrentPlanTextual);
-                        GUILayout.Label("    State: " + agent.State.ToString());
-                        GUILayout.Label("    Action: " + agent.GetCurrentAction());
-                        GUILayout.Label("    Health: " + tank.Inventory.Health.Amount.ToString());
-                        GUILayout.Label("    Ammo: " + tank.Inventory.Ammo.Amount.ToString());
+                        GUILayout.Label("    Plan: " + goapAgent.CurrentPlanTextual);
+                        GUILayout.Label("    State: " + goapAgent.State.ToString());
+                        GUILayout.Label("    Action: " + goapAgent.GetCurrentAction());
+                        GUILayout.Label("    Health: " + agent.Inventory.Health.Amount.ToString());
+                        GUILayout.Label("    Ammo: " + agent.Inventory.Ammo.Amount.ToString());
                         GUILayout.Label("    Agent Internal State: ");
-                        PrintWorldState(tank.Memory?.GetWorldState());
+                        PrintWorldState(agent.Memory?.GetWorldState());
 
                     }
                     EditorGUILayout.EndVertical();

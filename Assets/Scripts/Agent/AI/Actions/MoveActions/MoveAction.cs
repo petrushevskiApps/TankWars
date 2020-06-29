@@ -14,7 +14,7 @@ public abstract class MoveAction : GoapAction
 
 	public override void ExecuteAction()
 	{
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 
 	// Restart Moving action without re-planning
@@ -27,7 +27,7 @@ public abstract class MoveAction : GoapAction
 		actionReset.Invoke();
 	}
 
-	protected override void ExitAction(Action ExitAction)
+	protected override void ExitAction(Action ExitAction, float invalidateTime)
 	{
 		if(!IsActionExited)
 		{

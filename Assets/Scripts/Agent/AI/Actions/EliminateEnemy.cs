@@ -23,27 +23,35 @@ public class EliminateEnemy : GoapAction
 
 	public override float GetCost()
 	{
-		Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
-
-		// Default case no enemy detected during planning phase,
-		// count enemy health and ammo as full.
-		float enemyHealth = agent.Inventory.Health.Capacity;
-		float enemyAmmo = agent.Inventory.Ammo.Capacity * 10;
-
-		if (enemy != null)
-		{
-			// In case enemy is detected during planning phase,
-			// count real enemy health and ammo.
-			enemyHealth = enemy.Inventory.Health.Amount;
-			enemyAmmo = enemy.Inventory.Ammo.Amount * 10f;
-		}
-
 		float agentHealth = agent.Inventory.Health.Amount;
 		float agentAmmo = agent.Inventory.Ammo.Amount * 10;
-		
-		float cost = (enemyHealth - agentAmmo) + (enemyAmmo - agentHealth);
 
-		return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+		if (agentAmmo > 0)
+		{
+			// Default case no enemy detected during planning phase,
+			// count enemy health and ammo as full.
+			float enemyHealth = agent.Inventory.Health.Capacity;
+			float enemyAmmo = agent.Inventory.Ammo.Capacity * 10;
+
+			Agent enemy = agent.Memory.Enemies.GetSortedDetected()?.GetComponent<Agent>();
+
+			if (enemy != null)
+			{
+				// In case enemy is detected during planning phase,
+				// count real enemy health and ammo.
+				enemyHealth = enemy.Inventory.Health.Amount;
+				enemyAmmo = enemy.Inventory.Ammo.Amount * 10f;
+			}
+
+			float cost = (enemyHealth - agentAmmo) + (enemyAmmo - agentHealth);
+
+			return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+		}
+		else
+		{
+			return Mathf.Infinity;
+		}
+		
 	}
 
 	/* LIFECYCLE PHASE */
@@ -56,13 +64,13 @@ public class EliminateEnemy : GoapAction
 		}
 		else
 		{
-			ExitAction(actionCompleted);
+			ExitAction(actionCompleted, 0f);
 		}
 	}
 
 	public override void ResetTarget()
 	{
-		ExitAction(actionReset);
+		ExitAction(actionReset, 4f);
 	}
 
 	private FireRangeStatus InFireRange()
@@ -79,7 +87,7 @@ public class EliminateEnemy : GoapAction
 		FireCoroutine = StartCoroutine(Fire());
 	}
 
-	protected override void ExitAction(Action ExitAction)
+	protected override void ExitAction(Action ExitAction, float invalidateTime)
 	{
 		if(!IsActionExited)
 		{
@@ -96,8 +104,17 @@ public class EliminateEnemy : GoapAction
 				StopCoroutine(FireCoroutine);
 				FireCoroutine = null;
 			}
+			if (target != null)
+			{
+				agent.Navigation.InvalidateTarget();
+				target.GetComponent<IDestroyable>()?.UnregisterOnDestroy(EnemyKilled);
+				if(invalidateTime > 0)
+				{
+					agent.Memory.Enemies.InvalidateDetected(target, invalidateTime);
+				}
+				target = null;
+			}
 
-			agent.Navigation.InvalidateTarget();
 			ExitAction?.Invoke();
 		}
 	}
@@ -127,7 +144,7 @@ public class EliminateEnemy : GoapAction
 					}
 					else
 					{
-						InvalidateAndAbort();
+						ActionAbort();
 					}
 				}
 			}
@@ -144,8 +161,9 @@ public class EliminateEnemy : GoapAction
 	IEnumerator StartTimedAbort(float time)
 	{
 		yield return new WaitForSeconds(time);
-		InvalidateAndAbort();
+		CustomAbort(2f);
 	}
+
 	private void StopTimedAbort()
 	{
 		if(TimedAbort != null)
@@ -163,34 +181,22 @@ public class EliminateEnemy : GoapAction
 		{
 			target.GetComponent<IDestroyable>()?.RegisterOnDestroy(EnemyKilled);
 		}
-		//agent.Sensors.OnUnderAttack.AddListener(AbortAction);
-		agent.Inventory.Health.OnStatusChange.AddListener(AbortAction);
-		agent.Inventory.Ammo.OnStatusChange.AddListener(AbortAction);
+		agent.Inventory.Health.OnStatusChange.AddListener(ReplanningAbort);
+		//agent.Inventory.Ammo.OnStatusChange.AddListener(ReplanningAbort);
 	}
 
 	protected override void UnregisterListeners()
 	{
 		base.UnregisterListeners();
 
-		//agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
-		agent.Inventory.Health.OnStatusChange.RemoveListener(AbortAction);
-		agent.Inventory.Ammo.OnStatusChange.RemoveListener(AbortAction);
+		agent.Inventory.Health.OnStatusChange.RemoveListener(ReplanningAbort);
+		//agent.Inventory.Ammo.OnStatusChange.RemoveListener(ReplanningAbort);
 	}
 
 	private void EnemyKilled(GameObject arg0)
 	{
 		agent.Memory.Enemies.RemoveDetected(target);
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 
-	private void InvalidateAndAbort()
-	{
-		if (target != null)
-		{
-			target.GetComponent<IDestroyable>()?.UnregisterOnDestroy(EnemyKilled);
-			agent.Memory.Enemies.InvalidateDetected(target, 4f);
-			target = null;
-		}
-		AbortAction();
-	}
 }

@@ -39,6 +39,6 @@ public class CollectHealth : Collect
 	protected override IEnumerator CollectPickable()
 	{
 		yield return new WaitUntil(() => agent.Memory.IsHealthFull());
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 }

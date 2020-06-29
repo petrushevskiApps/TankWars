@@ -176,16 +176,9 @@ namespace GOAP
 		{
 			foreach (KeyValuePair<string, bool> testState in test) 
 			{
-				if(!state.ContainsKey(testState.Key))
+				if(!state.ContainsKey(testState.Key) || state[testState.Key] != testState.Value)
 				{
 					return false;
-				}
-				else
-				{
-					if(state[testState.Key] != testState.Value)
-					{
-						return false;
-					}
 				}
 			}
 			return true;

@@ -25,7 +25,7 @@ public class NavigationController : MonoBehaviour
 
     public virtual void BoostSpeed()
     {
-        currentSpeed = Mathf.Clamp(currentSpeed + 0.01f, originalSpeed, maxSpeed);
+        currentSpeed = Mathf.Clamp(currentSpeed + 0.03f, originalSpeed, maxSpeed);
     }
     public virtual void ResetSpeed()
     {

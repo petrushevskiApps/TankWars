@@ -33,25 +33,25 @@ public class FindHealth : SearchAction
 	protected override void RegisterListeners()
 	{
 		base.RegisterListeners();
-		agent.Sensors.OnUnderAttack.AddListener(AbortAction);
+		agent.Sensors.OnUnderAttack.AddListener(ActionAbort);
 
-		agent.Memory.AmmoPacks.OnDetected.AddListener(AbortAction);
 		agent.Memory.HealthPacks.OnDetected.AddListener(HealthDetected);
-		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(ReplanningAbort);
+		agent.Memory.HidingSpots.OnDetected.AddListener(ReplanningAbort);
 
 	}
 	protected override void UnregisterListeners()
 	{
 		base.UnregisterListeners();
-		agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
+		agent.Sensors.OnUnderAttack.RemoveListener(ActionAbort);
 
-		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AbortAction);
 		agent.Memory.HealthPacks.OnDetected.RemoveListener(HealthDetected);
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(ReplanningAbort);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(ReplanningAbort);
 	}
 
 	private void HealthDetected()
 	{
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 }

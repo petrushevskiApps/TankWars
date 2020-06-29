@@ -29,7 +29,7 @@ public class RunAway : MoveAction
 
 			float cost = (agentAmmo - enemyHealth) + (agentHealth - enemyAmmo);
 
-			return Mathf.Clamp(cost, minimumCost, Mathf.Infinity);
+			return Mathf.Clamp(cost, minimumCost + 0.1f, Mathf.Infinity);
 		}
 		else
 		{
@@ -50,7 +50,7 @@ public class RunAway : MoveAction
 		}
 		else
 		{
-			ExitAction(actionCompleted);
+			ExitAction(actionCompleted, 0f);
 		}
 	}
 	
@@ -73,12 +73,12 @@ public class RunAway : MoveAction
 		{
 			// If the agent arrives at the target location and isn't
 			// under attack action is completed. 
-			ExitAction(actionCompleted);
+			ExitAction(actionCompleted, 0f);
 		}
 	}
-	protected override void ExitAction(Action ExitAction)
+	protected override void ExitAction(Action ExitAction, float invalidateTime)
 	{
-		base.ExitAction(ExitAction);
+		base.ExitAction(ExitAction, invalidateTime);
 		agent.BoostOff();
 	}
 
@@ -87,35 +87,17 @@ public class RunAway : MoveAction
 	{
 		base.RegisterListeners();
 
-		agent.Memory.Enemies.OnRemoved.AddListener(EnemyLost);
-
-		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
-		agent.Memory.HealthPacks.OnDetected.AddListener(AbortAction);
-		agent.Memory.AmmoPacks.OnDetected.AddListener(AbortAction);
+		agent.Memory.HidingSpots.OnDetected.AddListener(ReplanningAbort);
+		agent.Memory.HealthPacks.OnDetected.AddListener(ReplanningAbort);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(ReplanningAbort);
 	}
 
 	protected override void UnregisterListeners()
 	{
 		base.UnregisterListeners();
 
-		agent.Memory.Enemies.OnRemoved.RemoveListener(EnemyLost);
-
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
-		agent.Memory.HealthPacks.OnDetected.RemoveListener(AbortAction);
-		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AbortAction);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(ReplanningAbort);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(ReplanningAbort);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(ReplanningAbort);
 	}
-
-
-	private void EnemyLost()
-	{
-		if(agent.Memory.Enemies.GetValidDetectedCount() == 0)
-		{
-			if(!agent.Memory.IsUnderAttack)
-			{
-				ExitAction(actionCompleted);
-			}
-		}
-	}
-
-	
 }

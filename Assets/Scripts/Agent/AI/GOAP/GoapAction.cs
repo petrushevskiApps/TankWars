@@ -92,7 +92,7 @@ public abstract class GoapAction : MonoBehaviour
 
 	public abstract void ExecuteAction();
 
-	protected abstract void ExitAction(Action exitAction);
+	protected abstract void ExitAction(Action exitAction, float invalidateTime);
 
 	public abstract void SetActionTarget();
 
@@ -101,19 +101,33 @@ public abstract class GoapAction : MonoBehaviour
 
 	protected virtual void RegisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.AddListener(AbortAction);
+		agent.Memory.Enemies.OnDetected.AddListener(ReplanningAbort);
 	}
 	protected virtual void UnregisterListeners()
 	{
-		agent.Memory.Enemies.OnDetected.RemoveListener(AbortAction);
-	}
-	protected void AbortAction()
-	{
-		ExitAction(actionFailed);
+		agent.Memory.Enemies.OnDetected.RemoveListener(ReplanningAbort);
 	}
 
-	protected void AbortAction(GameObject arg)
+	protected void CustomAbort(float invalidateTime)
 	{
-		ExitAction(actionFailed);
+		ExitAction(actionFailed, invalidateTime);
+	}
+
+	protected void ReplanningAbort()
+	{
+		// Re-Planing
+		ExitAction(actionFailed, 0f);
+	}
+
+	protected void ActionAbort()
+	{
+		// Actuall fail
+		ExitAction(actionFailed, 4f);
+	}
+
+	protected void ActionAbort(GameObject arg)
+	{
+		// Actuall fail
+		ExitAction(actionFailed, 4);
 	}
 }

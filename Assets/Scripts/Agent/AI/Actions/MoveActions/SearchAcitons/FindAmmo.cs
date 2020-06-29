@@ -34,27 +34,27 @@ public class FindAmmo : SearchAction
 	protected override void RegisterListeners()
 	{
 		base.RegisterListeners();
-		agent.Sensors.OnUnderAttack.AddListener(AbortAction);
+		agent.Sensors.OnUnderAttack.AddListener(ActionAbort);
 
 		agent.Memory.AmmoPacks.OnDetected.AddListener(AmmoDetected);
-		agent.Memory.HealthPacks.OnDetected.AddListener(AbortAction);
-		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+		agent.Memory.HealthPacks.OnDetected.AddListener(ReplanningAbort);
+		agent.Memory.HidingSpots.OnDetected.AddListener(ReplanningAbort);
 
 	}
 
 	protected override void UnregisterListeners()
 	{
 		base.UnregisterListeners();
-		agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
+		agent.Sensors.OnUnderAttack.RemoveListener(ActionAbort);
 
 		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AmmoDetected);
-		agent.Memory.HealthPacks.OnDetected.RemoveListener(AbortAction);
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(ReplanningAbort);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(ReplanningAbort);
 	}
 
 	private void AmmoDetected()
 	{
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 
 }

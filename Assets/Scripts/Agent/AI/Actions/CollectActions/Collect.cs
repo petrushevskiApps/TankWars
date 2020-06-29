@@ -25,10 +25,12 @@ public abstract class Collect : GoapAction
             // Total seconds until agent collects pickable
             float timeAgentToExecute = timeToPickable + pickable.GetComponent<Pickable>().timeToCollect;
 
-            // How many seconds until agent reaches agent
+            // How many seconds until enemy reaches agent
             float timeToEnemy = Utilities.TimeToReach(transform.position, enemy.gameObject, enemy.Navigation.currentSpeed);
+
             // How many seconds until enemy fires all ammo
             float timeToFullDamage = enemy.Inventory.Ammo.Amount * 0.5f;
+
             // Total time until enemy reaches agent and fires all ammo
             float timeToEnemyExecute = timeToEnemy + timeToFullDamage;
 
@@ -71,7 +73,7 @@ public abstract class Collect : GoapAction
         }
         else
         {
-            ExitAction(actionFailed);
+            ActionAbort();
         }
     }
 
@@ -92,7 +94,7 @@ public abstract class Collect : GoapAction
         }
         else
         {
-            ExitAction(actionFailed);
+            ActionAbort();
         }
     }
 
@@ -100,7 +102,7 @@ public abstract class Collect : GoapAction
     protected abstract IEnumerator CollectPickable();
 
 
-    protected override void ExitAction(Action ExitAction)
+    protected override void ExitAction(Action ExitAction, float invalidateTime)
     {
         if(!IsActionExited)
         {
@@ -115,9 +117,9 @@ public abstract class Collect : GoapAction
                 UpdateCoroutine = null;
             }
 
-            if (target != null)
+            if (target != null && invalidateTime > 0)
             {
-                detectedMemory.InvalidateDetected(target);
+                detectedMemory.InvalidateDetected(target, invalidateTime);
                 target = null;
             }
             agent.Navigation.InvalidateTarget();
@@ -131,34 +133,26 @@ public abstract class Collect : GoapAction
     {
         base.RegisterListeners();
         
-        detectedMemory.OnDetected.AddListener(OnNewDetected);
-        agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+        detectedMemory.OnDetected.AddListener(ReplanningAbort);
+        agent.Memory.HidingSpots.OnDetected.AddListener(ReplanningAbort); 
 
         agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
-        agent.Sensors.OnUnderAttack.AddListener(AbortAction);
+        agent.Sensors.OnUnderAttack.AddListener(ActionAbort);
     }
 
     protected override void UnregisterListeners()
     {
         base.UnregisterListeners();
         
-        detectedMemory.OnDetected.RemoveListener(OnNewDetected);
-        agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
+        detectedMemory.OnDetected.RemoveListener(ReplanningAbort);
+        agent.Memory.HidingSpots.OnDetected.RemoveListener(ReplanningAbort);
 
         agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
         agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
-        agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
+        agent.Sensors.OnUnderAttack.RemoveListener(ActionAbort);
     }
-   
-    // When new pickable is detected
-    // resetting target will re-sort detected
-    // pickables and update target to the closest one
-    protected void OnNewDetected()
-    {
-        SetActionTarget();
-    }
-
+ 
     // On agent detected, check if the agent is
     // executing same action. If it does, check
     // is it closer to target and abort and re-plan
@@ -185,7 +179,7 @@ public abstract class Collect : GoapAction
         {
             if (agentToTargetDistance < maxRequiredRange)
             {
-                ExitAction(actionFailed);
+                ActionAbort();
             }
         }
     }

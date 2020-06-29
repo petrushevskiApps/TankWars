@@ -36,12 +36,12 @@ public class FindEnemy : SearchAction
 
 	private void EnemyDetected()
 	{
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 
 	private void UnderAttack(GameObject arg0)
 	{
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 
 }

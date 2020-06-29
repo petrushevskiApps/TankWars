@@ -260,7 +260,7 @@ MonoBehaviour:
   navMeshTest: {fileID: 64427508}
   hpMapLimit: 3
   ammoMapLimit: 3
-  minProximity: 10
+  minProximity: 20
   minRelocationTime: 30
   maxRelocationTime: 60
   pickables: []

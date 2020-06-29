@@ -19,6 +19,7 @@ public class HideAndRegenerate : GoapAction
 
 	public HideAndRegenerate() 
 	{
+		AddPrecondition(StateKeys.ENEMY_DETECTED, false);
 		AddPrecondition(StateKeys.HIDING_SPOT_DETECTED, true);
 
 		AddEffect(StateKeys.HEALTH_FULL, true);
@@ -97,7 +98,7 @@ public class HideAndRegenerate : GoapAction
 		}
 		else
 		{
-			ExitAction(actionFailed);
+			ActionAbort();
 		}
 	}
 	public override void ResetTarget()
@@ -111,7 +112,7 @@ public class HideAndRegenerate : GoapAction
 	{
 		if (!detectedMemory.IsDetectedValid(target))
 		{
-			AbortAction();
+			ActionAbort();
 		}
 		else
 		{
@@ -121,7 +122,7 @@ public class HideAndRegenerate : GoapAction
 	
 	protected IEnumerator ActionUpdate()
 	{
-		if (!detectedMemory.IsDetectedValid(target)) AbortAction();
+		if (!detectedMemory.IsDetectedValid(target)) ActionAbort();
 
 		while(agent.Inventory.Health.Status != InventoryStatus.Full)
 		{
@@ -134,10 +135,10 @@ public class HideAndRegenerate : GoapAction
 			yield return new WaitForSeconds(REGENERATE_INTERVAL);
 		}
 		
-		ExitAction(actionCompleted);
+		ExitAction(actionCompleted, 0f);
 	}
 
-	protected override void ExitAction(Action ExitAction)
+	protected override void ExitAction(Action ExitAction, float invalidateTime)
 	{
 		if(!IsActionExited)
 		{
@@ -154,9 +155,9 @@ public class HideAndRegenerate : GoapAction
 			
 			agent.Navigation.InvalidateTarget();
 			
-			if(target != null)
+			if(target != null && invalidateTime > 0)
 			{
-				detectedMemory.InvalidateDetected(target);
+				detectedMemory.InvalidateDetected(target, invalidateTime);
 				target = null;
 			}
 
@@ -168,25 +169,25 @@ public class HideAndRegenerate : GoapAction
 	{
 		base.RegisterListeners();
 
-		agent.Sensors.OnUnderAttack.AddListener(AbortAction);
+		agent.Sensors.OnUnderAttack.AddListener(ActionAbort);
 		agent.Sensors.OnEnemyDetected.AddListener(OnAgentDetected);
 		agent.Sensors.OnFriendlyDetected.AddListener(OnAgentDetected);
 
-		agent.Memory.HealthPacks.OnDetected.AddListener(AbortAction);
-		agent.Memory.AmmoPacks.OnDetected.AddListener(AbortAction);
-		agent.Memory.HidingSpots.OnDetected.AddListener(AbortAction);
+		agent.Memory.HealthPacks.OnDetected.AddListener(ReplanningAbort);
+		agent.Memory.AmmoPacks.OnDetected.AddListener(ReplanningAbort);
+		agent.Memory.HidingSpots.OnDetected.AddListener(ReplanningAbort);
 	}
 	protected override void UnregisterListeners()
 	{
 		base.UnregisterListeners();
 
-		agent.Sensors.OnUnderAttack.RemoveListener(AbortAction);
+		agent.Sensors.OnUnderAttack.RemoveListener(ActionAbort);
 		agent.Sensors.OnEnemyDetected.RemoveListener(OnAgentDetected);
 		agent.Sensors.OnFriendlyDetected.RemoveListener(OnAgentDetected);
 
-		agent.Memory.HealthPacks.OnDetected.RemoveListener(AbortAction);
-		agent.Memory.AmmoPacks.OnDetected.RemoveListener(AbortAction);
-		agent.Memory.HidingSpots.OnDetected.RemoveListener(AbortAction);
+		agent.Memory.HealthPacks.OnDetected.RemoveListener(ReplanningAbort);
+		agent.Memory.AmmoPacks.OnDetected.RemoveListener(ReplanningAbort);
+		agent.Memory.HidingSpots.OnDetected.RemoveListener(ReplanningAbort);
 	}
 
 	// On agent detected, check if the agent is
@@ -215,7 +216,7 @@ public class HideAndRegenerate : GoapAction
 		{
 			if (agentToTargetDistance < maxRequiredRange)
 			{
-				ExitAction(actionFailed);
+				ActionAbort();
 			}
 		}
 	}
