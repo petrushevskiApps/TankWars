@@ -14,6 +14,7 @@ public class CameraController : Singleton<CameraController>
     [SerializeField] private CinemachineVirtualCamera followCamera;
 
     [SerializeField] private GameObject staticTracker;
+    [SerializeField] private GameObject deathEffect;
 
     private List<Agent> aiTargets;
     private Player playerTarget;
@@ -28,14 +29,14 @@ public class CameraController : Singleton<CameraController>
         cameraAudioListener = GetComponent<AudioListener>();
 
         GameManager.OnMatchSetup.AddListener(SetupMatchCamera);
-        GameManager.OnMatchStarted.AddListener(ActivateGameCamera);
+        //GameManager.OnMatchStarted.AddListener(ActivateGameCamera);
         GameManager.OnMatchEnded.AddListener(SetMatchEndedCamera);
         GameManager.OnMatchExited.AddListener(ResetCameraController);
     }
     private void OnDestroy()
     {
         GameManager.OnMatchSetup.RemoveListener(SetupMatchCamera);
-        GameManager.OnMatchStarted.RemoveListener(ActivateGameCamera);
+        //GameManager.OnMatchStarted.RemoveListener(ActivateGameCamera);
         GameManager.OnMatchEnded.RemoveListener(SetMatchEndedCamera);
         GameManager.OnMatchExited.RemoveListener(ResetCameraController);
     }
@@ -51,6 +52,7 @@ public class CameraController : Singleton<CameraController>
 
     private void ResetCameraController()
     {
+        deathEffect.SetActive(false);
         overviewTargetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
 
         if(aiTargets != null)
@@ -80,12 +82,13 @@ public class CameraController : Singleton<CameraController>
         }
         else if (configuration.CameraMode == CameraMode.FollowPlayer)
         {
-            SetupFollowCamera(playerTarget, false);
+            SetupFollowCamera(playerTarget, false, true);
         }
         else
         {
             Debug.LogError("No camera mode selected!!!");
         }
+        
     }
 
 
@@ -96,12 +99,11 @@ public class CameraController : Singleton<CameraController>
         ToggleMatchCamera(false);
     }
 
-    private void ActivateGameCamera(MatchConfiguration configuration)
+    private void ActivateGameCamera()
     {
         ToggleUiCamera(false);
         ToggleMatchCamera(true);
     }
-
     private void SetupOverviewCamera()
     {
         cameraAudioListener.enabled = true;
@@ -112,9 +114,11 @@ public class CameraController : Singleton<CameraController>
         });
 
         currentCamera = overviewCamera;
+        
+        ActivateGameCamera();
     }
 
-    private void SetupFollowCamera(Agent target, bool resetTracker)
+    private void SetupFollowCamera(Agent target, bool resetTracker, bool setDeathMode = false)
     {
         target.GetComponent<AudioListener>().enabled = true;
 
@@ -127,15 +131,24 @@ public class CameraController : Singleton<CameraController>
         {
             target.GetComponent<IDestroyable>().RegisterOnDestroy(ResetTracker);
         }
+        if(setDeathMode)
+        {
+            target.GetComponent<IDestroyable>().RegisterOnDestroy(ShowDeathMode);
+        }
+        ActivateGameCamera();
     }
 
     // Once the agent ( ai / player ) with camera tracker
     // is destroyed, set tracking random agent.
     private void ResetTracker(GameObject arg0)
     {
-        SetupFollowCamera(GetRandomTarget(), true);
+        //SetupFollowCamera(GetRandomTarget(), true);
+        SetupOverviewCamera();
     }
-
+    private void ShowDeathMode(GameObject arg0)
+    {
+        deathEffect.SetActive(true);
+    }
     private void ToggleUiCamera(bool status)
     {
         if(uiCamera != null)
