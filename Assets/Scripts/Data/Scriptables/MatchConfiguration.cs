@@ -20,5 +20,5 @@ public class MatchConfiguration : ScriptableObject
 public class TeamData
 {
     public int agentsCount = 0;
-    public bool isPlayer = false;
+    public bool isPlayerTeam = false;
 }

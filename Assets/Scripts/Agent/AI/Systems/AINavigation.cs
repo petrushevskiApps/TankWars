@@ -6,19 +6,15 @@ using UnityEngine.Events;
 
 public class AINavigation : NavigationController
 {
-
-	// Target can reference target location
-	// set by Action or Location pointer.
-	public GameObject Target { get; private set; }
-	public bool IsFollowing { get; private set; } = false;
-
-
 	[SerializeField] private float lookAtSpeed = 5f;
 	[SerializeField] private float lookAtAngle = 5f;
 	[SerializeField] private float followDifference = 0.5f;
 
+	// Target can reference target location
+	// set by Action or Location pointer.
+	public GameObject Target { get; private set; }
+
 	private GameObject agent;
-	private AIAgent aiAgent;
 
 	private NavMeshAgent navMeshAgent;
 	private NavMeshPath path;
@@ -32,47 +28,31 @@ public class AINavigation : NavigationController
 	private Coroutine FollowCoroutine;
 
 	private bool isRotating = false;
-	private bool isBoostOn = false;
 
-	public void Initialize(GameObject agent, int agentID)
+	public void Initialize(GameObject agent)
 	{
 		this.agent = agent;
-		aiAgent = agent.GetComponent<AIAgent>();
 		navMeshAgent = agent.GetComponent<NavMeshAgent>();
-		//navMeshAgent.avoidancePriority += agentID;
 		InstantiateLocationPointer();
 	}
 
-	public override void BoostSpeed()
+	protected override void IncreaseSpeed()
 	{
-		base.BoostSpeed();
+		base.IncreaseSpeed();
 		navMeshAgent.speed = currentSpeed;
 		navMeshAgent.avoidancePriority -= 10;
-		isBoostOn = true;
+		
 	}
-	public override void ResetSpeed()
+	protected override void DecreaseSpeed()
 	{
-		base.ResetSpeed();
+		base.DecreaseSpeed();
 		navMeshAgent.speed = currentSpeed;
 		navMeshAgent.avoidancePriority += 10;
-		isBoostOn = false;
 	}
 
 	private void Update()
 	{
 		OnMovement(navMeshAgent.velocity.magnitude > 0f || isRotating);
-
-		if (isBoostOn)
-		{
-			if (aiAgent.Inventory.SpeedBoost.Amount > 0)
-			{
-				aiAgent.BoostOn();
-			}
-			else
-			{
-				aiAgent.BoostOff();
-			}
-		}
 	}
 
 
@@ -133,7 +113,6 @@ public class AINavigation : NavigationController
 	{
 		if (FollowCoroutine != null)
 		{
-			IsFollowing = false;
 			StopCoroutine(FollowCoroutine);
 			FollowCoroutine = null;
 		}
@@ -142,7 +121,6 @@ public class AINavigation : NavigationController
 	{
 		while (Target != null)
 		{
-			IsFollowing = true;
 			Vector3 position = Target.transform.position;
 
 			if (Vector3.Distance(position, previousPosition) > followDifference)
@@ -232,8 +210,9 @@ public class AINavigation : NavigationController
 		{
 			// Find forward direction of agent
 			Vector3 direction = agent.transform.forward.normalized;
-
-			CreateLocation(direction, 10, 30);
+			Vector3 location = World.Instance.CreateLocation(agent, direction, 10, 30);
+			// Set run location
+			SetTargetLocation(location);
 		}
 	}
 
@@ -243,50 +222,13 @@ public class AINavigation : NavigationController
 		{
 			// Find direction from where agent is attacked
 			Vector3 direction = (runFromTarget - agent.transform.position).normalized;
-
-			// Get opposite direction with magnitude
-			direction *= (-Random.Range(15, 30));
-
-			// Find up direction of agent
-			Vector3 upDirection = agent.transform.up.normalized;
-
-			// Get side direction
-			Vector3 sideDirection = Vector3.Cross(direction, upDirection);
-
-			sideDirection *= (Random.Range(0f, 1f) <= 0.5 ? -1 : 1);
-
-			// Add side direction to forward
-			direction += sideDirection;
-
-			// Find location in opposite direction of the attack
-			Vector3 runToLocation = direction + agent.transform.position;
+			Vector3 location = World.Instance.CreateRunAwayLocation(agent, direction, 15, 30);
 
 			// Set run location
-			SetTargetLocation(runToLocation);
+			SetTargetLocation(location);
 		}
 	}
-	private void CreateLocation(Vector3 direction, float minForward, float maxForward)
-	{
-		// Add range to direction
-		direction *= Random.Range(minForward, maxForward);
-
-		// Find up direction of agent
-		Vector3 upDirection = agent.transform.up.normalized;
-
-		// Get side direction
-		Vector3 sideDirection = Vector3.Cross(direction, upDirection);
-
-		sideDirection *= (Random.Range(0f, 1f) <= 0.5 ? -1 : 1);
-
-		// Add side direction to forward
-		direction += Random.Range(10f, 30f) * sideDirection;
-
-		// Find location in opposite direction of the attack
-		Vector3 runToLocation = direction + agent.transform.position;
-
-		// Set run location
-		SetTargetLocation(runToLocation);
-	}
+	
 
 	private void SetTargetLocation(Vector3 targetPosition)
 	{

@@ -28,11 +28,13 @@ public class Detected : IEquatable<Detected>, IComparable<Detected>
     {
         return Vector3.Distance(agent.transform.position, detected.transform.position);
     }
-    public float GetAgentHealth()
+
+    public Agent GetAgent()
     {
-        return agent.GetComponent<Agent>().Inventory.Health.Amount;
+        return agent.GetComponent<Agent>();
     }
-    public virtual int CompareTo(Detected other)
+
+    public int CompareTo(Detected other)
     {
         return comparator.CompareDetected(this, other);
     }
@@ -45,4 +47,6 @@ public class Detected : IEquatable<Detected>, IComparable<Detected>
         }
         else return false;
     }
+
+    
 }

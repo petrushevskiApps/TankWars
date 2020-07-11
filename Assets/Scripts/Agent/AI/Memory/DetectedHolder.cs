@@ -14,7 +14,7 @@ public class DetectedHolder
     protected GameObject agent;
     private IComparator comparator;
 
-    public List<Detected> detectables = new List<Detected>();
+    private List<Detected> detectables = new List<Detected>();
 
     public DetectedHolder(GameObject agent, IComparator comparator)
     {
@@ -78,7 +78,6 @@ public class DetectedHolder
         }
     }
 
-
     public void InvalidateDetected(GameObject detectedObject, float time)
     {
         Detected detected = GetDetected(detectedObject);
@@ -105,8 +104,6 @@ public class DetectedHolder
         yield return new WaitForSeconds(revalidationTime);
         detectable.status = true;
     }
-
-    
 
     // Return closes detected with valid status
     public GameObject GetSortedDetected()

@@ -7,9 +7,10 @@ namespace GOAP
 	/**
 	* Used for building up the graph and holding the running costs of actions.
 	*/
-	public class Node : IEquatable<Node>, IComparable<Node>
+	public class StateNode : IEquatable<StateNode>, IComparable<StateNode>
     {
-		public Node parent;
+		public StateNode parent;
+		
 		public float StateCost => heuristic + RunningCost;
 
 		private float heuristic = 0;
@@ -19,7 +20,7 @@ namespace GOAP
 		public Dictionary<string, bool> State { get; private set; }
 		public GoapAction action; 
 
-		public Node(Node parent, float runningCost, Dictionary<string, bool> state, GoapAction action, Dictionary<string, bool> goalState)
+		public StateNode(StateNode parent, float runningCost, Dictionary<string, bool> state, GoapAction action, Dictionary<string, bool> goalState)
 		{
 			this.parent = parent;
 			this.RunningCost = runningCost;
@@ -49,7 +50,7 @@ namespace GOAP
 				}
 			}
 		}
-        public int CompareTo(Node other)
+        public int CompareTo(StateNode other)
         {
             if (StateCost > other.StateCost)
             {
@@ -76,8 +77,7 @@ namespace GOAP
             }
 
         }
-
-        public bool Equals(Node other)
+        public bool Equals(StateNode other)
         {
 			if(State == null || other.State == null)
 			{
@@ -109,7 +109,6 @@ namespace GOAP
 			}
 			
         }
-
         public override string ToString()
 		{
 			if (parent != null)

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MatchTimer : MonoBehaviour
+public class MatchTimerController : MonoBehaviour
 {
     private float matchTime = 0;
     private float timeInMatch = 0;

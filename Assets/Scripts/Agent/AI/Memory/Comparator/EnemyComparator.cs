@@ -7,14 +7,14 @@
  */
 public class EnemyComparator : IComparator
 {
-    public float healthDifferenceThreshold = 10f;
+    private float healthDifferenceThreshold = 10f;
 
     public int CompareDetected(Detected d1, Detected d2)
     {
         if (d1.IsValid() && d2.IsValid())
         {
-            float d2Health = d2.GetAgentHealth();
-            float d1Health = d1.GetAgentHealth();
+            float d2Health = d2.GetAgent().Inventory.Health.Amount;
+            float d1Health = d1.GetAgent().Inventory.Health.Amount;
 
             if (Mathf.Abs(d1Health - d2Health) > healthDifferenceThreshold)
             {
@@ -50,4 +50,5 @@ public class EnemyComparator : IComparator
             return 0;
         }
     }
+
 }

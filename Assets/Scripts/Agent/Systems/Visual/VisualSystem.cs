@@ -7,6 +7,7 @@ public class VisualSystem : MonoBehaviour
     [SerializeField] private RenderController renderer;
     [SerializeField] private AgentUIController agentUI;
     [SerializeField] private GameObject cameraTracker;
+    [SerializeField] private GameObject destroyedAgentPrefab;
 
     public ParticlesController Particles { get => particles; }
     public RenderController Renderer { get => renderer; }
@@ -15,7 +16,7 @@ public class VisualSystem : MonoBehaviour
 
     private Agent agent;
 
-    public void Setup(Agent agent, Material teamColor)
+    public void Initialize(Agent agent, Material teamColor)
     {
         this.agent = agent;
         agentUI.Setup(agent);
@@ -38,9 +39,21 @@ public class VisualSystem : MonoBehaviour
         agent.Navigation.OnAgentMoving.RemoveListener(Particles.PlayDrivingParticles);
     }
 
+    public void InstantiateDestroyed()
+    {
+        Vector3 position = agent.gameObject.transform.position;
+        Quaternion rotation = agent.gameObject.transform.rotation;
+        Transform parent = World.Instance.destroyedAgents;
+
+        GameObject destroyedAgent = Instantiate(destroyedAgentPrefab, position, rotation, parent);
+        destroyedAgent.name = destroyedAgent.name.Replace("(Clone)", "( " + agent.AgentName + " ) ");
+        DropTracker(destroyedAgent.transform);
+        destroyedAgent.SetActive(true);
+    }
+
     // On Agent death move tracker
     // to new parent ( destroyed agent )
-    public void DropTracker(Transform parent)
+    private void DropTracker(Transform parent)
     {
         cameraTracker.transform.parent = parent;
     }

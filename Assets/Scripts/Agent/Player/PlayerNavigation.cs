@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Animations;
-using UnityEngine.Events;
+﻿using UnityEngine;
 
 namespace Complete
 {
     public class PlayerNavigation : NavigationController
     {
+        public float turnSpeed = 130f;            // How fast the tank turns in degrees per second.
+
         private Rigidbody rigidbody;              // Reference used to move the tank.
 
         private float movementInputValue;         // The current value of the movement input.
@@ -45,21 +42,15 @@ namespace Complete
 
         public void UpdateMovement(float axisValue)
         {
-            OnMovement(IsMoving());
+            OnMovement(axisValue != 0);
             movementInputValue = axisValue;
         }
         public void UpdateTurning(float axisValue)
         {
-            OnMovement(IsMoving());
+            OnMovement(axisValue != 0);
             turnInputValue = axisValue;
         }
 
-        private bool IsMoving()
-        {
-            // Player is moving if either of the input values
-            // is different then zero.
-            return movementInputValue != 0 || turnInputValue != 0;
-        }
         private void Move ()
         {
             // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.

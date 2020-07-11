@@ -101,4 +101,48 @@ public class World : Singleton<World>
             Destroy(parent.GetChild(i).gameObject);
         }
     }
+
+    public Vector3 CreateLocation(GameObject agent, Vector3 direction, float minForward, float maxForward)
+    {
+        // Add range to direction
+        direction *= UnityEngine.Random.Range(minForward, maxForward);
+
+        // Find up direction of agent
+        Vector3 upDirection = agent.transform.up.normalized;
+
+        // Get side direction
+        Vector3 sideDirection = Vector3.Cross(direction, upDirection);
+
+        sideDirection *= (UnityEngine.Random.Range(0f, 1f) <= 0.5 ? -1 : 1);
+
+        // Add side direction to forward
+        direction += UnityEngine.Random.Range(minForward, maxForward) * sideDirection;
+
+        // Find location in opposite direction of the attack
+        Vector3 runToLocation = direction + agent.transform.position;
+
+        return runToLocation;
+    }
+
+    public Vector3 CreateRunAwayLocation(GameObject agent, Vector3 direction, float minForward, float maxForward)
+    {
+        // Get opposite direction with magnitude
+        direction *= (-UnityEngine.Random.Range(minForward, maxForward));
+
+        // Find up direction of agent
+        Vector3 upDirection = agent.transform.up.normalized;
+
+        // Get side direction
+        Vector3 sideDirection = Vector3.Cross(direction, upDirection);
+
+        sideDirection *= (UnityEngine.Random.Range(0f, 1f) <= 0.5 ? -1 : 1);
+
+        // Add side direction to forward
+        direction += sideDirection;
+
+        // Find location in opposite direction of the attack
+        Vector3 runToLocation = direction + agent.transform.position;
+
+        return runToLocation;
+    }
 }

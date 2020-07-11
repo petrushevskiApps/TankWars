@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -26,6 +24,8 @@ public class AgentsController : MonoBehaviour
     private List<string> teamNames = new List<string>();
     private List<string> agentNames = new List<string>();
 
+    private int agentId = 0;
+
     private void Awake()
     {
         GameManager.OnMatchSetup.AddListener(SetupController);
@@ -40,10 +40,34 @@ public class AgentsController : MonoBehaviour
 
     private void SetupController(MatchConfiguration configuration)
     {
-        Setup(agentNames, agentNamesList);
-        Setup(teamNames, teamNamesList);
+        SetupNames(agentNames, agentNamesList);
+        SetupNames(teamNames, teamNamesList);
         SpawnAgents(configuration.teamsConfig);
         ActivateTeams();
+    }
+    private void SpawnAgents(List<TeamData> teamsConfig) 
+    {
+        agentId = 0;
+        
+        foreach (TeamData teamData in teamsConfig)
+        {
+            List<Agent> teamMembers = new List<Agent>();
+
+            if(teamData.isPlayerTeam)
+            {
+                // Add Player to the team if its player team
+                PlayerAgent = InstantiateAgent(playerPrefab, teamMembers);
+                PlayerTeamId = MatchTeams.Count;
+            }
+
+            for (int i=0; i<teamData.agentsCount; i++)
+            {
+                // Add agents to team as specified in teamData
+                InstantiateAgent(aiPrefab, teamMembers);
+            }
+
+            InitializeTeam(new Team(MatchTeams.Count, GetRandomName(teamNames), teamData.isPlayerTeam, teamMembers));
+        }
     }
     private void ResetController()
     {
@@ -61,34 +85,6 @@ public class AgentsController : MonoBehaviour
         MatchTeams = new List<Team>();
         PlayerAgent = null;
         PlayerTeamId = -1;
-    }
-
-    int agentId = 0;
-
-    private void SpawnAgents(List<TeamData> teamsConfig) 
-    {
-        agentId = 0;
-        
-        foreach (TeamData teamData in teamsConfig)
-        {
-            List<Agent> teamMembers = new List<Agent>();
-
-            
-            if(teamData.isPlayer)
-            {
-                // Add Player to the team if its player team
-                PlayerAgent = InstantiateAgent(playerPrefab, teamMembers);
-                PlayerTeamId = MatchTeams.Count;
-            }
-
-            for (int i=0; i<teamData.agentsCount; i++)
-            {
-                // Add agents to team as specified in teamData
-                InstantiateAgent(aiPrefab, teamMembers);
-            }
-
-            InitializeTeam(new Team(MatchTeams.Count, GetRandomName(teamNames), teamData.isPlayer, teamMembers));
-        }
     }
 
     // This event is called when team has no
@@ -145,15 +141,12 @@ public class AgentsController : MonoBehaviour
     // enable spawned agents.
     private void ActivateTeams()
     {
-        foreach (Team team in MatchTeams)
-        {
-            team.ActivateTeamMembers();
-        }
+        MatchTeams.ForEach(team => team.ActivateTeamMembers());
     }
 
-    
 
-    public void Setup(List<string> availableNames, Names namesList)
+
+    private void SetupNames(List<string> availableNames, Names namesList)
     {
         availableNames.Clear();
 
@@ -163,7 +156,7 @@ public class AgentsController : MonoBehaviour
         }
     }
 
-    public string GetRandomName(List<string> availableNames)
+    private string GetRandomName(List<string> availableNames)
     {
         if (availableNames.Count > 0)
         {
@@ -171,7 +164,6 @@ public class AgentsController : MonoBehaviour
             string name = availableNames[index];
             availableNames.RemoveAt(index);
             return name;
-
         }
 
         return "NoNameAvailable";
@@ -183,5 +175,6 @@ public class AgentsController : MonoBehaviour
         MatchTeams.ForEach(team => team.Members.ForEach(agent => allAgents.Add(agent)));
         return allAgents;
     }
+
     public class OneTeamLeftEvent : UnityEvent<bool> { }
 }

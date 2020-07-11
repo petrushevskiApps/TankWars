@@ -7,9 +7,6 @@ using UnityEngine.Events;
 
 public class MemoryController : MonoBehaviour
 {
-    [HideInInspector]
-    public UnityEvent OnUnderFire = new UnityEvent();
-
     public DetectedHolder Enemies { get; private set; }
 
     public DetectedHolder AmmoPacks { get; private set; }
@@ -17,9 +14,6 @@ public class MemoryController : MonoBehaviour
     public DetectedHolder HealthPacks { get; private set; }
 
     public DetectedHolder HidingSpots { get; private set; }
-
-
-    public Vector3 MissileDirection { get; private set; }
 
     public bool IsUnderAttack { get; private set; }
 
@@ -30,7 +24,7 @@ public class MemoryController : MonoBehaviour
 
     private AIAgent agent;
 
-    private Coroutine UnderAttackTimer;
+    private Coroutine UnderAttackCoroutine;
     
     public void Initialize(AIAgent agent)
     {
@@ -56,10 +50,10 @@ public class MemoryController : MonoBehaviour
         worldState.Add(StateKeys.ENEMY_DETECTED, Enemies.IsAnyValidDetected);
         worldState.Add(StateKeys.ENEMY_KILLED, () => false);
 
-        worldState.Add(StateKeys.HEALTH_FULL, IsHealthFull);
+        worldState.Add(StateKeys.HEALTH_FULL, () => agent.Inventory.Health.IsFull);
         worldState.Add(StateKeys.HEALTH_DETECTED, HealthPacks.IsAnyValidDetected);
 
-        worldState.Add(StateKeys.AMMO_FULL, IsAmmoFull);
+        worldState.Add(StateKeys.AMMO_FULL, () => agent.Inventory.Ammo.IsFull);
         worldState.Add(StateKeys.AMMO_DETECTED, AmmoPacks.IsAnyValidDetected);
 
         worldState.Add(StateKeys.HIDING_SPOT_DETECTED, HidingSpots.IsAnyValidDetected);
@@ -134,48 +128,21 @@ public class MemoryController : MonoBehaviour
 
     private void SetIsUnderAttack(GameObject missile)
     {
-        if(!IsUnderAttack)
-        {
-            OnUnderFire.Invoke();
-        }
-
         IsUnderAttack = true;
-        MissileDirection = missile.gameObject.transform.position;
 
-        if (UnderAttackTimer != null)
+        if (UnderAttackCoroutine != null)
         {
-            agent.StopCoroutine(UnderAttackTimer);
+            agent.StopCoroutine(UnderAttackCoroutine);
         }
 
-        UnderAttackTimer = agent.StartCoroutine(UnderAttack());
+        UnderAttackCoroutine = agent.StartCoroutine(UnderAttackTimer());
     }
 
-    IEnumerator UnderAttack()
+    IEnumerator UnderAttackTimer()
     {
         yield return new WaitForSeconds(1f);
-        UnderAttackTimer = null;
+        UnderAttackCoroutine = null;
         IsUnderAttack = false;
-        MissileDirection = Vector3.zero;
     }
 
-    public bool IsAmmoFull()
-    {
-        InventoryStatus status = agent.Inventory.Ammo.Status;
-
-        if (status == InventoryStatus.Full)
-        {
-            return true;
-        }
-        else return false;
-    }
-    public bool IsHealthFull()
-    {
-        InventoryStatus status = agent.Inventory.Health.Status;
-
-        if (status == InventoryStatus.Full)
-        {
-            return true;
-        }
-        else return false;
-    }
 }

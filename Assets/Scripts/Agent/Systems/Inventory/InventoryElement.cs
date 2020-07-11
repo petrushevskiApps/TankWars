@@ -22,6 +22,10 @@ public class InventoryElement : MonoBehaviour
 
     public InventoryStatus Status { get; protected set; }
 
+    public bool IsFull => Status == InventoryStatus.Full;
+
+    private float inventoryCost = 1;
+
     public float Amount
     {
         get => amount;
@@ -58,26 +62,32 @@ public class InventoryElement : MonoBehaviour
         if(currentPercent <= 0)
         {
             Status = InventoryStatus.Empty;
+            inventoryCost = EMPTY_INV_COST;
         }
         else if (currentPercent > 0 && currentPercent <= 0.3f)
         {
             Status = InventoryStatus.VeryLow;
+            inventoryCost = VERY_LOW_INV_COST;
         }
         else if (currentPercent > 0.3f && currentPercent <= 0.5f)
         {
             Status = InventoryStatus.Low;
+            inventoryCost = LOW_INV_COST;
         }
         else if (currentPercent > 0.5f && currentPercent <= 0.7f)
         {
             Status = InventoryStatus.Medium;
+            inventoryCost = MEDIUM_INV_COST;
         }
         else if (currentPercent > 0.7f && currentPercent < 1f)
         {
             Status = InventoryStatus.High;
+            inventoryCost =  HIGH_INV_COST;
         }
         else
         {
             Status = InventoryStatus.Full;
+            inventoryCost = FULL_INV_COST;
         }
 
         if (previousStatus != Status) OnStatusChange.Invoke();
@@ -90,16 +100,7 @@ public class InventoryElement : MonoBehaviour
 	 */
     public float GetCost()
     {
-        switch (Status)
-        {
-            case InventoryStatus.Empty:     return EMPTY_INV_COST;
-            case InventoryStatus.VeryLow:   return VERY_LOW_INV_COST;
-            case InventoryStatus.Low:       return LOW_INV_COST;
-            case InventoryStatus.Medium:    return MEDIUM_INV_COST;
-            case InventoryStatus.High:      return HIGH_INV_COST;
-            case InventoryStatus.Full:      return FULL_INV_COST;
-            default: return 0;
-        }
+        return inventoryCost;
     }
 
     /*
@@ -109,16 +110,7 @@ public class InventoryElement : MonoBehaviour
 	 */
     public float GetInvertedCost()
     {
-        switch (Status)
-        {
-            case InventoryStatus.Empty:       return FULL_INV_COST - EMPTY_INV_COST;
-            case InventoryStatus.VeryLow:     return FULL_INV_COST - VERY_LOW_INV_COST;
-            case InventoryStatus.Low:         return FULL_INV_COST - LOW_INV_COST;
-            case InventoryStatus.Medium:      return FULL_INV_COST - MEDIUM_INV_COST;
-            case InventoryStatus.High:        return FULL_INV_COST - HIGH_INV_COST;
-            case InventoryStatus.Full:        return FULL_INV_COST - FULL_INV_COST;
-            default: return 0;
-        }
+        return FULL_INV_COST - inventoryCost;
     }
     public class OnValueChange : UnityEvent<float> { }
 }

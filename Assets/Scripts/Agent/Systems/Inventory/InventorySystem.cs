@@ -8,16 +8,16 @@ public class InventorySystem : MonoBehaviour, ICollector
 {
     [SerializeField] private InventoryElement health;
     [SerializeField] private InventoryElement ammo;
-	[SerializeField] private InventoryTime speedBoost;
-	[SerializeField] private InventoryTime shield;
+	[SerializeField] private TimerElement speedBoost;
+	[SerializeField] private TimerElement shield;
 
 	public InventoryElement Health { get => health; }
     
     public InventoryElement Ammo { get => ammo; }
 
-	public InventoryTime SpeedBoost { get => speedBoost; }
+	public TimerElement SpeedBoost { get => speedBoost; }
 
-	public InventoryTime Shield { get => shield; }
+	public TimerElement Shield { get => shield; }
 
 	public void PickableCollected(AmmoPack collected)
 	{

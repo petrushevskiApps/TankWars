@@ -27,15 +27,6 @@ public class SensorController : MonoBehaviour
 
     public MissileEvent OnUnderAttack { get; private set; } = new MissileEvent();
 
-    private Color ENEMY_VISIBLE_RAY_COLOR = Color.red;
-    private Color ENEMY_RADAR_RAY_COLOR = Color.gray;
-
-    private Color FRENDLY_VISIBLE_RAY_COLOR = Color.cyan;
-    private Color FRENDLY_RADAR_RAY_COLOR = Color.cyan;
-
-    private Color HIDING_SPOT_RAY_COLOR = Color.blue;
-    private Color PICKABLE_RAY_COLOR = Color.green;
-
     private Dictionary<string, AgentVisibilityStatus> enemiesVisibility = new Dictionary<string, AgentVisibilityStatus>();
     private Dictionary<string, AgentVisibilityStatus> friendsVisibility = new Dictionary<string, AgentVisibilityStatus>();
 
@@ -102,7 +93,7 @@ public class SensorController : MonoBehaviour
         {
             if (isVisible)
             {
-                DrawDebugRay(agent.gameObject, isRadar ? ENEMY_RADAR_RAY_COLOR : ENEMY_VISIBLE_RAY_COLOR);
+                DrawDebugRay(agent.gameObject, isRadar ? Constants.ENEMY_RADAR_RAY_COLOR : Constants.ENEMY_VISIBLE_RAY_COLOR);
 
                 SetAgentVisibilityStatus(agent, enemiesVisibility, isVisible, isRadar);
 
@@ -126,7 +117,7 @@ public class SensorController : MonoBehaviour
         {
             if (isVisible)
             {
-                DrawDebugRay(detected, isRadar ? FRENDLY_RADAR_RAY_COLOR : FRENDLY_VISIBLE_RAY_COLOR);
+                DrawDebugRay(detected, isRadar ? Constants.FRENDLY_RADAR_RAY_COLOR : Constants.FRENDLY_VISIBLE_RAY_COLOR);
                 SetAgentVisibilityStatus( agent, friendsVisibility, isVisible, isRadar);
                 OnFriendlyDetected.Invoke(detected);
             }
@@ -171,12 +162,12 @@ public class SensorController : MonoBehaviour
 
         if (pickable.GetType().Equals(typeof(AmmoPack)))
         {
-            DrawDebugRay(detected, PICKABLE_RAY_COLOR);
+            DrawDebugRay(detected, Constants.PICKABLE_RAY_COLOR);
             OnAmmoPackDetected.Invoke(detected);
         }
         else if(pickable.GetType().Equals(typeof(HealthPack)))
         {
-            DrawDebugRay(detected, PICKABLE_RAY_COLOR);
+            DrawDebugRay(detected, Constants.PICKABLE_RAY_COLOR);
             OnHealthPackDetected.Invoke(detected);
         }
     }
@@ -188,7 +179,7 @@ public class SensorController : MonoBehaviour
         {
             // Hiding spot can be detected if in sight range
             // both visible and invisible
-            DrawDebugRay(detected, HIDING_SPOT_RAY_COLOR);
+            DrawDebugRay(detected, Constants.HIDING_SPOT_RAY_COLOR);
             OnHidingSpotDetected.Invoke(detected);
         }
         else if (detected.CompareTag("Missile"))

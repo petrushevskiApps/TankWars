@@ -5,12 +5,13 @@ using System;
 
 public abstract class GoapAction : MonoBehaviour 
 {
-	public string ActionName { get => GetType().ToString(); }
-
 	[SerializeField] protected float minimumCost = 1f;
+
+	public string ActionName { get => GetType().ToString(); }
 
 	public float minRequiredRange = 10f;
 	public float maxRequiredRange = 15f;
+	
 	public bool requiresRange = false;
 
 	public Dictionary<string, bool> Preconditions { get; private set; }
@@ -40,7 +41,7 @@ public abstract class GoapAction : MonoBehaviour
 	// Prevent exiting action multiple times by events
 	public bool IsActionExited { get; set; } = false;
 
-	public GoapAction() 
+	public GoapAction()
 	{
 		Preconditions = new Dictionary<string, bool>();
 		Effects = new Dictionary<string, bool>();

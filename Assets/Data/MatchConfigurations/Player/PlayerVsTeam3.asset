@@ -16,4 +16,4 @@ MonoBehaviour:
   matchTime: 300
   teamsConfig:
   - agentsCount: 0
-    isPlayer: 1
+    isPlayerTeam: 1

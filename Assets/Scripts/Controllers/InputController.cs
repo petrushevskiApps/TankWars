@@ -28,7 +28,7 @@ public class InputController : MonoBehaviour
             OnBackKey.Invoke();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
             OnFirePressed.Invoke();
         }
@@ -46,7 +46,7 @@ public class InputController : MonoBehaviour
         OnMovementAxis.Invoke(Input.GetAxis("Vertical"));
         OnTurningAxis.Invoke(Input.GetAxis("Horizontal"));
 
-        if(Input.GetKey(KeyCode.LeftShift))
+        if(Input.GetKeyDown(KeyCode.LeftShift))
         {
             OnBoostStart.Invoke();
         }

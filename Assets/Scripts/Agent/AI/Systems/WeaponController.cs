@@ -9,6 +9,7 @@ public class WeaponController : MonoBehaviour
 {
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float fireRange;
+	[SerializeField] private float fireRate;
 
 	[HideInInspector]
 	public UnityEvent OnShooting = new UnityEvent();
@@ -41,7 +42,7 @@ public class WeaponController : MonoBehaviour
 	IEnumerator Timer()
 	{
 		fireLock = true;
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(fireRate);
 		fireLock = false;
 	}
 

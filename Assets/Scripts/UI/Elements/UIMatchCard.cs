@@ -51,7 +51,7 @@ public class UIMatchCard : MonoBehaviour
         foreach(TeamData team in matchConfiguration.teamsConfig)
         {
             agents += team.agentsCount;
-            if (team.isPlayer) player = 1;
+            if (team.isPlayerTeam) player = 1;
         }
 
         sb.Append("Agents: ");

@@ -11,26 +11,56 @@ public class NavigationController : MonoBehaviour
     [HideInInspector]
     public UnityEvent OnAgentIdling = new UnityEvent();
 
-    public float originalSpeed = 3.5f;                // How fast the tank moves forward and back.
     public float currentSpeed = 3.5f;
-    public float turnSpeed = 130f;            // How fast the tank turns in degrees per second.
-    public float maxSpeed = 8f;               // Maxiumum speed that can be reached with boost
+    private float originalSpeed = 3.5f;                // How fast the tank moves forward and back.
+    private float maxSpeed = 8f;               // Maxiumum speed that can be reached with boost
 
     private MoveStatus AgentMoveStatus;
+    private Coroutine Boosting;
 
     protected void Awake()
     {
         currentSpeed = originalSpeed;
     }
 
-    public virtual void BoostSpeed()
+
+    public void StartBoosting(Agent agent)
     {
-        currentSpeed = Mathf.Clamp(currentSpeed + 0.03f, originalSpeed, maxSpeed);
+        Boosting = StartCoroutine(BoostSpeed(agent));
+        agent.Inventory.SpeedBoost.Use();
     }
-    public virtual void ResetSpeed()
+    public void StopBoosting(Agent agent)
+    {
+        if(Boosting != null)
+        {
+            StopCoroutine(Boosting);
+            Boosting = null;
+        }
+        DecreaseSpeed();
+        agent.Inventory.SpeedBoost.Refill();
+    }
+
+    // Increase speed gradually while there is boost
+    // available in inventory.
+    public IEnumerator BoostSpeed(Agent agent)
+    {
+        while(agent.Inventory.SpeedBoost.Amount > 0)
+        {
+            IncreaseSpeed();
+            yield return new WaitForEndOfFrame();
+        }
+        DecreaseSpeed();
+    }
+
+    protected virtual void IncreaseSpeed()
+    {
+        currentSpeed = Mathf.Clamp(currentSpeed + Time.deltaTime, originalSpeed, maxSpeed);
+    }
+    protected virtual void DecreaseSpeed()
     {
         currentSpeed = originalSpeed;
     }
+
 
     protected void OnMovement(bool isMoving)
     {

@@ -4,10 +4,8 @@ using UnityEngine.Events;
 using System;
 using System.Collections;
 
-public class Agent : MonoBehaviour, IDestroyable
+public abstract class Agent : MonoBehaviour, IDestroyable
 {
-	[SerializeField] private GameObject destroyedAgentPrefab;
-
 	//Events
 	public PlayerDeath OnAgentDeath = new PlayerDeath();
 
@@ -31,11 +29,12 @@ public class Agent : MonoBehaviour, IDestroyable
 
 	public Team Team { get; private set; }
 	public string AgentName { get; private set; } = "tankName";
-
 	public bool IsShieldOn { get; private set; } = false;
 
 	private bool isDead;
 	protected int agentId;
+
+	private Coroutine ShieldTimer;
 
 	protected void Awake()
 	{
@@ -50,7 +49,7 @@ public class Agent : MonoBehaviour, IDestroyable
 		AgentName = name;
 		gameObject.name = name;
 		this.agentId = agentId;
-		visualSystem.Setup(this, teamColor);
+		visualSystem.Initialize(this, teamColor);
 	}
 
 	public void TakeDamage(float amount, Agent owner)
@@ -77,17 +76,12 @@ public class Agent : MonoBehaviour, IDestroyable
 
 		OnAgentDeath.Invoke(gameObject);
 
-		InstantiateDestroyed();
+		visualSystem.InstantiateDestroyed();
 
 		Destroy(gameObject);
 	}
-	private void InstantiateDestroyed()
-	{
-		GameObject destroyedAgent = Instantiate(destroyedAgentPrefab, transform.position, transform.rotation, World.Instance.destroyedAgents);
-		destroyedAgent.name = destroyedAgent.name.Replace("(Clone)", "( " + AgentName + " ) ");
-		visualSystem.DropTracker(destroyedAgent.transform);
-		destroyedAgent.SetActive(true);
-	}
+	
+
 	public void RegisterOnDestroy(UnityAction<GameObject> OnDestroyAction)
 	{
 		OnAgentDeath.AddListener(OnDestroyAction);
@@ -96,7 +90,7 @@ public class Agent : MonoBehaviour, IDestroyable
 	{
 		OnAgentDeath.RemoveListener(OnDestroyAction);
 	}
-	private Coroutine ShieldTimer;
+	
 
 	public void ToggleShield()
 	{
@@ -130,23 +124,15 @@ public class Agent : MonoBehaviour, IDestroyable
 
 	public void BoostOn()
 	{
-		if (Inventory.SpeedBoost.Amount > 0)
-		{
-			navigationController.BoostSpeed();
-			Inventory.SpeedBoost.Use();
-		}
-		else
-		{
-			navigationController.ResetSpeed();
-		}
-	}
-	public void BoostOff()
-	{
-		navigationController.ResetSpeed();
-		Inventory.SpeedBoost.Refill();
+		navigationController.StartBoosting(this);
 	}
 
-	
+	public void BoostOff()
+	{
+		navigationController.StopBoosting(this);
+	}
+
+
 
 	public class PlayerDeath : UnityEvent<GameObject> { }
 }

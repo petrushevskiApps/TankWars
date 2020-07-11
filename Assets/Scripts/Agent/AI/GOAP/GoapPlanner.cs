@@ -12,9 +12,9 @@ namespace GOAP
 	 */
 	public class GoapPlanner
 	{
-		private List<Node> openListStates;
-		private List<Node> closedListStates;
-		private List<Node> adjacentStates;
+		private List<StateNode> openListStates;
+		private List<StateNode> closedListStates;
+		private List<StateNode> adjacentStates;
 		
 		/**
 		 * Plan what sequence of actions can fulfill the goal.
@@ -54,18 +54,18 @@ namespace GOAP
 		{
 			bool isPlanFound = false;
 
-			openListStates = new List<Node>();
-			closedListStates = new List<Node>();
-			adjacentStates = new List<Node>();
+			openListStates = new List<StateNode>();
+			closedListStates = new List<StateNode>();
+			adjacentStates = new List<StateNode>();
 
 			// start by adding the original state to the open list
-			AddToListAndSort(openListStates, new Node(null, 0, worldState, null, goal));
+			AddToListAndSort(openListStates, new StateNode(null, 0, worldState, null, goal));
 
 			while (openListStates.Count > 0)
 			{
 				//TODO: Open List should be Sorted ( Ascending order by F )
 				// Get the square with the lowest F score
-				Node currentState = openListStates[0];
+				StateNode currentState = openListStates[0];
 
 				// add the current state to the closed list
 				closedListStates.Add(currentState);
@@ -86,7 +86,7 @@ namespace GOAP
 				// Retrieve all states next possible
 				adjacentStates = GetAdjacentStates(currentState, availableActions, goal);
 
-				foreach(Node state in adjacentStates)
+				foreach(StateNode state in adjacentStates)
 				{
 					// if this adjacent state is already in the closed list ignore it
 					if (closedListStates.Contains(state))
@@ -105,7 +105,7 @@ namespace GOAP
 						// test if using the current G score make the states F score lower,
 						// if yes update the parent because it means its a better path
 						int index = openListStates.IndexOf(state);
-						Node oldState = openListStates[index];
+						StateNode oldState = openListStates[index];
 						
 						if(state.StateCost < oldState.StateCost)
 						{
@@ -120,9 +120,9 @@ namespace GOAP
 			return new Plan(closedListStates, isPlanFound, agentName, planName);
 		}
 		
-		private List<Node> GetAdjacentStates(Node parent, HashSet<GoapAction> availableActions, Dictionary<string, bool> goal)
+		private List<StateNode> GetAdjacentStates(StateNode parent, HashSet<GoapAction> availableActions, Dictionary<string, bool> goal)
 		{
-			List<Node> adjacent = new List<Node>();
+			List<StateNode> adjacent = new List<StateNode>();
 
 			// Go through each action available at this node
 			// and see if we can use it here
@@ -140,7 +140,7 @@ namespace GOAP
 						Dictionary<string, bool> state = UpdatedState(parent.State, action.Effects);
 
 						// Create new Node State
-						Node node = new Node(parent, parent.RunningCost + action.GetCost(), state, action, goal);
+						StateNode node = new StateNode(parent, parent.RunningCost + action.GetCost(), state, action, goal);
 
 						// Add the new state to adjacent states
 						AddToListAndSort(adjacent, node);
@@ -152,7 +152,7 @@ namespace GOAP
 		}
 
 
-		private void AddToListAndSort(List<Node> list, Node element)
+		private void AddToListAndSort(List<StateNode> list, StateNode element)
 		{
 			list.Insert(0, element);
 			list.Sort();
@@ -229,10 +229,10 @@ namespace GOAP
 		string agentName = "NoName";
 		string planName = "NoName";
 
-		public List<Node> plan = new List<Node>();
+		public List<StateNode> plan = new List<StateNode>();
 		public bool isPlanSuccessful = false;
 
-		public Plan(List<Node> plan, bool isPlanSuccessful, string agentName, string planName)
+		public Plan(List<StateNode> plan, bool isPlanSuccessful, string agentName, string planName)
 		{
 			this.plan = plan;
 			this.planName = planName;
@@ -260,7 +260,7 @@ namespace GOAP
 			sb.Append("GOAP Tree:");
 			sb.AppendLine();
 
-			foreach (Node node in plan)
+			foreach (StateNode node in plan)
 			{
 				sb.Append(node.ToString());
 				sb.Append("->");

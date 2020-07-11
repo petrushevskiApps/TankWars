@@ -5,40 +5,42 @@ using UnityEngine;
 
 public class AudioSystem : MonoBehaviour
 {
-    [SerializeField] protected AudioConfiguration configuration;
+    [SerializeField] private AudioConfiguration configuration;
 
     [Header("Agent Audio Sources")]
-    [SerializeField] protected AudioSource drivingSource;
-    [SerializeField] protected AudioSource sfxSource;
+    [SerializeField] private AudioSource drivingSource;
+    [SerializeField] private AudioSource sfxSource;
 
-    protected Agent agent;
-    
-    public float pitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
-    private float originalPitch;              // The pitch of the audio source at the start of the scene.
+    // The amount by which the pitch of the engine noises can vary.
+    [SerializeField] private float pitchRange = 0.2f;
+
+    // The pitch of the audio source at the start of the scene.
+    private float originalPitch;
+
+    private Agent agent;
 
     private void Awake()
     {
         agent = transform.parent.GetComponent<Agent>();
+        originalPitch = drivingSource.pitch;
     }
     private void Start()
     {
         RegisterListeners();
-
-        originalPitch = drivingSource.pitch;
     }
     private void OnDestroy()
     {
         UnregisterListeners();
     }
 
-    protected virtual void RegisterListeners()
+    private void RegisterListeners()
     {
         agent.Weapon.OnShooting.AddListener(PlayShooting);
         agent.Navigation.OnAgentIdling.AddListener(PlayIdling);
         agent.Navigation.OnAgentMoving.AddListener(PlayDriving);
     }
 
-    protected virtual void UnregisterListeners()
+    private void UnregisterListeners()
     {
         agent.Weapon.OnShooting.RemoveListener(PlayShooting);
         agent.Navigation.OnAgentIdling.RemoveListener(PlayIdling);

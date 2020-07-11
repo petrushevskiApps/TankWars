@@ -40,7 +40,7 @@ public class CollectAmmo : Collect
 
 	protected override IEnumerator CollectPickable()
 	{
-		yield return new WaitUntil(() => agent.Memory.IsAmmoFull() || (target == null));
+		yield return new WaitUntil(() => agent.Inventory.Ammo.IsFull || (target == null));
 		ExitAction(actionCompleted, 0f);
 	}
 }

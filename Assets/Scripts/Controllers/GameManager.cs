@@ -17,7 +17,7 @@ public class GameManager : Singleton<GameManager>
     public Team WinningTeamId { get; private set; } = null;
 
     public AgentsController AgentsController { get; private set; }
-    public MatchTimer MatchTimer { get; private set; }
+    public MatchTimerController MatchTimer { get; private set; }
 
     public MatchConfiguration MatchConfiguration { get; private set; }
 
@@ -29,7 +29,7 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
 
         AgentsController = GetComponent<AgentsController>();
-        MatchTimer = GetComponent<MatchTimer>();
+        MatchTimer = GetComponent<MatchTimerController>();
 
         MatchTimer.OnTimerEnd.AddListener(MatchEnded);
         AgentsController.OneTeamLeft.AddListener(MatchEnded);

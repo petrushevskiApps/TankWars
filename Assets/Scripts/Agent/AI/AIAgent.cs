@@ -19,7 +19,7 @@ public class AIAgent : Agent, IGoap
 	{
 		base.Initialize(team, name, teamColor, agentId);
 
-		Navigation.Initialize(gameObject, UnityEngine.Random.Range(0, 10));
+		Navigation.Initialize(gameObject);
 
 		Memory.Initialize(this);
 
@@ -43,28 +43,6 @@ public class AIAgent : Agent, IGoap
 	public int GetGoalsCount()
 	{
 		return Memory.GetGoals().Count;
-	}
-
-
-
-	public void PlanFailed(Dictionary<string, bool> failedGoal)
-	{
-
-	}
-
-	public void PlanFound(Dictionary<string, bool> goal, Queue<GoapAction> actions)
-	{
-
-	}
-
-	public void ActionsFinished()
-	{
-
-	}
-
-	public void PlanAborted(GoapAction aborter)
-	{
-
 	}
 
 }

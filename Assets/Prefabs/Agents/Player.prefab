@@ -298,6 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 192454, guid: 008ecb1b70bec724fa2cd34255b0d8f8, type: 3}
   fireRange: 10
+  fireRate: 0.5
   OnShooting:
     m_PersistentCalls:
       m_Calls: []
@@ -625,8 +626,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9909141014511c4a9e61b534a04ee87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyedAgentPrefab: {fileID: 4706593813742124158, guid: b3ab40f8832d57f46b70b33ec7889bd6,
-    type: 3}
   collectController: {fileID: 3649931314146163526}
   weaponController: {fileID: 910284484475132284}
   navigationController: {fileID: 4998884739790146127}
@@ -659,10 +658,8 @@ MonoBehaviour:
   OnAgentIdling:
     m_PersistentCalls:
       m_Calls: []
-  originalSpeed: 3.5
   currentSpeed: 3.5
   turnSpeed: 50
-  maxSpeed: 7
 --- !u!1 &5109456267326574939
 GameObject:
   m_ObjectHideFlags: 0
@@ -10682,6 +10679,8 @@ MonoBehaviour:
   renderer: {fileID: 1614925991844755307}
   agentUI: {fileID: 7811164667866942393}
   cameraTracker: {fileID: 5405429569707618283}
+  destroyedAgentPrefab: {fileID: 4706593813742124158, guid: b3ab40f8832d57f46b70b33ec7889bd6,
+    type: 3}
 --- !u!1 &8667158776242604873
 GameObject:
   m_ObjectHideFlags: 0
