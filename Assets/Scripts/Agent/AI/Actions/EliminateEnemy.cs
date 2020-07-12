@@ -77,6 +77,8 @@ public class EliminateEnemy : GoapAction
 	{
 		float fireRange = Vector3.Distance(transform.position, target.transform.position);
 
+		if (fireRange > maxRequiredRange) return FireRangeStatus.Follow;
+		
 		return fireRange < minRequiredRange ? FireRangeStatus.ToClose : FireRangeStatus.InRange;
 	}
 
