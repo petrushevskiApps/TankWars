@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: PlayerMode
   m_EditorClassIdentifier: 
   matchConfigs:
-  - {fileID: 11400000, guid: 43e57217115ab4244a401f63eba2f724, type: 2}
   - {fileID: 11400000, guid: 9d2fc97ceff555b43ad6ebc089a7d51d, type: 2}
+  - {fileID: 11400000, guid: 34768dff3aac98644beb9321987f4b25, type: 2}
+  - {fileID: 11400000, guid: e5c436a12a5cc3c4d9a127fb20ea354a, type: 2}
   - {fileID: 11400000, guid: 7ebdfe7fc9097e241adfd933963e6e05, type: 2}
+  - {fileID: 11400000, guid: 43e57217115ab4244a401f63eba2f724, type: 2}

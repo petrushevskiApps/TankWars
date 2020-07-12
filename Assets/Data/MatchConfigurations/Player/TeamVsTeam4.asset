@@ -15,7 +15,7 @@ MonoBehaviour:
   CameraMode: 2
   matchTime: 300
   teamsConfig:
-  - agentsCount: 4
-    isPlayerTeam: 0
   - agentsCount: 3
     isPlayerTeam: 1
+  - agentsCount: 4
+    isPlayerTeam: 0
