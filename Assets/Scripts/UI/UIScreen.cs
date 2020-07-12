@@ -9,7 +9,7 @@ public class UIScreen : MonoBehaviour, IEquatable<UIScreen>
     {
         InputController.OnBackKey.AddListener(OnBackPressed);
     }
-    private void OnDisable()
+    protected void OnDisable()
     {
         InputController.OnBackKey.RemoveListener(OnBackPressed);
     }

@@ -18,14 +18,14 @@ public class Team : IEquatable<Team>, IComparable<Team>
     public TeamEvent OnTeamEmpty = new TeamEvent();
     public TeamKillEvent OnTeamKill = new TeamKillEvent();
 
-    
+    public Material teamColor { get; private set; }
 
-    public Team(int teamId, string teamName, bool isPlayerTeam, List<Agent> teamMembers)
+    public Team(int teamId, string teamName, bool isPlayerTeam, List<Agent> teamMembers, Material teamColor)
     {
         ID = teamId;
         TeamName = teamName;
         IsPlayerTeam = isPlayerTeam;
-
+        this.teamColor = teamColor;
         Members = teamMembers;
     }
 

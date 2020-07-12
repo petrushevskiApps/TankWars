@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TeamColors
   m_EditorClassIdentifier: 
   teamColors:
-  - {fileID: 2100000, guid: 24e8ad3eb0c53c041a62358bea70aefc, type: 2}
   - {fileID: 2100000, guid: 931961dd1b5e26b458484d485a138fb1, type: 2}
   - {fileID: 2100000, guid: 5b16bea210cfe5f46b4ca29e3fbc4120, type: 2}
-  - {fileID: 2100000, guid: 39344db3925d9d24690b723b60cac846, type: 2}
-  - {fileID: 2100000, guid: 232fc3dc4607db24ab3bd336f59a049d, type: 2}
+  - {fileID: 2100000, guid: 24e8ad3eb0c53c041a62358bea70aefc, type: 2}
   - {fileID: 2100000, guid: f9393608f1de2a74c8d66815098481e8, type: 2}
+  - {fileID: 2100000, guid: 232fc3dc4607db24ab3bd336f59a049d, type: 2}
+  - {fileID: 2100000, guid: 39344db3925d9d24690b723b60cac846, type: 2}

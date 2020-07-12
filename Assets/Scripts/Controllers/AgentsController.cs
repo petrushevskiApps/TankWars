@@ -66,7 +66,7 @@ public class AgentsController : MonoBehaviour
                 InstantiateAgent(aiPrefab, teamMembers);
             }
 
-            InitializeTeam(new Team(MatchTeams.Count, GetRandomName(teamNames), teamData.isPlayerTeam, teamMembers));
+            InitializeTeam(new Team(MatchTeams.Count, GetRandomName(teamNames), teamData.isPlayerTeam, teamMembers, teamColors.GetTeamColor(MatchTeams.Count)));
         }
     }
     private void ResetController()

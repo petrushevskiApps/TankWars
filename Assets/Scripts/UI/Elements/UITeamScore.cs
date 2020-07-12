@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UITeamScore : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI teamName;
     [SerializeField] private TextMeshProUGUI teamKills;
+    [SerializeField] private Image background;
 
     private Team team;
 
@@ -16,8 +18,8 @@ public class UITeamScore : MonoBehaviour
         this.team = team;
         this.team.OnTeamKill.AddListener(UpdateTeamKills);
         gameObject.SetActive(true);
-
-        SetNames();
+        SetColor();
+        SetName();
         UpdateTeamKills(0);
     }
 
@@ -29,9 +31,15 @@ public class UITeamScore : MonoBehaviour
         }
         
     }
-    private void SetNames()
+    private void SetName()
     {
         teamName.text = team.TeamName;
+    }
+    private void SetColor()
+    {
+        Color color = team.teamColor.color;
+        color.a = 0.7f;
+        background.color = color;
     }
     private void UpdateTeamKills(int score)
     {
