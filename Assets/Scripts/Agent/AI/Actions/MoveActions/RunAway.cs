@@ -61,12 +61,14 @@ public class RunAway : MoveAction
 		base.EnterAction(Success, Fail, Reset);
 		agent.BoostOn();
 	}
+	
 	public override void ExecuteAction()
 	{
 		if(agent.Memory.IsUnderAttack)
 		{
 			 // If the agent is still under attack get new
 			 // target location to run away.
+			agent.BoostOff();
 			RestartAction();
 		}
 		else
@@ -76,10 +78,11 @@ public class RunAway : MoveAction
 			ExitAction(actionCompleted, 0f);
 		}
 	}
+	
 	protected override void ExitAction(Action ExitAction, float invalidateTime)
 	{
-		base.ExitAction(ExitAction, invalidateTime);
 		agent.BoostOff();
+		base.ExitAction(ExitAction, invalidateTime);
 	}
 
 

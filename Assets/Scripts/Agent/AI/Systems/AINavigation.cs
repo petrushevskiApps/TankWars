@@ -41,7 +41,6 @@ public class AINavigation : NavigationController
 		base.IncreaseSpeed();
 		navMeshAgent.speed = currentSpeed;
 		navMeshAgent.avoidancePriority -= 10;
-		
 	}
 	protected override void DecreaseSpeed()
 	{

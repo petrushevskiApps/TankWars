@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,17 +16,18 @@ public class NavigationController : MonoBehaviour
 
     private MoveStatus AgentMoveStatus;
     private Coroutine Boosting;
-
+    
     protected void Awake()
     {
         currentSpeed = originalSpeed;
     }
 
-
     public void StartBoosting(Agent agent)
     {
+        if (Boosting != null) return; // Already boosting
         Boosting = StartCoroutine(BoostSpeed(agent));
         agent.Inventory.SpeedBoost.Use();
+
     }
     public void StopBoosting(Agent agent)
     {
@@ -42,14 +42,14 @@ public class NavigationController : MonoBehaviour
 
     // Increase speed gradually while there is boost
     // available in inventory.
-    public IEnumerator BoostSpeed(Agent agent)
+    private IEnumerator BoostSpeed(Agent agent)
     {
         while(agent.Inventory.SpeedBoost.Amount > 0)
         {
             IncreaseSpeed();
             yield return new WaitForEndOfFrame();
         }
-        DecreaseSpeed();
+        StopBoosting(agent);
     }
 
     protected virtual void IncreaseSpeed()
