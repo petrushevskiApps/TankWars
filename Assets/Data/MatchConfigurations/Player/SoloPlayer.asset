@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraMode: 2
   matchTime: 300
+  matchDescription: Use this match type to explore the map, player controls and get
+    ready !
   teamsConfig:
   - agentsCount: 0
     isPlayerTeam: 1

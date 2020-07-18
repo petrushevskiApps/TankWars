@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraMode: 2
   matchTime: 300
+  matchDescription: Player fights against 3 ai agents. Destroy the agents and win
+    the match.
   teamsConfig:
   - agentsCount: 0
     isPlayerTeam: 1

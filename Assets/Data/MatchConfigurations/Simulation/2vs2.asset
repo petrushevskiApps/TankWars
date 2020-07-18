@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraMode: 0
   matchTime: 60
+  matchDescription: Watch ai agent teams fight each other. Team with most destroyed
+    enemies wins the game.
   teamsConfig:
   - agentsCount: 2
     isPlayerTeam: 0

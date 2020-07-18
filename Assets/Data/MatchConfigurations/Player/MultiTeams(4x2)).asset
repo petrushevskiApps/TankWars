@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraMode: 2
   matchTime: 300
+  matchDescription: Multy team arena. Four teams each with 2 agents fight against
+    each other. Destroy all enemies to win this match!
   teamsConfig:
   - agentsCount: 1
     isPlayerTeam: 1

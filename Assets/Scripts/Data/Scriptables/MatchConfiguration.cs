@@ -12,7 +12,7 @@ public class MatchConfiguration : ScriptableObject
 {
     public CameraMode CameraMode;
     public float matchTime = 5f;
-
+    public string matchDescription = "Match Description";
     public List<TeamData> teamsConfig = new List<TeamData>();
 }
 

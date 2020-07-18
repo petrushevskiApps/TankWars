@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraMode: 2
   matchTime: 300
+  matchDescription: Team with most enemies destroyed when the timer ends, wins the
+    match.
   teamsConfig:
   - agentsCount: 3
     isPlayerTeam: 1

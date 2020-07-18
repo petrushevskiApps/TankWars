@@ -31,13 +31,13 @@ public class UIMatchCard : MonoBehaviour
     {
         this.matchConfiguration = matchConfiguration;
         SetText(subtitle, GetSubtitleText());
-        SetText(description, GetDescriptionText());
+        SetText(description, GetDescriptionText(matchConfiguration));
         gameObject.SetActive(true);
     }
 
-    private string GetDescriptionText()
+    private string GetDescriptionText(MatchConfiguration matchConfiguration)
     {
-        return Constants.TeamVsTeamDescription;
+        return matchConfiguration.matchDescription;
     }
 
     private string GetSubtitleText()
